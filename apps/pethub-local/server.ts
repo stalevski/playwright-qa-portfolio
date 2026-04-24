@@ -54,9 +54,11 @@ const respondNotFound = (response: Response, message: string): void => {
   response.status(404).json({ message });
 };
 
-const renderStatCard = (label: string, value: number): string => `<div class="card"><div class="muted">${label}</div><div style="font-size: 28px; font-weight: bold;">${value}</div></div>`;
+const renderStatCard = (label: string, value: number): string =>
+  `<div class="card"><div class="muted">${label}</div><div style="font-size: 28px; font-weight: bold;">${value}</div></div>`;
 
-const renderApiQuickLink = (method: string, path: string): string => `<li><span class="pill">${method}</span> <code>${path}</code></li>`;
+const renderApiQuickLink = (method: string, path: string): string =>
+  `<li><span class="pill">${method}</span> <code>${path}</code></li>`;
 
 const renderTableSection = (title: string, headers: string[], rows: string[][]): string => `
     <section>
@@ -69,7 +71,8 @@ const renderTableSection = (title: string, headers: string[], rows: string[][]):
       </table>
     </section>`;
 
-const renderJsonCard = (title: string, value: unknown): string => `<div class="card"><div class="muted">${title}</div><pre>${JSON.stringify(value, null, 2)}</pre></div>`;
+const renderJsonCard = (title: string, value: unknown): string =>
+  `<div class="card"><div class="muted">${title}</div><pre>${JSON.stringify(value, null, 2)}</pre></div>`;
 
 type StorefrontUser = {
   username: string;
@@ -131,7 +134,10 @@ const getStorefrontSession = (request: Request): StorefrontSession | undefined =
 };
 
 const setStorefrontSessionCookie = (response: Response, sessionId: string): void => {
-  response.setHeader('Set-Cookie', `storefront_session=${encodeURIComponent(sessionId)}; Path=/; HttpOnly; SameSite=Lax`);
+  response.setHeader(
+    'Set-Cookie',
+    `storefront_session=${encodeURIComponent(sessionId)}; Path=/; HttpOnly; SameSite=Lax`,
+  );
 };
 
 const clearStorefrontSessionCookie = (response: Response): void => {
@@ -177,12 +183,17 @@ const mapPetToStorefrontItem = (pet: Awaited<ReturnType<typeof getPetsQuery>>[nu
   status: pet.status,
   price: pet.price,
   notes: pet.notes,
-  description: storefrontDescriptions[pet.category] ?? 'Local inventory item for practicing UI automation and exploratory testing.',
+  description:
+    storefrontDescriptions[pet.category] ??
+    'Local inventory item for practicing UI automation and exploratory testing.',
   badge: storefrontEmoji[pet.category] ?? '🐾',
   accent: storefrontAccent[pet.category] ?? '#2563eb',
 });
 
-const sortStorefrontInventory = (items: Array<ReturnType<typeof mapPetToStorefrontItem>>, sort: StorefrontSortValue): Array<ReturnType<typeof mapPetToStorefrontItem>> => {
+const sortStorefrontInventory = (
+  items: Array<ReturnType<typeof mapPetToStorefrontItem>>,
+  sort: StorefrontSortValue,
+): Array<ReturnType<typeof mapPetToStorefrontItem>> => {
   const copy = [...items];
   switch (sort) {
     case 'az':
@@ -196,7 +207,9 @@ const sortStorefrontInventory = (items: Array<ReturnType<typeof mapPetToStorefro
   }
 };
 
-const getCartDetails = async (session: StorefrontSession): Promise<Array<ReturnType<typeof mapPetToStorefrontItem> & { quantity: number; lineTotal: number }>> => {
+const getCartDetails = async (
+  session: StorefrontSession,
+): Promise<Array<ReturnType<typeof mapPetToStorefrontItem> & { quantity: number; lineTotal: number }>> => {
   const inventory = await getStorefrontInventory();
   return session.cart
     .map((item) => {
@@ -210,7 +223,9 @@ const getCartDetails = async (session: StorefrontSession): Promise<Array<ReturnT
         lineTotal: pet.price * item.quantity,
       };
     })
-    .filter((item): item is ReturnType<typeof mapPetToStorefrontItem> & { quantity: number; lineTotal: number } => Boolean(item));
+    .filter((item): item is ReturnType<typeof mapPetToStorefrontItem> & { quantity: number; lineTotal: number } =>
+      Boolean(item),
+    );
 };
 
 const getCartBadgeCount = (session: StorefrontSession): number => session.cart.length;
@@ -292,10 +307,11 @@ const renderStorefrontLayout = (options: {
 </body>
 </html>`;
 
-const renderStorefrontLogin = (error?: string): string => renderStorefrontLayout({
-  title: 'PetHub Outfitters Login',
-  heading: 'Sign in',
-  body: `
+const renderStorefrontLogin = (error?: string): string =>
+  renderStorefrontLayout({
+    title: 'PetHub Outfitters Login',
+    heading: 'Sign in',
+    body: `
     <section class="hero">
       <span class="pill">Local UI app</span>
       <h1>Practice against a local storefront instead of a third-party demo</h1>
@@ -322,9 +338,12 @@ const renderStorefrontLogin = (error?: string): string => renderStorefrontLayout
         ${storefrontUsers.map((user) => `<div class="row-between"><span><strong>${user.username}</strong><br /><span class="muted">${user.role}</span></span><span class="muted">${user.password}</span></div>`).join('')}
       </section>
     </div>`,
-});
+  });
 
-const renderStorefrontInventory = async (session: StorefrontSession, sort: StorefrontSortValue = 'az'): Promise<string> => {
+const renderStorefrontInventory = async (
+  session: StorefrontSession,
+  sort: StorefrontSortValue = 'az',
+): Promise<string> => {
   const items = sortStorefrontInventory(await getStorefrontInventory(), sort);
   return renderStorefrontLayout({
     title: 'PetHub Outfitters Inventory',
@@ -354,7 +373,9 @@ const renderStorefrontInventory = async (session: StorefrontSession, sort: Store
           </form>
         </div>
         <div data-test="inventory-container" class="grid">
-          ${items.map((item) => `
+          ${items
+            .map(
+              (item) => `
             <article data-test="inventory-item" class="product-card">
               <div class="row-between">
                 <span class="icon">${item.badge}</span>
@@ -372,7 +393,9 @@ const renderStorefrontInventory = async (session: StorefrontSession, sort: Store
                   <button type="submit">Add to cart</button>
                 </form>
               </div>
-            </article>`).join('')}
+            </article>`,
+            )
+            .join('')}
         </div>
       </section>`,
   });
@@ -446,7 +469,12 @@ const renderStorefrontCart = async (session: StorefrontSession): Promise<string>
           <h2 style="margin: 0;">Cart items</h2>
           <a class="button secondary" href="/shop/inventory">Continue shopping</a>
         </div>
-        ${items.length === 0 ? '<p class="muted">Your cart is empty.</p>' : items.map((item) => `
+        ${
+          items.length === 0
+            ? '<p class="muted">Your cart is empty.</p>'
+            : items
+                .map(
+                  (item) => `
           <div class="product-card">
             <div class="row-between">
               <div>
@@ -465,7 +493,10 @@ const renderStorefrontCart = async (session: StorefrontSession): Promise<string>
               <span data-test="inventory-item-price">$${item.price.toFixed(2)}</span>
               <strong>$${item.lineTotal.toFixed(2)}</strong>
             </div>
-          </div>`).join('')}
+          </div>`,
+                )
+                .join('')
+        }
         <div class="summary">
           <div><span class="muted">Subtotal</span><strong>$${subtotal.toFixed(2)}</strong></div>
         </div>
@@ -522,12 +553,13 @@ const renderStorefrontCheckout = async (session: StorefrontSession, error?: stri
   });
 };
 
-const renderStorefrontComplete = async (session: StorefrontSession, orderId: number): Promise<string> => renderStorefrontLayout({
-  title: 'Order complete',
-  heading: 'Order complete',
-  session,
-  activeNav: 'checkout',
-  body: `
+const renderStorefrontComplete = async (session: StorefrontSession, orderId: number): Promise<string> =>
+  renderStorefrontLayout({
+    title: 'Order complete',
+    heading: 'Order complete',
+    session,
+    activeNav: 'checkout',
+    body: `
     <section class="hero">
       <span class="pill">Order complete</span>
       <h1>Thanks for shopping locally</h1>
@@ -541,7 +573,7 @@ const renderStorefrontComplete = async (session: StorefrontSession, orderId: num
         <a class="button secondary" href="/">Open admin dashboard</a>
       </div>
     </section>`,
-});
+  });
 
 type OpsCaseSeverity = 'low' | 'medium' | 'high';
 
@@ -563,25 +595,39 @@ const opsCases: OpsCase[] = [
     summary: 'The source order can move forward while the UI still emphasizes an older projected status.',
     sourceOfTruth: 'Source DB and event feed',
     observedInUi: 'Dashboard cards and investigation summaries',
-    likelyChecks: ['Compare order status in source DB vs read model order ledger', 'Verify event feed contains order.status-updated', 'Check downstream billing order status'],
+    likelyChecks: [
+      'Compare order status in source DB vs read model order ledger',
+      'Verify event feed contains order.status-updated',
+      'Check downstream billing order status',
+    ],
   },
   {
     slug: 'missing-analytics',
     title: 'Missing Analytics Event',
     severity: 'medium',
-    summary: 'A workflow can appear successful in operations data but still not be represented in the analytics replica.',
+    summary:
+      'A workflow can appear successful in operations data but still not be represented in the analytics replica.',
     sourceOfTruth: 'Source events vs downstream analyticsEvents',
     observedInUi: 'Sync monitor counts and alert cards',
-    likelyChecks: ['Compare source event count against analytics replica count', 'Identify latest missing entityId', 'Validate downstream sync timing'],
+    likelyChecks: [
+      'Compare source event count against analytics replica count',
+      'Identify latest missing entityId',
+      'Validate downstream sync timing',
+    ],
   },
   {
     slug: 'order-total-mismatch',
     title: 'Order Total Mismatch',
     severity: 'high',
-    summary: 'The storefront can create an order whose total looks right in the UI but does not fully describe multi-item cart relations.',
+    summary:
+      'The storefront can create an order whose total looks right in the UI but does not fully describe multi-item cart relations.',
     sourceOfTruth: 'Orders source DB, order relations, storefront completion flow',
     observedInUi: 'Storefront completion and operations incident detail',
-    likelyChecks: ['Validate order total against cart lines', 'Check only first pet relation is persisted', 'Verify billing export amount and order relation payload'],
+    likelyChecks: [
+      'Validate order total against cart lines',
+      'Check only first pet relation is persisted',
+      'Verify billing export amount and order relation payload',
+    ],
   },
 ];
 
@@ -706,11 +752,13 @@ const renderOpsOverview = async (): Promise<string> => {
           <table>
             <thead><tr><th>Order</th><th>User</th><th>Source Status</th><th>Ledger Status</th><th>Billing</th></tr></thead>
             <tbody>
-              ${latestOrders.map((order) => {
-                const ledger = summary.readModels.orderLedger.find((entry) => entry.id === order.id);
-                const billing = summary.downstream.billingOrders.find((entry) => entry.orderId === order.id);
-                return `<tr><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${billing?.orderStatus ?? 'missing'}</td></tr>`;
-              }).join('')}
+              ${latestOrders
+                .map((order) => {
+                  const ledger = summary.readModels.orderLedger.find((entry) => entry.id === order.id);
+                  const billing = summary.downstream.billingOrders.find((entry) => entry.orderId === order.id);
+                  return `<tr><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${billing?.orderStatus ?? 'missing'}</td></tr>`;
+                })
+                .join('')}
             </tbody>
           </table>
         </section>
@@ -729,12 +777,20 @@ const renderOpsOverview = async (): Promise<string> => {
 
 const renderOpsQueue = async (): Promise<string> => {
   const summary = await buildOpsSummary();
-  const queueRows = summary.orders.slice(0, 10).map((order, index) => {
-    const ledger = summary.readModels.orderLedger.find((entry) => entry.id === order.id);
-    const severity = index === 0 || ledger?.status !== order.status ? 'high' : index % 2 === 0 ? 'medium' : 'low';
-    const investigation = ledger?.status !== order.status ? 'Source and projection disagree' : order.totalAmount > 1000 ? 'High-value order requires downstream verification' : 'Routine verification';
-    return `<tr><td><span class="pill" style="background: ${severityColor[severity]};">${severity}</span></td><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${investigation}</td></tr>`;
-  }).join('');
+  const queueRows = summary.orders
+    .slice(0, 10)
+    .map((order, index) => {
+      const ledger = summary.readModels.orderLedger.find((entry) => entry.id === order.id);
+      const severity = index === 0 || ledger?.status !== order.status ? 'high' : index % 2 === 0 ? 'medium' : 'low';
+      const investigation =
+        ledger?.status !== order.status
+          ? 'Source and projection disagree'
+          : order.totalAmount > 1000
+            ? 'High-value order requires downstream verification'
+            : 'Routine verification';
+      return `<tr><td><span class="pill" style="background: ${severityColor[severity]};">${severity}</span></td><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${investigation}</td></tr>`;
+    })
+    .join('');
 
   return renderOpsLayout({
     title: 'Operations Work Queue',
@@ -803,10 +859,11 @@ const renderOpsComparisons = async (): Promise<string> => {
   });
 };
 
-const renderOpsIncidents = async (): Promise<string> => renderOpsLayout({
-  title: 'Operations Incidents',
-  activeNav: 'incidents',
-  body: `
+const renderOpsIncidents = async (): Promise<string> =>
+  renderOpsLayout({
+    title: 'Operations Incidents',
+    activeNav: 'incidents',
+    body: `
     <section class="hero">
       <h1>Known incident patterns</h1>
       <p>These scenarios are intentionally designed to train investigation habits: source-vs-projection validation, downstream gaps, and workflow integrity checks.</p>
@@ -814,7 +871,7 @@ const renderOpsIncidents = async (): Promise<string> => renderOpsLayout({
     <div class="grid three-column">
       ${opsCases.map((incident) => `<section><span class="pill" style="background: ${severityColor[incident.severity]};">${incident.severity}</span><h2 style="margin-top: 12px;">${incident.title}</h2><p class="muted">${incident.summary}</p><a href="/ops/incidents/${incident.slug}" style="color: #93c5fd;">Open detail</a></section>`).join('')}
     </div>`,
-});
+  });
 
 const renderOpsIncidentDetail = async (incident: OpsCase): Promise<string> => {
   const summary = await buildOpsSummary();
@@ -838,12 +895,16 @@ const renderOpsIncidentDetail = async (incident: OpsCase): Promise<string> => {
         </section>
         <section>
           <h2>Relevant live data</h2>
-          <div class="code">${JSON.stringify({
-            latestOrder: summary.orders[0],
-            latestLedger: summary.readModels.orderLedger[0],
-            latestBilling: summary.downstream.billingOrders[0],
-            latestEvent: summary.events[0],
-          }, null, 2)}</div>
+          <div class="code">${JSON.stringify(
+            {
+              latestOrder: summary.orders[0],
+              latestLedger: summary.readModels.orderLedger[0],
+              latestBilling: summary.downstream.billingOrders[0],
+              latestEvent: summary.events[0],
+            },
+            null,
+            2,
+          )}</div>
         </section>
       </div>
       <section>
@@ -973,7 +1034,9 @@ app.get('/', async (_request: Request, response: Response) => {
             ['GET', '/api/events'],
             ['GET', '/api/read-models'],
             ['GET', '/api/downstream-systems'],
-          ].map(([method, path]) => renderApiQuickLink(method, path)).join('')}
+          ]
+            .map(([method, path]) => renderApiQuickLink(method, path))
+            .join('')}
         </ul>
       </section>
     </div>
@@ -1028,12 +1091,69 @@ app.get('/', async (_request: Request, response: Response) => {
         <pre>${JSON.stringify(inventory, null, 2)}</pre>
       </div>
     </section>
-    ${renderTableSection('Pets', ['ID', 'Name', 'Category', 'Status', 'Price', 'Updated'], pets.map((pet) => [String(pet.id), pet.name, pet.category, pet.status, pet.price.toFixed(2), pet.updatedAt]))}
-    ${renderTableSection('Employees', ['ID', 'User ID', 'Code', 'Department', 'Title', 'Status'], employees.map((employee) => [String(employee.id), String(employee.userId), employee.employeeCode, employee.department, employee.title, employee.status]))}
-    ${renderTableSection('Customers', ['ID', 'User ID', 'Number', 'Segment', 'Tier', 'Status'], customers.map((customer) => [String(customer.id), String(customer.userId), customer.customerNumber, customer.segment, customer.loyaltyTier, customer.status]))}
-    ${renderTableSection('Orders', ['ID', 'Pet', 'User', 'Status', 'Total', 'Updated'], orders.map((order) => [String(order.id), order.pet?.name ?? `Pet #${order.petId}`, order.user?.username ?? `User #${order.userId}`, order.status, order.totalAmount.toFixed(2), order.updatedAt]))}
-    ${renderTableSection('Users', ['ID', 'Username', 'Email', 'Role', 'Created'], users.map((user) => [String(user.id), user.username, user.email, user.role, user.createdAt]))}
-    ${renderTableSection('Audit Log', ['ID', 'Entity', 'Action', 'Details', 'Created'], audit.map((entry) => [String(entry.id), entry.order ? `order#${entry.order.id}` : entry.pet ? `pet#${entry.pet.id}` : entry.user ? `user#${entry.user.id}` : `${entry.entityType}#${entry.entityId}`, entry.action, entry.details, entry.createdAt]))}
+    ${renderTableSection(
+      'Pets',
+      ['ID', 'Name', 'Category', 'Status', 'Price', 'Updated'],
+      pets.map((pet) => [String(pet.id), pet.name, pet.category, pet.status, pet.price.toFixed(2), pet.updatedAt]),
+    )}
+    ${renderTableSection(
+      'Employees',
+      ['ID', 'User ID', 'Code', 'Department', 'Title', 'Status'],
+      employees.map((employee) => [
+        String(employee.id),
+        String(employee.userId),
+        employee.employeeCode,
+        employee.department,
+        employee.title,
+        employee.status,
+      ]),
+    )}
+    ${renderTableSection(
+      'Customers',
+      ['ID', 'User ID', 'Number', 'Segment', 'Tier', 'Status'],
+      customers.map((customer) => [
+        String(customer.id),
+        String(customer.userId),
+        customer.customerNumber,
+        customer.segment,
+        customer.loyaltyTier,
+        customer.status,
+      ]),
+    )}
+    ${renderTableSection(
+      'Orders',
+      ['ID', 'Pet', 'User', 'Status', 'Total', 'Updated'],
+      orders.map((order) => [
+        String(order.id),
+        order.pet?.name ?? `Pet #${order.petId}`,
+        order.user?.username ?? `User #${order.userId}`,
+        order.status,
+        order.totalAmount.toFixed(2),
+        order.updatedAt,
+      ]),
+    )}
+    ${renderTableSection(
+      'Users',
+      ['ID', 'Username', 'Email', 'Role', 'Created'],
+      users.map((user) => [String(user.id), user.username, user.email, user.role, user.createdAt]),
+    )}
+    ${renderTableSection(
+      'Audit Log',
+      ['ID', 'Entity', 'Action', 'Details', 'Created'],
+      audit.map((entry) => [
+        String(entry.id),
+        entry.order
+          ? `order#${entry.order.id}`
+          : entry.pet
+            ? `pet#${entry.pet.id}`
+            : entry.user
+              ? `user#${entry.user.id}`
+              : `${entry.entityType}#${entry.entityId}`,
+        entry.action,
+        entry.details,
+        entry.createdAt,
+      ]),
+    )}
     <section>
       <h2>Read Models Database</h2>
       <div class="three-column">
@@ -1104,7 +1224,9 @@ app.post('/shop/login', (request: Request, response: Response) => {
 
   const user = storefrontUsers.find((candidate) => candidate.username === username && candidate.password === password);
   if (!user) {
-    response.status(400).send(renderStorefrontLogin('Epic sadface: Username and password do not match any user in this service'));
+    response
+      .status(400)
+      .send(renderStorefrontLogin('Epic sadface: Username and password do not match any user in this service'));
     return;
   }
 
@@ -1226,7 +1348,9 @@ app.post('/shop/checkout', async (request: Request, response: Response) => {
 
   const cartItems = await getCartDetails(session);
   if (cartItems.length === 0) {
-    response.status(400).send(await renderStorefrontCheckout(session, 'Error: Your cart must contain at least one item'));
+    response
+      .status(400)
+      .send(await renderStorefrontCheckout(session, 'Error: Your cart must contain at least one item'));
     return;
   }
 
@@ -1274,11 +1398,13 @@ app.get('/ops/incidents', async (_request: Request, response: Response) => {
 app.get('/ops/incidents/:slug', async (request: Request, response: Response) => {
   const incident = opsCases.find((candidate) => candidate.slug === request.params.slug);
   if (!incident) {
-    response.status(404).send(renderOpsLayout({
-      title: 'Incident not found',
-      activeNav: 'incidents',
-      body: '<section><h1>Incident not found</h1><p class="muted">The requested investigation pattern does not exist.</p></section>',
-    }));
+    response.status(404).send(
+      renderOpsLayout({
+        title: 'Incident not found',
+        activeNav: 'incidents',
+        body: '<section><h1>Incident not found</h1><p class="muted">The requested investigation pattern does not exist.</p></section>',
+      }),
+    );
     return;
   }
 

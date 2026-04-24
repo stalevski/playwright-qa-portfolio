@@ -1,4 +1,10 @@
-import type { LocalCustomerDto, LocalEmployeeDto, LocalOrderDto, LocalPetDto, LocalUserDto } from '@models/api/local.dto';
+import type {
+  LocalCustomerDto,
+  LocalEmployeeDto,
+  LocalOrderDto,
+  LocalPetDto,
+  LocalUserDto,
+} from '@models/api/local.dto';
 import type { OrderDto } from '@models/api/order.dto';
 import type { PetDto, PetStatus } from '@models/api/pet.dto';
 import type { UserDto } from '@models/api/user.dto';
@@ -9,8 +15,26 @@ export class RandomDataGenerator {
   private static readonly digits = '0123456789';
   private static readonly symbols = '!@#$%^&*_-+=';
   private static readonly loremWords = [
-    'alpha', 'beta', 'gamma', 'delta', 'omega', 'pixel', 'cloud', 'forest', 'river', 'stone',
-    'shadow', 'ember', 'nova', 'signal', 'vector', 'harbor', 'summit', 'orchid', 'cobalt', 'silver',
+    'alpha',
+    'beta',
+    'gamma',
+    'delta',
+    'omega',
+    'pixel',
+    'cloud',
+    'forest',
+    'river',
+    'stone',
+    'shadow',
+    'ember',
+    'nova',
+    'signal',
+    'vector',
+    'harbor',
+    'summit',
+    'orchid',
+    'cobalt',
+    'silver',
   ];
   private static readonly dogNames = ['Buddy', 'Max', 'Charlie', 'Rocky', 'Cooper', 'Milo', 'Teddy', 'Leo'];
   private static readonly catNames = ['Luna', 'Bella', 'Simba', 'Nala', 'Mochi', 'Misty', 'Cleo', 'Willow'];
@@ -26,11 +50,36 @@ export class RandomDataGenerator {
   ];
   private static readonly firstNames = ['Alex', 'Mia', 'Daniel', 'Sofia', 'Liam', 'Emma', 'Noah', 'Olivia'];
   private static readonly lastNames = ['Parker', 'Stone', 'Carter', 'Bennett', 'Hayes', 'Coleman', 'Reed', 'Brooks'];
-  private static readonly streetNames = ['Oak Street', 'Maple Avenue', 'River Road', 'Sunset Lane', 'Hillcrest Drive', 'Pine Court'];
+  private static readonly streetNames = [
+    'Oak Street',
+    'Maple Avenue',
+    'River Road',
+    'Sunset Lane',
+    'Hillcrest Drive',
+    'Pine Court',
+  ];
   private static readonly cities = ['Skopje', 'Belgrade', 'Sofia', 'Vienna', 'Prague', 'Warsaw', 'Berlin', 'Amsterdam'];
-  private static readonly countries = ['North Macedonia', 'Serbia', 'Bulgaria', 'Austria', 'Czech Republic', 'Poland', 'Germany', 'Netherlands'];
+  private static readonly countries = [
+    'North Macedonia',
+    'Serbia',
+    'Bulgaria',
+    'Austria',
+    'Czech Republic',
+    'Poland',
+    'Germany',
+    'Netherlands',
+  ];
   private static readonly companyPrefixes = ['Pet', 'Nova', 'Blue', 'Cloud', 'Prime', 'Silver', 'Peak', 'Smart'];
-  private static readonly companySuffixes = ['Labs', 'Systems', 'Solutions', 'Works', 'Studios', 'Group', 'Hub', 'Dynamics'];
+  private static readonly companySuffixes = [
+    'Labs',
+    'Systems',
+    'Solutions',
+    'Works',
+    'Studios',
+    'Group',
+    'Hub',
+    'Dynamics',
+  ];
   private static readonly roles = ['customer', 'manager', 'admin'];
   private static readonly employeeStatuses: LocalEmployeeDto['status'][] = ['active', 'leave', 'inactive'];
   private static readonly customerStatuses: LocalCustomerDto['status'][] = ['active', 'prospect', 'inactive'];
@@ -42,7 +91,12 @@ export class RandomDataGenerator {
   private static readonly orderStatuses: LocalOrderDto['status'][] = ['placed', 'approved', 'completed', 'cancelled'];
   private static readonly petStatuses: PetStatus[] = ['available', 'pending', 'sold'];
   private static readonly usernamePrefixes = ['petlover', 'qauser', 'sandbox', 'shopper', 'adopter', 'caretaker'];
-  private static readonly noteSuffixes = ['for regression checks', 'for smoke coverage', 'for audit verification', 'for relation testing'];
+  private static readonly noteSuffixes = [
+    'for regression checks',
+    'for smoke coverage',
+    'for audit verification',
+    'for relation testing',
+  ];
 
   static randomNumber(min = 0, max = 9999): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -127,7 +181,9 @@ export class RandomDataGenerator {
       this.randomChar(this.alphabetUpper),
       this.randomChar(this.digits),
       this.randomChar(this.symbols),
-      ...Array.from({ length: safeLength - 4 }, () => this.randomChar(`${this.alphabetLower}${this.alphabetUpper}${this.digits}${this.symbols}`)),
+      ...Array.from({ length: safeLength - 4 }, () =>
+        this.randomChar(`${this.alphabetLower}${this.alphabetUpper}${this.digits}${this.symbols}`),
+      ),
     ];
     return this.shuffle(base).join('');
   }
@@ -208,11 +264,8 @@ export class RandomDataGenerator {
 
   static randomPetName(category?: string): string {
     const resolvedCategory = category ?? this.randomPetCategory();
-    const namePool = resolvedCategory === 'Dogs'
-      ? this.dogNames
-      : resolvedCategory === 'Cats'
-        ? this.catNames
-        : this.birdNames;
+    const namePool =
+      resolvedCategory === 'Dogs' ? this.dogNames : resolvedCategory === 'Cats' ? this.catNames : this.birdNames;
 
     return `${this.pickOne(namePool)} ${this.randomId(1, 999)}`;
   }
@@ -308,7 +361,9 @@ export class RandomDataGenerator {
     return this.pickOne(this.customerStatuses);
   }
 
-  static createLocalPet(overrides: Partial<Omit<LocalPetDto, 'createdAt' | 'updatedAt'>> = {}): Omit<LocalPetDto, 'createdAt' | 'updatedAt'> {
+  static createLocalPet(
+    overrides: Partial<Omit<LocalPetDto, 'createdAt' | 'updatedAt'>> = {},
+  ): Omit<LocalPetDto, 'createdAt' | 'updatedAt'> {
     const category = overrides.category ?? this.randomPetCategory();
     return {
       id: overrides.id ?? this.randomId(90000, 99999),
@@ -335,7 +390,9 @@ export class RandomDataGenerator {
     };
   }
 
-  static createLocalOrder(overrides: Partial<Omit<LocalOrderDto, 'createdAt' | 'updatedAt'>> = {}): Omit<LocalOrderDto, 'createdAt' | 'updatedAt'> {
+  static createLocalOrder(
+    overrides: Partial<Omit<LocalOrderDto, 'createdAt' | 'updatedAt'>> = {},
+  ): Omit<LocalOrderDto, 'createdAt' | 'updatedAt'> {
     return {
       id: overrides.id ?? this.randomId(90000, 99999),
       petId: overrides.petId ?? this.randomId(90000, 99999),
@@ -346,7 +403,9 @@ export class RandomDataGenerator {
     };
   }
 
-  static createLocalEmployee(overrides: Partial<Omit<LocalEmployeeDto, 'createdAt'>> = {}): Omit<LocalEmployeeDto, 'createdAt'> {
+  static createLocalEmployee(
+    overrides: Partial<Omit<LocalEmployeeDto, 'createdAt'>> = {},
+  ): Omit<LocalEmployeeDto, 'createdAt'> {
     return {
       id: overrides.id ?? this.randomId(40000, 49999),
       userId: overrides.userId ?? this.randomId(90000, 99999),
@@ -359,7 +418,9 @@ export class RandomDataGenerator {
     };
   }
 
-  static createLocalCustomer(overrides: Partial<Omit<LocalCustomerDto, 'createdAt'>> = {}): Omit<LocalCustomerDto, 'createdAt'> {
+  static createLocalCustomer(
+    overrides: Partial<Omit<LocalCustomerDto, 'createdAt'>> = {},
+  ): Omit<LocalCustomerDto, 'createdAt'> {
     return {
       id: overrides.id ?? this.randomId(50000, 59999),
       userId: overrides.userId ?? this.randomId(90000, 99999),

@@ -151,7 +151,16 @@ const now = () => new Date().toISOString();
 
 const ensureLoaded = async (): Promise<void> => {
   await database.read();
-  database.data ||= { pets: [], users: [], employees: [], customers: [], orders: [], auditLog: [], events: [], sessions: [] };
+  database.data ||= {
+    pets: [],
+    users: [],
+    employees: [],
+    customers: [],
+    orders: [],
+    auditLog: [],
+    events: [],
+    sessions: [],
+  };
   database.data.events ||= [];
   database.data.sessions ||= [];
   database.data.employees ||= [];
@@ -180,17 +189,70 @@ export const initializeDatabase = async (): Promise<void> => {
   if (database.data.pets.length === 0) {
     const timestamp = now();
     database.data.pets.push(
-      { id: 1001, name: 'Golden Retriever', category: 'Dogs', status: 'available', price: 1200, notes: 'Friendly and family trained', createdAt: timestamp, updatedAt: timestamp },
-      { id: 1002, name: 'British Shorthair', category: 'Cats', status: 'pending', price: 900, notes: 'Indoor cat with vaccination record', tags: [{ id: 1, name: 'indoor' }], photoUrls: [], createdAt: timestamp, updatedAt: timestamp },
-      { id: 1003, name: 'Cockatiel', category: 'Birds', status: 'sold', price: 300, notes: 'Comes with cage and starter kit', tags: [{ id: 2, name: 'starter-kit' }], photoUrls: [], createdAt: timestamp, updatedAt: timestamp },
+      {
+        id: 1001,
+        name: 'Golden Retriever',
+        category: 'Dogs',
+        status: 'available',
+        price: 1200,
+        notes: 'Friendly and family trained',
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+      {
+        id: 1002,
+        name: 'British Shorthair',
+        category: 'Cats',
+        status: 'pending',
+        price: 900,
+        notes: 'Indoor cat with vaccination record',
+        tags: [{ id: 1, name: 'indoor' }],
+        photoUrls: [],
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
+      {
+        id: 1003,
+        name: 'Cockatiel',
+        category: 'Birds',
+        status: 'sold',
+        price: 300,
+        notes: 'Comes with cage and starter kit',
+        tags: [{ id: 2, name: 'starter-kit' }],
+        photoUrls: [],
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      },
     );
   }
 
   if (database.data.users.length === 0) {
     const timestamp = now();
     database.data.users.push(
-      { id: 2001, username: 'admin', firstName: 'Store', lastName: 'Admin', email: 'admin@localpetstore.test', role: 'admin', password: 'Password123!', phone: '1002003000', userStatus: 1, createdAt: timestamp },
-      { id: 2002, username: 'buyer01', firstName: 'Pet', lastName: 'Buyer', email: 'buyer01@localpetstore.test', role: 'customer', password: 'Password123!', phone: '1234567890', userStatus: 1, createdAt: timestamp },
+      {
+        id: 2001,
+        username: 'admin',
+        firstName: 'Store',
+        lastName: 'Admin',
+        email: 'admin@localpetstore.test',
+        role: 'admin',
+        password: 'Password123!',
+        phone: '1002003000',
+        userStatus: 1,
+        createdAt: timestamp,
+      },
+      {
+        id: 2002,
+        username: 'buyer01',
+        firstName: 'Pet',
+        lastName: 'Buyer',
+        email: 'buyer01@localpetstore.test',
+        role: 'customer',
+        password: 'Password123!',
+        phone: '1234567890',
+        userStatus: 1,
+        createdAt: timestamp,
+      },
     );
   }
 
@@ -225,7 +287,16 @@ export const initializeDatabase = async (): Promise<void> => {
 
   if (database.data.orders.length === 0) {
     const timestamp = now();
-    database.data.orders.push({ id: 3001, petId: 1002, userId: 2002, quantity: 1, status: 'placed', totalAmount: 900, createdAt: timestamp, updatedAt: timestamp });
+    database.data.orders.push({
+      id: 3001,
+      petId: 1002,
+      userId: 2002,
+      quantity: 1,
+      status: 'placed',
+      totalAmount: 900,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
   }
 
   await initializeReadModels();
@@ -271,7 +342,10 @@ export const createPet = async (pet: Omit<PetRecord, 'createdAt' | 'updatedAt'>)
   return createdPet;
 };
 
-export const updatePet = async (id: number, pet: Omit<PetRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<PetRecord | undefined> => {
+export const updatePet = async (
+  id: number,
+  pet: Omit<PetRecord, 'id' | 'createdAt' | 'updatedAt'>,
+): Promise<PetRecord | undefined> => {
   await ensureLoaded();
   const index = database.data.pets.findIndex((candidate: PetRecord) => candidate.id === id);
   if (index === -1) {
@@ -293,7 +367,10 @@ export const updatePet = async (id: number, pet: Omit<PetRecord, 'id' | 'created
   return updatedPet;
 };
 
-export const updatePetWithFormData = async (id: number, form: { name?: string; status?: PetRecord['status'] }): Promise<PetRecord | undefined> => {
+export const updatePetWithFormData = async (
+  id: number,
+  form: { name?: string; status?: PetRecord['status'] },
+): Promise<PetRecord | undefined> => {
   await ensureLoaded();
   const existingPet = await getPetById(id);
   if (!existingPet) {
@@ -400,7 +477,10 @@ export const createUsers = async (users: Array<Omit<UserRecord, 'createdAt'>>): 
   return createdUsers;
 };
 
-export const updateUser = async (username: string, user: Omit<UserRecord, 'createdAt'>): Promise<UserRecord | undefined> => {
+export const updateUser = async (
+  username: string,
+  user: Omit<UserRecord, 'createdAt'>,
+): Promise<UserRecord | undefined> => {
   await ensureLoaded();
   const index = database.data.users.findIndex((candidate: UserRecord) => candidate.username === username);
   if (index === -1) {
@@ -492,7 +572,10 @@ export const createOrder = async (order: Omit<OrderRecord, 'createdAt' | 'update
   return createdOrder;
 };
 
-export const updateOrderStatus = async (id: number, status: OrderRecord['status']): Promise<OrderRecord | undefined> => {
+export const updateOrderStatus = async (
+  id: number,
+  status: OrderRecord['status'],
+): Promise<OrderRecord | undefined> => {
   await ensureLoaded();
   const index = database.data.orders.findIndex((candidate: OrderRecord) => candidate.id === id);
   if (index === -1) {
@@ -520,7 +603,9 @@ export const getEvents = async (): Promise<LocalAppEvent[]> => {
 
 export const loginUser = async (username: string, password: string): Promise<SessionRecord | undefined> => {
   await ensureLoaded();
-  const user = database.data.users.find((candidate: UserRecord) => candidate.username === username && candidate.password === password);
+  const user = database.data.users.find(
+    (candidate: UserRecord) => candidate.username === username && candidate.password === password,
+  );
   if (!user) {
     return undefined;
   }
@@ -556,9 +641,16 @@ export const getAuditLogWithRelations = async (): Promise<AuditRecordWithRelatio
     .slice(0, 100)
     .map((entry: AuditRecord) => ({
       ...entry,
-      pet: entry.entityType === 'pet' ? database.data.pets.find((pet: PetRecord) => pet.id === entry.entityId) : undefined,
-      user: entry.entityType === 'user' ? database.data.users.find((user: UserRecord) => user.id === entry.entityId) : undefined,
-      order: entry.entityType === 'order' ? database.data.orders.find((order: OrderRecord) => order.id === entry.entityId) : undefined,
+      pet:
+        entry.entityType === 'pet' ? database.data.pets.find((pet: PetRecord) => pet.id === entry.entityId) : undefined,
+      user:
+        entry.entityType === 'user'
+          ? database.data.users.find((user: UserRecord) => user.id === entry.entityId)
+          : undefined,
+      order:
+        entry.entityType === 'order'
+          ? database.data.orders.find((order: OrderRecord) => order.id === entry.entityId)
+          : undefined,
     }));
 };
 
@@ -618,7 +710,12 @@ const addAudit = (entityType: string, entityId: number, action: string, details:
   });
 };
 
-const emitEvent = (type: LocalAppEventType, entityType: 'pet' | 'user' | 'order', entityId: number, payload: Record<string, unknown>): void => {
+const emitEvent = (
+  type: LocalAppEventType,
+  entityType: 'pet' | 'user' | 'order',
+  entityId: number,
+  payload: Record<string, unknown>,
+): void => {
   const nextId = (database.data?.events[0]?.id ?? 0) + 1;
   const createdAt = now();
 
@@ -660,7 +757,13 @@ const syncDerivedStores = async (): Promise<void> => {
   });
 };
 
-const toAuditRecord = (type: LocalAppEventType, entityType: 'pet' | 'user' | 'order', entityId: number, payload: Record<string, unknown>, createdAt: string): AuditRecord => {
+const toAuditRecord = (
+  type: LocalAppEventType,
+  entityType: 'pet' | 'user' | 'order',
+  entityId: number,
+  payload: Record<string, unknown>,
+  createdAt: string,
+): AuditRecord => {
   const nextId = (database.data?.auditLog[0]?.id ?? 0) + 1;
 
   switch (type) {

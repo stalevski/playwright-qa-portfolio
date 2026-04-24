@@ -149,7 +149,9 @@ export class LocalPetStoreApiClient extends BaseApiClient {
   }
 
   async loginUser(username: string, password: string): Promise<LocalSessionDto> {
-    return this.get<LocalSessionDto>(`users/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+    return this.get<LocalSessionDto>(
+      `users/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+    );
   }
 
   async logoutUser(): Promise<ApiMessageDto> {

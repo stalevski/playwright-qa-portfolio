@@ -1,6 +1,7 @@
 ---
 description: generate Playwright tests and supporting framework code using repo conventions
 ---
+
 # AI Test Generator Workflow
 
 Use this workflow after planning has been approved.

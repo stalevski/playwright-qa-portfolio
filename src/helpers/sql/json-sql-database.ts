@@ -35,14 +35,19 @@ type ParsedQuery = {
   where: Condition[];
 };
 
-const selectRegex = /^select\s+(.+?)\s+from\s+([a-zA-Z_][\w]*)(?:\s+inner\s+join\s+([a-zA-Z_][\w]*)\s+on\s+(.+?))?(?:\s+where\s+(.+))?$/is;
+const selectRegex =
+  /^select\s+(.+?)\s+from\s+([a-zA-Z_][\w]*)(?:\s+inner\s+join\s+([a-zA-Z_][\w]*)\s+on\s+(.+?))?(?:\s+where\s+(.+))?$/is;
 const countRegex = /^count\(\*\)(?:\s+as\s+([a-zA-Z_][\w]*))?$/i;
 const fieldRegex = /^([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)?)(?:\s+as\s+([a-zA-Z_][\w]*))?$/i;
 const joinRegex = /^([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)?)\s*=\s*([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)?)$/i;
 
 const normalizeWhitespace = (value: string): string => value.replace(/\s+/g, ' ').trim();
 
-const splitCommaSeparated = (value: string): string[] => value.split(',').map((part) => part.trim()).filter(Boolean);
+const splitCommaSeparated = (value: string): string[] =>
+  value
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
 
 const stripQuotes = (value: string): string => value.replace(/^'(.*)'$/s, '$1').replace(/^"(.*)"$/s, '$1');
 
@@ -92,28 +97,29 @@ const resolveIdentifier = (identifier: string, context: RowContext): unknown => 
   return row[fieldName];
 };
 
-const parseSelect = (source: string): SelectExpression[] => splitCommaSeparated(source).map((entry) => {
-  const countMatch = entry.match(countRegex);
-  if (countMatch) {
+const parseSelect = (source: string): SelectExpression[] =>
+  splitCommaSeparated(source).map((entry) => {
+    const countMatch = entry.match(countRegex);
+    if (countMatch) {
+      return {
+        kind: 'count',
+        alias: countMatch[1] ?? 'count',
+      } satisfies CountField;
+    }
+
+    const fieldMatch = entry.match(fieldRegex);
+    if (!fieldMatch) {
+      throw new Error(`Unsupported SELECT field: ${entry}`);
+    }
+
+    const sourceIdentifier = fieldMatch[1];
+    const alias = fieldMatch[2] ?? sourceIdentifier.split('.').at(-1) ?? sourceIdentifier;
     return {
-      kind: 'count',
-      alias: countMatch[1] ?? 'count',
-    } satisfies CountField;
-  }
-
-  const fieldMatch = entry.match(fieldRegex);
-  if (!fieldMatch) {
-    throw new Error(`Unsupported SELECT field: ${entry}`);
-  }
-
-  const sourceIdentifier = fieldMatch[1];
-  const alias = fieldMatch[2] ?? sourceIdentifier.split('.').at(-1) ?? sourceIdentifier;
-  return {
-    kind: 'field',
-    source: sourceIdentifier,
-    alias,
-  } satisfies SelectField;
-});
+      kind: 'field',
+      source: sourceIdentifier,
+      alias,
+    } satisfies SelectField;
+  });
 
 const parseJoin = (table: string | undefined, source: string | undefined): JoinDefinition | undefined => {
   if (!table || !source) {
@@ -168,7 +174,8 @@ const parseQuery = (sql: string, params: SqlPrimitive[]): ParsedQuery => {
   };
 };
 
-const matchesWhere = (context: RowContext, conditions: Condition[]): boolean => conditions.every((condition) => resolveIdentifier(condition.left, context) === condition.right);
+const matchesWhere = (context: RowContext, conditions: Condition[]): boolean =>
+  conditions.every((condition) => resolveIdentifier(condition.left, context) === condition.right);
 
 const mapRow = (context: RowContext, select: SelectExpression[]): Record<string, unknown> => {
   const result: Record<string, unknown> = {};

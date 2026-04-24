@@ -126,12 +126,24 @@ test.describe('Local Petstore API', () => {
     expect((await localApiClient.getCustomer(createdCustomer.id)).customerNumber).toBe(customer.customerNumber);
 
     const readModels = await localApiClient.getReadModels();
-    expect(readModels.employeeDirectory.some((entry) => entry.id === createdEmployee.id && entry.userId === employeeUser.id)).toBeTruthy();
-    expect(readModels.customerRegistry.some((entry) => entry.id === createdCustomer.id && entry.userId === customerUser.id)).toBeTruthy();
+    expect(
+      readModels.employeeDirectory.some((entry) => entry.id === createdEmployee.id && entry.userId === employeeUser.id),
+    ).toBeTruthy();
+    expect(
+      readModels.customerRegistry.some((entry) => entry.id === createdCustomer.id && entry.userId === customerUser.id),
+    ).toBeTruthy();
 
     const downstreamSystems = await localApiClient.getDownstreamSystems();
-    expect(downstreamSystems.hrEmployees.some((entry) => entry.employeeId === createdEmployee.id && entry.userId === employeeUser.id)).toBeTruthy();
-    expect(downstreamSystems.customerProfiles.some((entry) => entry.customerId === createdCustomer.id && entry.userId === customerUser.id)).toBeTruthy();
+    expect(
+      downstreamSystems.hrEmployees.some(
+        (entry) => entry.employeeId === createdEmployee.id && entry.userId === employeeUser.id,
+      ),
+    ).toBeTruthy();
+    expect(
+      downstreamSystems.customerProfiles.some(
+        (entry) => entry.customerId === createdCustomer.id && entry.userId === customerUser.id,
+      ),
+    ).toBeTruthy();
   });
 
   test('creates related user and order records and records audit events', async ({ localApiClient }) => {
@@ -176,7 +188,9 @@ test.describe('Local Petstore API', () => {
     expect(auditLog.some((entry) => entry.entityType === 'order' && entry.entityId === order.id)).toBeTruthy();
 
     const auditLogRelations = await localApiClient.getAuditLogRelations();
-    const orderAuditEntry = auditLogRelations.find((entry) => entry.entityType === 'order' && entry.entityId === order.id);
+    const orderAuditEntry = auditLogRelations.find(
+      (entry) => entry.entityType === 'order' && entry.entityId === order.id,
+    );
     expect(orderAuditEntry?.order?.id).toBe(order.id);
   });
 
@@ -219,14 +233,28 @@ test.describe('Local Petstore API', () => {
 
     const readModels = await localApiClient.getReadModels();
     expect(readModels.petCatalog.some((entry) => entry.id === pet.id && entry.name === pet.name)).toBeTruthy();
-    expect(readModels.userDirectory.some((entry) => entry.id === user.id && entry.username === user.username)).toBeTruthy();
+    expect(
+      readModels.userDirectory.some((entry) => entry.id === user.id && entry.username === user.username),
+    ).toBeTruthy();
     expect(readModels.orderLedger.some((entry) => entry.id === order.id && entry.userId === user.id)).toBeTruthy();
-    expect(readModels.eventFeed.some((entry) => entry.entityId === order.id && entry.type === 'order.created')).toBeTruthy();
+    expect(
+      readModels.eventFeed.some((entry) => entry.entityId === order.id && entry.type === 'order.created'),
+    ).toBeTruthy();
 
     const downstreamSystems = await localApiClient.getDownstreamSystems();
-    expect(downstreamSystems.inventoryReplica.some((entry) => entry.petId === pet.id && entry.name === pet.name)).toBeTruthy();
-    expect(downstreamSystems.crmCustomers.some((entry) => entry.userId === user.id && entry.username === user.username)).toBeTruthy();
-    expect(downstreamSystems.billingOrders.some((entry) => entry.orderId === order.id && entry.amount === pet.price)).toBeTruthy();
-    expect(downstreamSystems.analyticsEvents.some((entry) => entry.entityId === order.id && entry.eventType === 'order.created')).toBeTruthy();
+    expect(
+      downstreamSystems.inventoryReplica.some((entry) => entry.petId === pet.id && entry.name === pet.name),
+    ).toBeTruthy();
+    expect(
+      downstreamSystems.crmCustomers.some((entry) => entry.userId === user.id && entry.username === user.username),
+    ).toBeTruthy();
+    expect(
+      downstreamSystems.billingOrders.some((entry) => entry.orderId === order.id && entry.amount === pet.price),
+    ).toBeTruthy();
+    expect(
+      downstreamSystems.analyticsEvents.some(
+        (entry) => entry.entityId === order.id && entry.eventType === 'order.created',
+      ),
+    ).toBeTruthy();
   });
 });

@@ -27,7 +27,11 @@ test.describe('Sauce Demo UI', () => {
     await sauceDemoLoginPage.assertErrorContains('Username is required');
   });
 
-  test('opens product details from inventory', async ({ sauceDemoLoginPage, sauceDemoInventoryPage, sauceDemoProductDetailsPage }) => {
+  test('opens product details from inventory', async ({
+    sauceDemoLoginPage,
+    sauceDemoInventoryPage,
+    sauceDemoProductDetailsPage,
+  }) => {
     await sauceDemoLoginPage.goto();
     await sauceDemoLoginPage.login(standardUser, password);
     await sauceDemoInventoryPage.openItemDetails(backpack);
@@ -70,7 +74,10 @@ test.describe('Sauce Demo UI', () => {
     expect(prices).toEqual(expected);
   });
 
-  test('adds and removes products from the cart and updates the badge', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
+  test('adds and removes products from the cart and updates the badge', async ({
+    sauceDemoLoginPage,
+    sauceDemoInventoryPage,
+  }) => {
     await sauceDemoLoginPage.goto();
     await sauceDemoLoginPage.login(standardUser, password);
     await sauceDemoInventoryPage.addItemToCart(backpack);
@@ -83,7 +90,14 @@ test.describe('Sauce Demo UI', () => {
     await sauceDemoInventoryPage.assertCartBadgeHidden();
   });
 
-  test('completes checkout for a single item', async ({ sauceDemoLoginPage, sauceDemoInventoryPage, sauceDemoCartPage, sauceDemoCheckoutInformationPage, sauceDemoCheckoutOverviewPage, sauceDemoCheckoutCompletePage }) => {
+  test('completes checkout for a single item', async ({
+    sauceDemoLoginPage,
+    sauceDemoInventoryPage,
+    sauceDemoCartPage,
+    sauceDemoCheckoutInformationPage,
+    sauceDemoCheckoutOverviewPage,
+    sauceDemoCheckoutCompletePage,
+  }) => {
     await sauceDemoLoginPage.goto();
     await sauceDemoLoginPage.login(standardUser, password);
     await sauceDemoInventoryPage.addItemToCart(backpack);
@@ -103,7 +117,12 @@ test.describe('Sauce Demo UI', () => {
     await sauceDemoInventoryPage.assertLoaded();
   });
 
-  test('validates required checkout fields', async ({ sauceDemoLoginPage, sauceDemoInventoryPage, sauceDemoCartPage, sauceDemoCheckoutInformationPage }) => {
+  test('validates required checkout fields', async ({
+    sauceDemoLoginPage,
+    sauceDemoInventoryPage,
+    sauceDemoCartPage,
+    sauceDemoCheckoutInformationPage,
+  }) => {
     await sauceDemoLoginPage.goto();
     await sauceDemoLoginPage.login(standardUser, password);
     await sauceDemoInventoryPage.addItemToCart(backpack);
