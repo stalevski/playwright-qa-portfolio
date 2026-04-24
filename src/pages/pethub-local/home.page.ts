@@ -47,7 +47,14 @@ export class LocalPetStorePage extends BasePage {
     await expect(this.downstreamSystemsHeading).toBeVisible();
   }
 
-  async createPet(pet: { id: number; name: string; category: string; status: 'available' | 'pending' | 'sold'; price: number; notes: string }): Promise<void> {
+  async createPet(pet: {
+    id: number;
+    name: string;
+    category: string;
+    status: 'available' | 'pending' | 'sold';
+    price: number;
+    notes: string;
+  }): Promise<void> {
     await this.createPetSection.getByPlaceholder('Pet ID').fill(String(pet.id));
     await this.createPetSection.getByPlaceholder('Pet name').fill(pet.name);
     await this.createPetSection.getByPlaceholder('Category').fill(pet.category);

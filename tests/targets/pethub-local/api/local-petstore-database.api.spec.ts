@@ -46,12 +46,18 @@ test.describe('Local Petstore database validation with SQL', () => {
 
     await localApiClient.createPet(pet);
 
-    await expect.poll(async () => {
-      const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM pets WHERE id = ?', [pet.id]);
-      return countRow.total;
-    }).toBe(1);
+    await expect
+      .poll(async () => {
+        const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM pets WHERE id = ?', [
+          pet.id,
+        ]);
+        return countRow.total;
+      })
+      .toBe(1);
 
-    const [persistedPet] = await operationalDb.query<PetRow>('SELECT id, name, status, price FROM pets WHERE id = ?', [pet.id]);
+    const [persistedPet] = await operationalDb.query<PetRow>('SELECT id, name, status, price FROM pets WHERE id = ?', [
+      pet.id,
+    ]);
 
     expect(persistedPet.id).toBe(pet.id);
     expect(persistedPet.name).toBe(pet.name);
@@ -81,23 +87,33 @@ test.describe('Local Petstore database validation with SQL', () => {
     await localApiClient.createUser(user);
     await localApiClient.createOrder(order);
 
-    await expect.poll(async () => {
-      const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM orders WHERE id = ?', [order.id]);
-      return countRow.total;
-    }).toBe(1);
+    await expect
+      .poll(async () => {
+        const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM orders WHERE id = ?', [
+          order.id,
+        ]);
+        return countRow.total;
+      })
+      .toBe(1);
 
-    await expect.poll(async () => {
-      const [relationRow] = await operationalDb.query<OrderRelationRow>(
-        'SELECT orders.id AS orderId, pets.name AS petName, orders.status AS status FROM orders INNER JOIN pets ON orders.petId = pets.id WHERE orders.id = ?',
-        [order.id],
-      );
-      return relationRow?.petName ?? null;
-    }).toBe(pet.name);
+    await expect
+      .poll(async () => {
+        const [relationRow] = await operationalDb.query<OrderRelationRow>(
+          'SELECT orders.id AS orderId, pets.name AS petName, orders.status AS status FROM orders INNER JOIN pets ON orders.petId = pets.id WHERE orders.id = ?',
+          [order.id],
+        );
+        return relationRow?.petName ?? null;
+      })
+      .toBe(pet.name);
 
-    await expect.poll(async () => {
-      const [userRow] = await operationalDb.query<OrderUserRow>('SELECT id, username FROM users WHERE id = ?', [user.id]);
-      return userRow?.username ?? null;
-    }).toBe(user.username);
+    await expect
+      .poll(async () => {
+        const [userRow] = await operationalDb.query<OrderUserRow>('SELECT id, username FROM users WHERE id = ?', [
+          user.id,
+        ]);
+        return userRow?.username ?? null;
+      })
+      .toBe(user.username);
 
     const [relationRow] = await operationalDb.query<OrderRelationRow>(
       'SELECT orders.id AS orderId, pets.name AS petName, orders.status AS status FROM orders INNER JOIN pets ON orders.petId = pets.id WHERE orders.id = ?',
@@ -128,12 +144,20 @@ test.describe('Local Petstore database validation with SQL', () => {
       notes: pet.notes,
     });
 
-    await expect.poll(async () => {
-      const [projectionCount] = await readModelsDb.query<CountRow>('SELECT COUNT(*) AS total FROM petCatalog WHERE id = ?', [pet.id]);
-      return projectionCount.total;
-    }).toBe(1);
+    await expect
+      .poll(async () => {
+        const [projectionCount] = await readModelsDb.query<CountRow>(
+          'SELECT COUNT(*) AS total FROM petCatalog WHERE id = ?',
+          [pet.id],
+        );
+        return projectionCount.total;
+      })
+      .toBe(1);
 
-    const [projectedPet] = await readModelsDb.query<ReadModelPetRow>('SELECT id, name, status FROM petCatalog WHERE id = ?', [pet.id]);
+    const [projectedPet] = await readModelsDb.query<ReadModelPetRow>(
+      'SELECT id, name, status FROM petCatalog WHERE id = ?',
+      [pet.id],
+    );
 
     expect(projectedPet.id).toBe(pet.id);
     expect(projectedPet.name).toBe(`${pet.name} Updated`);

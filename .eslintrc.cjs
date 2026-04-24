@@ -11,12 +11,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'playwright'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:playwright/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:playwright/recommended', 'prettier'],
   ignorePatterns: [
     'node_modules',
     'playwright-report',

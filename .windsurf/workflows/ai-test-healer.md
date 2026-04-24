@@ -1,6 +1,7 @@
 ---
 description: analyze failing Playwright tests and propose safe, minimal fixes
 ---
+
 # AI Test Healer Workflow
 
 Use this workflow when a Playwright test fails and you want AI to diagnose the failure and propose a reviewable fix.

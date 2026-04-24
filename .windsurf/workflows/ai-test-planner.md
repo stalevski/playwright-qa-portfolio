@@ -1,6 +1,7 @@
 ---
 description: plan Playwright UI and API test coverage before implementation
 ---
+
 # AI Test Planner Workflow
 
 Use this workflow when you want AI to turn a requirement, bug report, endpoint list, or user flow into a concrete Playwright test plan.

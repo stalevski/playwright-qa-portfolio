@@ -1,6 +1,7 @@
 ---
 description: compare current Playwright coverage against Swagger Petstore features and identify gaps
 ---
+
 # AI Coverage Assistant Workflow
 
 Use this workflow to compare the existing framework against requested coverage and identify missing tests.

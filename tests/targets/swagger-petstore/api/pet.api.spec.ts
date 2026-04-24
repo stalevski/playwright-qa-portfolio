@@ -63,28 +63,32 @@ test.describe('Petstore API - Pet endpoints', () => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
 
-    await expect.poll(async () => {
-      const response = await apiClient.getPet(pet.id);
-      if (!response.ok()) {
-        return null;
-      }
-      const body = await response.json();
-      return { id: body.id, name: body.name };
-    }).toEqual({ id: pet.id, name: pet.name });
+    await expect
+      .poll(async () => {
+        const response = await apiClient.getPet(pet.id);
+        if (!response.ok()) {
+          return null;
+        }
+        const body = await response.json();
+        return { id: body.id, name: body.name };
+      })
+      .toEqual({ id: pet.id, name: pet.name });
   });
 
   test('gets a pet by id with the documented api key header', async ({ apiClient }) => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
 
-    await expect.poll(async () => {
-      const response = await apiClient.getPetWithApiKey(pet.id, swaggerApiKey);
-      if (!response.ok()) {
-        return null;
-      }
-      const body = await response.json();
-      return { id: body.id, name: body.name };
-    }).toEqual({ id: pet.id, name: pet.name });
+    await expect
+      .poll(async () => {
+        const response = await apiClient.getPetWithApiKey(pet.id, swaggerApiKey);
+        if (!response.ok()) {
+          return null;
+        }
+        const body = await response.json();
+        return { id: body.id, name: body.name };
+      })
+      .toEqual({ id: pet.id, name: pet.name });
   });
 
   test('updates a pet with form data', async ({ apiClient }) => {
@@ -95,14 +99,16 @@ test.describe('Petstore API - Pet endpoints', () => {
 
     expect(response.message).toContain(String(pet.id));
 
-    await expect.poll(async () => {
-      const getResponse = await apiClient.getPet(pet.id);
-      if (!getResponse.ok()) {
-        return null;
-      }
-      const body = await getResponse.json();
-      return { name: body.name, status: body.status };
-    }).toEqual({ name: `${pet.name}-form`, status: 'sold' });
+    await expect
+      .poll(async () => {
+        const getResponse = await apiClient.getPet(pet.id);
+        if (!getResponse.ok()) {
+          return null;
+        }
+        const body = await getResponse.json();
+        return { name: body.name, status: body.status };
+      })
+      .toEqual({ name: `${pet.name}-form`, status: 'sold' });
   });
 
   test('deletes a pet', async ({ apiClient }) => {

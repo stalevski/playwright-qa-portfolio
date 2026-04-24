@@ -115,7 +115,9 @@ export class PetStoreApiClient extends BaseApiClient {
   }
 
   async loginUser(username: string, password: string): Promise<ApiMessageDto> {
-    return this.get<ApiMessageDto>(`user/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+    return this.get<ApiMessageDto>(
+      `user/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+    );
   }
 
   async createUser(user: UserDto): Promise<ApiMessageDto> {

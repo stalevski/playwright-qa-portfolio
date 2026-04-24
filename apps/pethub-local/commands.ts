@@ -27,11 +27,17 @@ export const createPetCommand = async (pet: Omit<PetRecord, 'createdAt' | 'updat
   return createPet(pet);
 };
 
-export const updatePetCommand = async (id: number, pet: Omit<PetRecord, 'id' | 'createdAt' | 'updatedAt'>): Promise<PetRecord | undefined> => {
+export const updatePetCommand = async (
+  id: number,
+  pet: Omit<PetRecord, 'id' | 'createdAt' | 'updatedAt'>,
+): Promise<PetRecord | undefined> => {
   return updatePet(id, pet);
 };
 
-export const updatePetWithFormCommand = async (id: number, form: { name?: string; status?: PetRecord['status'] }): Promise<PetRecord | undefined> => {
+export const updatePetWithFormCommand = async (
+  id: number,
+  form: { name?: string; status?: PetRecord['status'] },
+): Promise<PetRecord | undefined> => {
   return updatePetWithFormData(id, form);
 };
 
@@ -55,7 +61,10 @@ export const createCustomerCommand = async (customer: Omit<CustomerRecord, 'crea
   return createCustomer(customer);
 };
 
-export const updateUserCommand = async (username: string, user: Omit<UserRecord, 'createdAt'>): Promise<UserRecord | undefined> => {
+export const updateUserCommand = async (
+  username: string,
+  user: Omit<UserRecord, 'createdAt'>,
+): Promise<UserRecord | undefined> => {
   return updateUser(username, user);
 };
 
@@ -75,6 +84,9 @@ export const createOrderCommand = async (order: Omit<OrderRecord, 'createdAt' | 
   return createOrder(order);
 };
 
-export const updateOrderStatusCommand = async (id: number, status: OrderRecord['status']): Promise<OrderRecord | undefined> => {
+export const updateOrderStatusCommand = async (
+  id: number,
+  status: OrderRecord['status'],
+): Promise<OrderRecord | undefined> => {
   return updateOrderStatus(id, status);
 };

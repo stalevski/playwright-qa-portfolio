@@ -140,7 +140,10 @@ export class PetStoreHomePage extends BasePage {
   }
 
   private operationBlock(summary: string): Locator {
-    return this.page.locator('.opblock').filter({ has: this.page.locator('.opblock-summary-description', { hasText: summary }) }).first();
+    return this.page
+      .locator('.opblock')
+      .filter({ has: this.page.locator('.opblock-summary-description', { hasText: summary }) })
+      .first();
   }
 
   private async openOperation(operation: Locator): Promise<void> {
@@ -150,14 +153,19 @@ export class PetStoreHomePage extends BasePage {
 
     const tryItOutButton = operation.getByRole('button', { name: 'Try it out' });
     const operationBody = operation.locator('.opblock-body');
-    const operationToggle = operation.locator('.opblock-summary-control').or(operation.locator('.opblock-control-arrow'));
+    const operationToggle = operation
+      .locator('.opblock-summary-control')
+      .or(operation.locator('.opblock-control-arrow'));
 
     for (let attempt = 0; attempt < 3; attempt += 1) {
       if (await operationBody.isVisible().catch(() => false)) {
         break;
       }
 
-      await operationToggle.first().click({ force: true }).catch(() => undefined);
+      await operationToggle
+        .first()
+        .click({ force: true })
+        .catch(() => undefined);
       await this.dismissCookieBanner();
     }
 
