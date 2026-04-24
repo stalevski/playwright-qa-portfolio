@@ -6,6 +6,7 @@ export class SauceDemoCheckoutInformationPage extends BasePage {
   readonly lastNameInput: Locator;
   readonly postalCodeInput: Locator;
   readonly continueButton: Locator;
+  readonly cancelButton: Locator;
   readonly errorBanner: Locator;
 
   constructor(page: Page) {
@@ -14,6 +15,7 @@ export class SauceDemoCheckoutInformationPage extends BasePage {
     this.lastNameInput = page.getByTestId('lastName');
     this.postalCodeInput = page.getByTestId('postalCode');
     this.continueButton = page.getByTestId('continue');
+    this.cancelButton = page.getByTestId('cancel');
     this.errorBanner = page.getByTestId('error');
   }
 
@@ -25,6 +27,10 @@ export class SauceDemoCheckoutInformationPage extends BasePage {
 
   async continue(): Promise<void> {
     await this.continueButton.click();
+  }
+
+  async cancel(): Promise<void> {
+    await this.cancelButton.click();
   }
 
   async assertErrorContains(text: string): Promise<void> {

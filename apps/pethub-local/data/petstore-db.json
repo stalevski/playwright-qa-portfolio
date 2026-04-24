@@ -1,111 +1,14 @@
 {
   "pets": [
     {
-      "id": 91383,
-      "name": "Buddy 984",
-      "category": "Dogs",
-      "status": "available",
-      "price": 2246.06,
-      "notes": "Calm personality and good with other pets for regression checks",
-      "createdAt": "2026-04-24T13:32:26.231Z",
-      "updatedAt": "2026-04-24T13:32:26.231Z"
-    },
-    {
-      "id": 92518,
-      "name": "Rio 989",
-      "category": "Birds",
-      "status": "available",
-      "price": 1207.05,
-      "notes": "Calm personality and good with other pets for relation testing",
-      "createdAt": "2026-04-24T13:32:26.173Z",
-      "updatedAt": "2026-04-24T13:32:26.173Z"
-    },
-    {
-      "id": 92091,
-      "name": "Luna 983",
-      "category": "Cats",
-      "status": "available",
-      "price": 2432.46,
-      "notes": "Indoor pet with recent health check completed for regression checks",
-      "createdAt": "2026-04-24T13:32:26.032Z",
-      "updatedAt": "2026-04-24T13:32:26.032Z"
-    },
-    {
-      "id": 95699,
-      "name": "Nala 447-form",
-      "category": "Cats",
-      "status": "sold",
-      "price": 899.17,
-      "notes": "Vaccinated and ready for adoption for smoke coverage",
-      "tags": [
-        {
-          "id": 95699,
-          "name": "tag-95699"
-        }
-      ],
-      "photoUrls": [],
-      "createdAt": "2026-04-24T13:32:25.480Z",
-      "updatedAt": "2026-04-24T13:32:25.524Z"
-    },
-    {
-      "id": 96120,
-      "name": "Cooper 244 Updated",
-      "category": "Dogs",
-      "status": "available",
-      "price": 1356.93,
-      "notes": "Indoor pet with recent health check completed for relation testing",
-      "createdAt": "2026-04-24T13:32:25.420Z",
-      "updatedAt": "2026-04-24T13:32:25.439Z"
-    },
-    {
-      "id": 1777037638136,
-      "name": "Pico 555 Updated",
-      "category": "Birds",
-      "status": "sold",
-      "price": 1115.09,
-      "notes": "Friendly with children and leash trained for regression checks",
-      "createdAt": "2026-04-24T13:32:25.314Z",
-      "updatedAt": "2026-04-24T13:32:25.334Z"
-    },
-    {
-      "id": 1777037547457,
-      "name": "Nala 732",
-      "category": "Cats",
-      "status": "available",
-      "price": 1152.75,
-      "notes": "Indoor pet with recent health check completed for smoke coverage",
-      "createdAt": "2026-04-24T13:32:25.210Z",
-      "updatedAt": "2026-04-24T13:32:25.210Z"
-    },
-    {
-      "id": 1777037550203,
-      "name": "Buddy 139",
-      "category": "Dogs",
-      "status": "pending",
-      "price": 2423.09,
-      "notes": "Comes with starter kit and feeding schedule for audit verification",
-      "createdAt": "2026-04-24T13:32:25.133Z",
-      "updatedAt": "2026-04-24T13:32:25.133Z"
-    },
-    {
-      "id": 92568,
-      "name": "Milo 987",
-      "category": "Dogs",
-      "status": "available",
-      "price": 518.12,
-      "notes": "Calm personality and good with other pets for smoke coverage",
-      "createdAt": "2026-04-24T13:31:52.026Z",
-      "updatedAt": "2026-04-24T13:31:52.026Z"
-    },
-    {
       "id": 1001,
       "name": "Golden Retriever",
       "category": "Dogs",
       "status": "available",
       "price": 1200,
       "notes": "Friendly and family trained",
-      "createdAt": "2026-04-24T13:31:41.099Z",
-      "updatedAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z",
+      "updatedAt": "2026-04-24T15:04:47.751Z"
     },
     {
       "id": 1002,
@@ -121,8 +24,8 @@
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T13:31:41.099Z",
-      "updatedAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z",
+      "updatedAt": "2026-04-24T15:04:47.751Z"
     },
     {
       "id": 1003,
@@ -138,107 +41,11 @@
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T13:31:41.099Z",
-      "updatedAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z",
+      "updatedAt": "2026-04-24T15:04:47.751Z"
     }
   ],
   "users": [
-    {
-      "id": 91361,
-      "username": "petlover-4960",
-      "firstName": "Mia",
-      "lastName": "Carter",
-      "email": "petlover-4960@pethub.test",
-      "role": "customer",
-      "password": "yz*7gr45Wq%GVF",
-      "phone": "+38975073732",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:26.250Z"
-    },
-    {
-      "id": 95461,
-      "username": "qauser-6427",
-      "firstName": "Mia",
-      "lastName": "Parker",
-      "email": "qauser-6427@pethub.test",
-      "role": "customer",
-      "password": "T6^XOexyQN0-TE",
-      "phone": "+38914798285",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:26.053Z"
-    },
-    {
-      "id": 95525,
-      "username": "adopter-4329",
-      "firstName": "Sofia",
-      "lastName": "Reed",
-      "email": "adopter-4329@pethub.test",
-      "role": "customer",
-      "password": "Password123!",
-      "phone": "+38980747784",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.909Z"
-    },
-    {
-      "id": 92000,
-      "username": "caretaker-1287",
-      "firstName": "Daniel",
-      "lastName": "Coleman",
-      "email": "caretaker-1287@pethub.test",
-      "role": "admin",
-      "password": "Password123!",
-      "phone": "+38915947468",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.768Z"
-    },
-    {
-      "id": 95161,
-      "username": "qauser-8628",
-      "firstName": "Daniel",
-      "lastName": "Coleman",
-      "email": "qauser-8628@pethub.test",
-      "role": "customer",
-      "password": "OjO0+CQ9sAfpgv",
-      "phone": "+38931104050",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.692Z"
-    },
-    {
-      "id": 95303,
-      "username": "sandbox-5105",
-      "firstName": "Olivia",
-      "lastName": "Brooks",
-      "email": "sandbox-5105@pethub.test",
-      "role": "customer",
-      "password": "i9%Db3P6vOmHxy",
-      "phone": "+38959685854",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.670Z"
-    },
-    {
-      "id": 98454,
-      "username": "petlover-1553",
-      "firstName": "Alex",
-      "lastName": "Brooks",
-      "email": "petlover-1553@pethub.test",
-      "role": "customer",
-      "password": "_KG%v$JtG0-lFx",
-      "phone": "+38936914638",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.657Z"
-    },
-    {
-      "id": 1777037549098,
-      "username": "caretaker-5441",
-      "firstName": "Mia",
-      "lastName": "Parker",
-      "email": "caretaker-5441@pethub.test",
-      "role": "customer",
-      "password": "HM6tkYOw+YT*4&",
-      "phone": "+38970828277",
-      "userStatus": 1,
-      "createdAt": "2026-04-24T13:32:25.235Z"
-    },
     {
       "id": 2001,
       "username": "admin",
@@ -249,7 +56,7 @@
       "password": "Password123!",
       "phone": "1002003000",
       "userStatus": 1,
-      "createdAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z"
     },
     {
       "id": 2002,
@@ -261,21 +68,10 @@
       "password": "Password123!",
       "phone": "1234567890",
       "userStatus": 1,
-      "createdAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z"
     }
   ],
   "employees": [
-    {
-      "id": 48695,
-      "userId": 92000,
-      "employeeCode": "EMP-3787",
-      "department": "Finance",
-      "title": "Supervisor",
-      "location": "Warehouse",
-      "status": "active",
-      "hireDate": "2025-07-07T12:28:54.628Z",
-      "createdAt": "2026-04-24T13:32:25.934Z"
-    },
     {
       "id": 4001,
       "userId": 2001,
@@ -284,21 +80,11 @@
       "title": "Store Administrator",
       "location": "HQ",
       "status": "active",
-      "hireDate": "2026-04-24T13:31:41.099Z",
-      "createdAt": "2026-04-24T13:31:41.099Z"
+      "hireDate": "2026-04-24T15:04:47.751Z",
+      "createdAt": "2026-04-24T15:04:47.751Z"
     }
   ],
   "customers": [
-    {
-      "id": 51232,
-      "userId": 95525,
-      "customerNumber": "CUST-3638",
-      "segment": "retail",
-      "loyaltyTier": "bronze",
-      "status": "active",
-      "lifetimeValue": 635.52,
-      "createdAt": "2026-04-24T13:32:25.954Z"
-    },
     {
       "id": 5001,
       "userId": 2002,
@@ -307,50 +93,10 @@
       "loyaltyTier": "silver",
       "status": "active",
       "lifetimeValue": 900,
-      "createdAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z"
     }
   ],
   "orders": [
-    {
-      "id": 93152,
-      "petId": 91383,
-      "userId": 91361,
-      "quantity": 1,
-      "status": "placed",
-      "totalAmount": 2246.06,
-      "createdAt": "2026-04-24T13:32:26.268Z",
-      "updatedAt": "2026-04-24T13:32:26.268Z"
-    },
-    {
-      "id": 92133,
-      "petId": 92091,
-      "userId": 95461,
-      "quantity": 1,
-      "status": "approved",
-      "totalAmount": 2432.46,
-      "createdAt": "2026-04-24T13:32:26.075Z",
-      "updatedAt": "2026-04-24T13:32:26.093Z"
-    },
-    {
-      "id": 1777037589229,
-      "petId": 1777037547457,
-      "userId": 1777037549098,
-      "quantity": 2,
-      "status": "placed",
-      "totalAmount": 1152.75,
-      "createdAt": "2026-04-24T13:32:25.254Z",
-      "updatedAt": "2026-04-24T13:32:25.254Z"
-    },
-    {
-      "id": 1777037543114,
-      "petId": 1002,
-      "userId": 2002,
-      "quantity": 1,
-      "status": "placed",
-      "totalAmount": 900,
-      "createdAt": "2026-04-24T13:32:23.116Z",
-      "updatedAt": "2026-04-24T13:32:23.116Z"
-    },
     {
       "id": 3001,
       "petId": 1002,
@@ -358,538 +104,11 @@
       "quantity": 1,
       "status": "placed",
       "totalAmount": 900,
-      "createdAt": "2026-04-24T13:31:41.099Z",
-      "updatedAt": "2026-04-24T13:31:41.099Z"
+      "createdAt": "2026-04-24T15:04:47.751Z",
+      "updatedAt": "2026-04-24T15:04:47.751Z"
     }
   ],
-  "auditLog": [
-    {
-      "id": 27,
-      "entityType": "order",
-      "entityId": 93152,
-      "action": "created",
-      "details": "Order 93152 created",
-      "createdAt": "2026-04-24T13:32:26.268Z"
-    },
-    {
-      "id": 26,
-      "entityType": "user",
-      "entityId": 91361,
-      "action": "created",
-      "details": "User petlover-4960 created",
-      "createdAt": "2026-04-24T13:32:26.250Z"
-    },
-    {
-      "id": 25,
-      "entityType": "pet",
-      "entityId": 91383,
-      "action": "created",
-      "details": "Pet Buddy 984 created",
-      "createdAt": "2026-04-24T13:32:26.231Z"
-    },
-    {
-      "id": 24,
-      "entityType": "pet",
-      "entityId": 92518,
-      "action": "created",
-      "details": "Pet Rio 989 created",
-      "createdAt": "2026-04-24T13:32:26.173Z"
-    },
-    {
-      "id": 23,
-      "entityType": "order",
-      "entityId": 92133,
-      "action": "status-updated",
-      "details": "Order 92133 changed to approved",
-      "createdAt": "2026-04-24T13:32:26.094Z"
-    },
-    {
-      "id": 22,
-      "entityType": "order",
-      "entityId": 92133,
-      "action": "created",
-      "details": "Order 92133 created",
-      "createdAt": "2026-04-24T13:32:26.075Z"
-    },
-    {
-      "id": 21,
-      "entityType": "user",
-      "entityId": 95461,
-      "action": "created",
-      "details": "User qauser-6427 created",
-      "createdAt": "2026-04-24T13:32:26.053Z"
-    },
-    {
-      "id": 20,
-      "entityType": "pet",
-      "entityId": 92091,
-      "action": "created",
-      "details": "Pet Luna 983 created",
-      "createdAt": "2026-04-24T13:32:26.032Z"
-    },
-    {
-      "id": 19,
-      "entityType": "user",
-      "entityId": 95525,
-      "action": "created",
-      "details": "User adopter-4329 created",
-      "createdAt": "2026-04-24T13:32:25.909Z"
-    },
-    {
-      "id": 18,
-      "entityType": "user",
-      "entityId": 92000,
-      "action": "created",
-      "details": "User caretaker-1287 created",
-      "createdAt": "2026-04-24T13:32:25.768Z"
-    },
-    {
-      "id": 17,
-      "entityType": "user",
-      "entityId": 95161,
-      "action": "created",
-      "details": "User qauser-8628 created",
-      "createdAt": "2026-04-24T13:32:25.692Z"
-    },
-    {
-      "id": 16,
-      "entityType": "user",
-      "entityId": 95303,
-      "action": "created",
-      "details": "User sandbox-5105 created",
-      "createdAt": "2026-04-24T13:32:25.670Z"
-    },
-    {
-      "id": 15,
-      "entityType": "user",
-      "entityId": 98454,
-      "action": "created",
-      "details": "User petlover-1553 created",
-      "createdAt": "2026-04-24T13:32:25.657Z"
-    },
-    {
-      "id": 14,
-      "entityType": "user",
-      "entityId": 93266,
-      "action": "created",
-      "details": "User sandbox-6694 created",
-      "createdAt": "2026-04-24T13:32:25.623Z"
-    },
-    {
-      "id": 13,
-      "entityType": "user",
-      "entityId": 93266,
-      "action": "created",
-      "details": "User sandbox-6694 created",
-      "createdAt": "2026-04-24T13:32:25.593Z"
-    },
-    {
-      "id": 12,
-      "entityType": "pet",
-      "entityId": 95699,
-      "action": "updated",
-      "details": "Pet 95699 updated",
-      "createdAt": "2026-04-24T13:32:25.524Z"
-    },
-    {
-      "id": 11,
-      "entityType": "pet",
-      "entityId": 95699,
-      "action": "created",
-      "details": "Pet Nala 447 created",
-      "createdAt": "2026-04-24T13:32:25.480Z"
-    },
-    {
-      "id": 10,
-      "entityType": "pet",
-      "entityId": 96120,
-      "action": "updated",
-      "details": "Pet 96120 updated",
-      "createdAt": "2026-04-24T13:32:25.439Z"
-    },
-    {
-      "id": 9,
-      "entityType": "pet",
-      "entityId": 96120,
-      "action": "created",
-      "details": "Pet Cooper 244 created",
-      "createdAt": "2026-04-24T13:32:25.420Z"
-    },
-    {
-      "id": 8,
-      "entityType": "pet",
-      "entityId": 1777037638136,
-      "action": "updated",
-      "details": "Pet 1777037638136 updated",
-      "createdAt": "2026-04-24T13:32:25.334Z"
-    },
-    {
-      "id": 7,
-      "entityType": "pet",
-      "entityId": 1777037638136,
-      "action": "created",
-      "details": "Pet Pico 555 created",
-      "createdAt": "2026-04-24T13:32:25.314Z"
-    },
-    {
-      "id": 6,
-      "entityType": "order",
-      "entityId": 1777037589229,
-      "action": "created",
-      "details": "Order 1777037589229 created",
-      "createdAt": "2026-04-24T13:32:25.254Z"
-    },
-    {
-      "id": 5,
-      "entityType": "user",
-      "entityId": 1777037549098,
-      "action": "created",
-      "details": "User caretaker-5441 created",
-      "createdAt": "2026-04-24T13:32:25.235Z"
-    },
-    {
-      "id": 4,
-      "entityType": "pet",
-      "entityId": 1777037547457,
-      "action": "created",
-      "details": "Pet Nala 732 created",
-      "createdAt": "2026-04-24T13:32:25.210Z"
-    },
-    {
-      "id": 3,
-      "entityType": "pet",
-      "entityId": 1777037550203,
-      "action": "created",
-      "details": "Pet Buddy 139 created",
-      "createdAt": "2026-04-24T13:32:25.133Z"
-    },
-    {
-      "id": 2,
-      "entityType": "order",
-      "entityId": 1777037543114,
-      "action": "created",
-      "details": "Order 1777037543114 created",
-      "createdAt": "2026-04-24T13:32:23.117Z"
-    },
-    {
-      "id": 1,
-      "entityType": "pet",
-      "entityId": 92568,
-      "action": "created",
-      "details": "Pet Milo 987 created",
-      "createdAt": "2026-04-24T13:31:52.027Z"
-    }
-  ],
-  "events": [
-    {
-      "id": 27,
-      "type": "order.created",
-      "entityType": "order",
-      "entityId": 93152,
-      "payload": {
-        "petId": 91383,
-        "userId": 91361,
-        "status": "placed"
-      },
-      "createdAt": "2026-04-24T13:32:26.268Z"
-    },
-    {
-      "id": 26,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 91361,
-      "payload": {
-        "username": "petlover-4960",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:26.250Z"
-    },
-    {
-      "id": 25,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 91383,
-      "payload": {
-        "petName": "Buddy 984",
-        "category": "Dogs",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:26.231Z"
-    },
-    {
-      "id": 24,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 92518,
-      "payload": {
-        "petName": "Rio 989",
-        "category": "Birds",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:26.173Z"
-    },
-    {
-      "id": 23,
-      "type": "order.status-updated",
-      "entityType": "order",
-      "entityId": 92133,
-      "payload": {
-        "status": "approved"
-      },
-      "createdAt": "2026-04-24T13:32:26.094Z"
-    },
-    {
-      "id": 22,
-      "type": "order.created",
-      "entityType": "order",
-      "entityId": 92133,
-      "payload": {
-        "petId": 92091,
-        "userId": 95461,
-        "status": "placed"
-      },
-      "createdAt": "2026-04-24T13:32:26.075Z"
-    },
-    {
-      "id": 21,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 95461,
-      "payload": {
-        "username": "qauser-6427",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:26.053Z"
-    },
-    {
-      "id": 20,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 92091,
-      "payload": {
-        "petName": "Luna 983",
-        "category": "Cats",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:26.032Z"
-    },
-    {
-      "id": 19,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 95525,
-      "payload": {
-        "username": "adopter-4329",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.909Z"
-    },
-    {
-      "id": 18,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 92000,
-      "payload": {
-        "username": "caretaker-1287",
-        "role": "admin"
-      },
-      "createdAt": "2026-04-24T13:32:25.768Z"
-    },
-    {
-      "id": 17,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 95161,
-      "payload": {
-        "username": "qauser-8628",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.692Z"
-    },
-    {
-      "id": 16,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 95303,
-      "payload": {
-        "username": "sandbox-5105",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.670Z"
-    },
-    {
-      "id": 15,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 98454,
-      "payload": {
-        "username": "petlover-1553",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.657Z"
-    },
-    {
-      "id": 14,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 93266,
-      "payload": {
-        "username": "sandbox-6694",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.623Z"
-    },
-    {
-      "id": 13,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 93266,
-      "payload": {
-        "username": "sandbox-6694",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.593Z"
-    },
-    {
-      "id": 12,
-      "type": "pet.updated",
-      "entityType": "pet",
-      "entityId": 95699,
-      "payload": {
-        "petName": "Nala 447-form",
-        "status": "sold"
-      },
-      "createdAt": "2026-04-24T13:32:25.524Z"
-    },
-    {
-      "id": 11,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 95699,
-      "payload": {
-        "petName": "Nala 447",
-        "category": "Cats",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:25.480Z"
-    },
-    {
-      "id": 10,
-      "type": "pet.updated",
-      "entityType": "pet",
-      "entityId": 96120,
-      "payload": {
-        "petName": "Cooper 244 Updated",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:25.439Z"
-    },
-    {
-      "id": 9,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 96120,
-      "payload": {
-        "petName": "Cooper 244",
-        "category": "Dogs",
-        "status": "pending"
-      },
-      "createdAt": "2026-04-24T13:32:25.420Z"
-    },
-    {
-      "id": 8,
-      "type": "pet.updated",
-      "entityType": "pet",
-      "entityId": 1777037638136,
-      "payload": {
-        "petName": "Pico 555 Updated",
-        "status": "sold"
-      },
-      "createdAt": "2026-04-24T13:32:25.334Z"
-    },
-    {
-      "id": 7,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 1777037638136,
-      "payload": {
-        "petName": "Pico 555",
-        "category": "Birds",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:25.314Z"
-    },
-    {
-      "id": 6,
-      "type": "order.created",
-      "entityType": "order",
-      "entityId": 1777037589229,
-      "payload": {
-        "petId": 1777037547457,
-        "userId": 1777037549098,
-        "status": "placed"
-      },
-      "createdAt": "2026-04-24T13:32:25.254Z"
-    },
-    {
-      "id": 5,
-      "type": "user.created",
-      "entityType": "user",
-      "entityId": 1777037549098,
-      "payload": {
-        "username": "caretaker-5441",
-        "role": "customer"
-      },
-      "createdAt": "2026-04-24T13:32:25.235Z"
-    },
-    {
-      "id": 4,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 1777037547457,
-      "payload": {
-        "petName": "Nala 732",
-        "category": "Cats",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:32:25.210Z"
-    },
-    {
-      "id": 3,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 1777037550203,
-      "payload": {
-        "petName": "Buddy 139",
-        "category": "Dogs",
-        "status": "pending"
-      },
-      "createdAt": "2026-04-24T13:32:25.133Z"
-    },
-    {
-      "id": 2,
-      "type": "order.created",
-      "entityType": "order",
-      "entityId": 1777037543114,
-      "payload": {
-        "petId": 1002,
-        "userId": 2002,
-        "status": "placed"
-      },
-      "createdAt": "2026-04-24T13:32:23.117Z"
-    },
-    {
-      "id": 1,
-      "type": "pet.created",
-      "entityType": "pet",
-      "entityId": 92568,
-      "payload": {
-        "petName": "Milo 987",
-        "category": "Dogs",
-        "status": "available"
-      },
-      "createdAt": "2026-04-24T13:31:52.027Z"
-    }
-  ],
+  "auditLog": [],
+  "events": [],
   "sessions": []
 }
