@@ -2,3 +2,10 @@ node_modules/
 playwright-report/
 test-results/
 .env
+*.log
+tmp-*.js
+.DS_Store
+Thumbs.db
+blob-report/
+dist/
+coverage/
