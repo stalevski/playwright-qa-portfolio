@@ -12,6 +12,7 @@ import {
   initializeLocalApp,
   loginUserCommand,
   logoutUserCommand,
+  resetDatabase,
   updateOrderStatusCommand,
   updatePetWithFormCommand,
   updatePetCommand,
@@ -1563,6 +1564,11 @@ app.get('/api/read-models', async (_request: Request, response: Response) => {
 
 app.get('/api/downstream-systems', async (_request: Request, response: Response) => {
   response.json(await getDownstreamSystemsQuery());
+});
+
+app.post('/api/admin/reset', async (_request: Request, response: Response) => {
+  await resetDatabase();
+  response.json({ status: 'ok', message: 'database reset and reseeded' });
 });
 
 const start = async (): Promise<void> => {

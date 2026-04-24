@@ -1,10 +1,11 @@
 import type { CategoryDto, PetDto, PetStatus, TagDto } from '@models/api/pet.dto';
+import { uniqueId } from '@helpers/unique-id';
 
 export class PetBuilder {
   private pet: PetDto;
 
   constructor() {
-    const id = Date.now();
+    const id = uniqueId();
     this.pet = {
       id,
       category: {

@@ -21,7 +21,7 @@ test.describe('Petstore Swagger UI', () => {
     ]);
   });
 
-  test('keeps authorize control accessible', async ({ homePage, page }) => {
+  test('keeps authorize control accessible', async ({ homePage }) => {
     await homePage.goto();
     await homePage.assertLoaded();
     await homePage.openAuthorizeModal();

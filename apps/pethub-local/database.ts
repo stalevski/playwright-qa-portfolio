@@ -158,6 +158,22 @@ const ensureLoaded = async (): Promise<void> => {
   database.data.customers ||= [];
 };
 
+export const resetDatabase = async (): Promise<void> => {
+  await ensureLoaded();
+  database.data = {
+    pets: [],
+    users: [],
+    employees: [],
+    customers: [],
+    orders: [],
+    auditLog: [],
+    events: [],
+    sessions: [],
+  };
+  await database.write();
+  await initializeDatabase();
+};
+
 export const initializeDatabase = async (): Promise<void> => {
   await ensureLoaded();
 

@@ -1,4 +1,4 @@
-import type { LocalCustomerDto, LocalEmployeeDto, LocalOrderDto, LocalPetDto, LocalUserDto } from '@helpers/api-clients/pethub-local-api.client';
+import type { LocalCustomerDto, LocalEmployeeDto, LocalOrderDto, LocalPetDto, LocalUserDto } from '@models/api/local.dto';
 import type { OrderDto } from '@models/api/order.dto';
 import type { PetDto, PetStatus } from '@models/api/pet.dto';
 import type { UserDto } from '@models/api/user.dto';

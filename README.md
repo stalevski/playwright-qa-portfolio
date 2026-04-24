@@ -70,6 +70,7 @@ The PetHub Local app provides:
 - `PATCH /api/orders/:id/status`
 - `GET /api/audit-log`
 - `GET /api/audit-log/relations`
+- `POST /api/admin/reset` — truncates and reseeds the local database (used by Playwright `globalSetup`)
 
 ### Install dependencies
 
@@ -223,6 +224,18 @@ API only:
 ```powershell
 & "C:\Program Files\nodejs\node.exe" .\node_modules\playwright\cli.js test tests/targets/swagger-petstore/api tests/targets/pethub-local/api
 ```
+
+## Lint and format
+
+```powershell
+npm.cmd run lint
+npm.cmd run lint:fix
+npm.cmd run format
+npm.cmd run format:check
+```
+
+- ESLint config: `.eslintrc.cjs` (TypeScript + Playwright rules)
+- Prettier config: `.prettierrc.json`
 
 ## AI-assisted workflow
 
