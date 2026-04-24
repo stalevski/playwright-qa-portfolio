@@ -200,6 +200,18 @@ Run only the PetHub Local UI suite:
 npm.cmd run test:pethub-local:ui
 ```
 
+### Parallel execution note
+
+The Playwright config keeps parallel execution enabled for normal framework usage.
+
+The `pethub-local` target uses a shared local Express app with JSON-backed persistence files. Because of that, full-suite highly parallel execution can expose shared-state issues when multiple local UI/API tests mutate the same data at the same time.
+
+If you hit intermittent local-only failures during a full parallel run, prefer one of these approaches:
+
+- run the affected `pethub-local` spec or target in isolation
+- run the local UI or local API suite separately
+- temporarily reduce workers when validating the local target
+
 UI only:
 
 ```powershell

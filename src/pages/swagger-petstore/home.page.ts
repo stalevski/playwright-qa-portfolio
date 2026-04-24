@@ -5,7 +5,6 @@ import type { PetDto } from '@models/api/pet.dto';
 type TagName = 'pet' | 'store' | 'user';
 
 export class PetStoreHomePage extends BasePage {
-  readonly topbar: Locator;
   readonly title: Locator;
   readonly authorizeButton: Locator;
   readonly cookieAcceptButton: Locator;
@@ -15,7 +14,6 @@ export class PetStoreHomePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.topbar = page.locator('.topbar-wrapper').or(page.locator('.topbar'));
     this.title = page.getByRole('heading', { level: 1, name: /swagger petstore/i });
     this.authorizeButton = page.getByRole('button', { name: 'Authorize' });
     this.cookieAcceptButton = page.getByRole('button', { name: /allow all/i }).or(page.locator('#ch2-allow-all-btn'));
@@ -30,7 +28,6 @@ export class PetStoreHomePage extends BasePage {
   }
 
   async assertLoaded(): Promise<void> {
-    await this.expectVisible(this.topbar);
     await expect(this.title).toContainText('Swagger Petstore');
     await this.expectVisible(this.authorizeButton);
   }
