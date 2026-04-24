@@ -201,7 +201,7 @@ const sortStorefrontInventory = (
     case 'za':
       return copy.sort((left, right) => right.name.localeCompare(left.name));
     case 'lohi':
-      return copy.sort((left, right) => String(left.price).localeCompare(String(right.price)));
+      return copy.sort((left, right) => left.price - right.price);
     case 'hilo':
       return copy.sort((left, right) => right.price - left.price);
   }

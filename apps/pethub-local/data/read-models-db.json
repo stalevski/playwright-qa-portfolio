@@ -1,12 +1,12 @@
 {
   "petCatalog": [
     {
-      "id": 96779,
-      "name": "Milo 490",
+      "id": 99700,
+      "name": "Buddy 612",
       "category": "Dogs",
       "status": "available",
-      "price": 1339.02,
-      "updatedAt": "2026-04-24T08:31:08.395Z"
+      "price": 1393.28,
+      "updatedAt": "2026-04-24T12:47:35.359Z"
     },
     {
       "id": 1003,
@@ -14,7 +14,7 @@
       "category": "Birds",
       "status": "sold",
       "price": 300,
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 1002,
@@ -22,7 +22,7 @@
       "category": "Cats",
       "status": "pending",
       "price": 900,
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 1001,
@@ -30,7 +30,7 @@
       "category": "Dogs",
       "status": "available",
       "price": 1200,
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "userDirectory": [
@@ -39,14 +39,14 @@
       "username": "buyer01",
       "email": "buyer01@localpetstore.test",
       "role": "customer",
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 2001,
       "username": "admin",
       "email": "admin@localpetstore.test",
       "role": "admin",
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "employeeDirectory": [
@@ -57,7 +57,7 @@
       "department": "Operations",
       "title": "Store Administrator",
       "status": "active",
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "customerRegistry": [
@@ -69,36 +69,59 @@
       "loyaltyTier": "silver",
       "status": "active",
       "lifetimeValue": 900,
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "orderLedger": [
+    {
+      "id": 1777034860403,
+      "petId": 1002,
+      "userId": 2002,
+      "status": "placed",
+      "totalAmount": 900,
+      "updatedAt": "2026-04-24T12:47:40.405Z"
+    },
     {
       "id": 3001,
       "petId": 1002,
       "userId": 2002,
       "status": "placed",
       "totalAmount": 900,
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "updatedAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "auditFeed": [
     {
+      "id": 2,
+      "entityType": "order",
+      "entityId": 1777034860403,
+      "action": "created",
+      "details": "Order 1777034860403 created",
+      "createdAt": "2026-04-24T12:47:40.405Z"
+    },
+    {
       "id": 1,
       "entityType": "pet",
-      "entityId": 96779,
+      "entityId": 99700,
       "action": "created",
-      "details": "Pet Milo 490 created",
-      "createdAt": "2026-04-24T08:31:08.396Z"
+      "details": "Pet Buddy 612 created",
+      "createdAt": "2026-04-24T12:47:35.360Z"
     }
   ],
   "eventFeed": [
     {
+      "id": 2,
+      "type": "order.created",
+      "entityType": "order",
+      "entityId": 1777034860403,
+      "createdAt": "2026-04-24T12:47:40.405Z"
+    },
+    {
       "id": 1,
       "type": "pet.created",
       "entityType": "pet",
-      "entityId": 96779,
-      "createdAt": "2026-04-24T08:31:08.395Z"
+      "entityId": 99700,
+      "createdAt": "2026-04-24T12:47:35.360Z"
     }
   ]
 }
