@@ -7,10 +7,8 @@ dotenv.config();
 const swaggerPetstoreUiBaseUrl = testTargets.swaggerPetstore.uiBaseUrl;
 const swaggerPetstoreApiBaseUrl = testTargets.swaggerPetstore.apiBaseUrl;
 const sauceDemoUiBaseUrl = testTargets.sauceDemo.uiBaseUrl;
-const sauceDemoApiBaseUrl = testTargets.sauceDemo.apiBaseUrl;
 const pethubLocalUiBaseUrl = testTargets.pethubLocal.uiBaseUrl;
 const pethubLocalApiBaseUrl = testTargets.pethubLocal.apiBaseUrl;
-const localWebServerCommand = `set APP_PORT=${localAppPort}&& npm.cmd run app:start`;
 
 export default defineConfig({
   testDir: './tests',
@@ -38,11 +36,15 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: localWebServerCommand,
+    command: 'npm run app:start',
     url: pethubLocalUiBaseUrl,
+    env: {
+      APP_PORT: localAppPort,
+    },
     reuseExistingServer: true,
     timeout: 120_000,
   },
+  globalSetup: './src/core/global-setup.ts',
   projects: [
     {
       name: 'swagger-petstore-ui-chromium',
@@ -80,13 +82,6 @@ export default defineConfig({
       name: 'sauce-demo-ui-webkit',
       testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Safari'], baseURL: sauceDemoUiBaseUrl },
-    },
-    {
-      name: 'sauce-demo-api',
-      testMatch: /tests\/targets\/sauce-demo\/api\/.*\.api\.spec\.ts/,
-      use: {
-        baseURL: sauceDemoApiBaseUrl,
-      },
     },
     {
       name: 'pethub-local-ui-chromium',

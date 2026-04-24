@@ -1,10 +1,11 @@
 import type { UserDto } from '@models/api/user.dto';
+import { uniqueId } from '@helpers/unique-id';
 
 export class UserBuilder {
   private user: UserDto;
 
   constructor() {
-    const id = Date.now();
+    const id = uniqueId();
     this.user = {
       id,
       username: `playwright-user-${id}`,

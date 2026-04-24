@@ -21,6 +21,8 @@ export const initializeLocalApp = async (): Promise<void> => {
   await initializeDatabase();
 };
 
+export { resetDatabase } from './database';
+
 export const createPetCommand = async (pet: Omit<PetRecord, 'createdAt' | 'updatedAt'>): Promise<PetRecord> => {
   return createPet(pet);
 };

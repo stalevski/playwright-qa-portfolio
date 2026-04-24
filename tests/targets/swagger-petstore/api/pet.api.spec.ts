@@ -63,28 +63,28 @@ test.describe('Petstore API - Pet endpoints', () => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
 
-    const response = await apiClient.getPet(pet.id);
-
-    expect(response.ok()).toBeTruthy();
-    await expect(async () => {
+    await expect.poll(async () => {
+      const response = await apiClient.getPet(pet.id);
+      if (!response.ok()) {
+        return null;
+      }
       const body = await response.json();
-      expect(body.id).toBe(pet.id);
-      expect(body.name).toBe(pet.name);
-    }).toPass();
+      return { id: body.id, name: body.name };
+    }).toEqual({ id: pet.id, name: pet.name });
   });
 
   test('gets a pet by id with the documented api key header', async ({ apiClient }) => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
 
-    const response = await apiClient.getPetWithApiKey(pet.id, swaggerApiKey);
-
-    expect(response.ok()).toBeTruthy();
-    await expect(async () => {
+    await expect.poll(async () => {
+      const response = await apiClient.getPetWithApiKey(pet.id, swaggerApiKey);
+      if (!response.ok()) {
+        return null;
+      }
       const body = await response.json();
-      expect(body.id).toBe(pet.id);
-      expect(body.name).toBe(pet.name);
-    }).toPass();
+      return { id: body.id, name: body.name };
+    }).toEqual({ id: pet.id, name: pet.name });
   });
 
   test('updates a pet with form data', async ({ apiClient }) => {
@@ -95,12 +95,14 @@ test.describe('Petstore API - Pet endpoints', () => {
 
     expect(response.message).toContain(String(pet.id));
 
-    const getResponse = await apiClient.getPet(pet.id);
-    await expect(async () => {
+    await expect.poll(async () => {
+      const getResponse = await apiClient.getPet(pet.id);
+      if (!getResponse.ok()) {
+        return null;
+      }
       const body = await getResponse.json();
-      expect(body.name).toBe(`${pet.name}-form`);
-      expect(body.status).toBe('sold');
-    }).toPass();
+      return { name: body.name, status: body.status };
+    }).toEqual({ name: `${pet.name}-form`, status: 'sold' });
   });
 
   test('deletes a pet', async ({ apiClient }) => {

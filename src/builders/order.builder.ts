@@ -1,10 +1,11 @@
 import type { OrderDto, OrderStatus } from '@models/api/order.dto';
+import { uniqueId } from '@helpers/unique-id';
 
 export class OrderBuilder {
   private order: OrderDto;
 
   constructor() {
-    const id = Date.now();
+    const id = uniqueId();
     this.order = {
       id,
       petId: id,

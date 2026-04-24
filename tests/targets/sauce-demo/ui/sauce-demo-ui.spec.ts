@@ -12,7 +12,7 @@ test.describe('Sauce Demo UI', () => {
     await sauceDemoLoginPage.assertLoaded();
     await sauceDemoLoginPage.login(standardUser, password);
     await sauceDemoInventoryPage.assertLoaded();
-    await expect(await sauceDemoInventoryPage.getItemCount()).toBeGreaterThan(0);
+    expect(await sauceDemoInventoryPage.getItemCount()).toBeGreaterThan(0);
   });
 
   test('shows an error for a locked out user', async ({ sauceDemoLoginPage }) => {
