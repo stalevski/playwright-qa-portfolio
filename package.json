@@ -1,0 +1,35 @@
+{
+  "name": "pethub-qa-lab",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "app:start": "tsx apps/pethub-local/server.ts",
+    "test": "playwright test",
+    "test:swagger-petstore": "playwright test --project=swagger-petstore-ui-chromium --project=swagger-petstore-ui-firefox --project=swagger-petstore-ui-webkit --project=swagger-petstore-api",
+    "test:swagger-petstore:ui": "playwright test --project=swagger-petstore-ui-chromium --project=swagger-petstore-ui-firefox --project=swagger-petstore-ui-webkit",
+    "test:swagger-petstore:api": "playwright test --project=swagger-petstore-api",
+    "test:sauce-demo": "playwright test --project=sauce-demo-ui-chromium --project=sauce-demo-ui-firefox --project=sauce-demo-ui-webkit --project=sauce-demo-api",
+    "test:sauce-demo:ui": "playwright test --project=sauce-demo-ui-chromium --project=sauce-demo-ui-firefox --project=sauce-demo-ui-webkit",
+    "test:sauce-demo:api": "playwright test --project=sauce-demo-api",
+    "test:pethub-local": "playwright test --project=pethub-local-ui-chromium --project=pethub-local-ui-firefox --project=pethub-local-ui-webkit --project=pethub-local-api",
+    "test:pethub-local:ui": "playwright test --project=pethub-local-ui-chromium --project=pethub-local-ui-firefox --project=pethub-local-ui-webkit",
+    "test:pethub-local:api": "playwright test --project=pethub-local-api",
+    "test:ui": "playwright test tests/targets/swagger-petstore/ui tests/targets/sauce-demo/ui tests/targets/pethub-local/ui",
+    "test:api": "playwright test tests/targets/swagger-petstore/api tests/targets/sauce-demo/api tests/targets/pethub-local/api",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "lowdb": "^7.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.0",
+    "@types/express": "^5.0.3",
+    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
+    "dotenv": "^16.4.5"
+  }
+}
