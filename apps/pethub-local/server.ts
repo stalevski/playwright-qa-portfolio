@@ -5,7 +5,6 @@ import {
   getCustomersQuery,
   getDownstreamSystemsQuery,
   getEmployeesQuery,
-  getEventsQuery,
   getInventoryQuery,
   getOrdersWithRelationsQuery,
   getPetsQuery,
@@ -323,6 +322,7 @@ app.post('/pets', async (request: Request, response: Response) => {
 const start = async (): Promise<void> => {
   await initializeLocalApp();
   app.listen(port, () => {
+    // eslint-disable-next-line no-console -- intentional startup banner
     console.log(`PetHub QA Lab running at http://127.0.0.1:${port}`);
   });
 };
