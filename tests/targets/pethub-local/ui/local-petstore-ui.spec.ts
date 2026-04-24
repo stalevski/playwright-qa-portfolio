@@ -1,0 +1,34 @@
+import { test, expect } from '@pethub-local-fixtures';
+import { RandomDataGenerator } from '@helpers/random-data-generator';
+
+const localPet = RandomDataGenerator.createLocalPet({
+  category: 'Dogs',
+  status: 'available',
+});
+
+test.describe('Local Petstore UI', () => {
+  test('loads the admin dashboard', async ({ localHomePage }) => {
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+    await localHomePage.assertOrderRelationVisible('buyer01');
+  });
+
+  test('shows Swagger-style explorer and derived databases', async ({ localHomePage, page }) => {
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+
+    await expect(page.getByText('/api/read-models')).toBeVisible();
+    await expect(page.getByText('/api/downstream-systems')).toBeVisible();
+    await expect(page.getByText('Inventory Replica')).toBeVisible();
+    await expect(page.getByText('Pet Catalog')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Execute' }).first()).toBeVisible();
+  });
+
+  test('creates a pet and shows an audit entry', async ({ localHomePage }) => {
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+    await localHomePage.createPet(localPet);
+    await localHomePage.assertPetVisible(localPet);
+    await localHomePage.assertAuditEntryVisible(`Pet ${localPet.name} created`);
+  });
+});
