@@ -1,12 +1,84 @@
 {
   "inventoryReplica": [
     {
+      "petId": 1777037638136,
+      "name": "Pico 555 Updated",
+      "category": "Birds",
+      "availabilityStatus": "sold",
+      "price": 1115.09,
+      "syncedAt": "2026-04-24T13:32:25.334Z"
+    },
+    {
+      "petId": 1777037550203,
+      "name": "Buddy 139",
+      "category": "Dogs",
+      "availabilityStatus": "pending",
+      "price": 2423.09,
+      "syncedAt": "2026-04-24T13:32:25.133Z"
+    },
+    {
+      "petId": 1777037547457,
+      "name": "Nala 732",
+      "category": "Cats",
+      "availabilityStatus": "available",
+      "price": 1152.75,
+      "syncedAt": "2026-04-24T13:32:25.210Z"
+    },
+    {
+      "petId": 96120,
+      "name": "Cooper 244 Updated",
+      "category": "Dogs",
+      "availabilityStatus": "available",
+      "price": 1356.93,
+      "syncedAt": "2026-04-24T13:32:25.439Z"
+    },
+    {
+      "petId": 95699,
+      "name": "Nala 447-form",
+      "category": "Cats",
+      "availabilityStatus": "sold",
+      "price": 899.17,
+      "syncedAt": "2026-04-24T13:32:25.524Z"
+    },
+    {
+      "petId": 92568,
+      "name": "Milo 987",
+      "category": "Dogs",
+      "availabilityStatus": "available",
+      "price": 518.12,
+      "syncedAt": "2026-04-24T13:31:52.026Z"
+    },
+    {
+      "petId": 92518,
+      "name": "Rio 989",
+      "category": "Birds",
+      "availabilityStatus": "available",
+      "price": 1207.05,
+      "syncedAt": "2026-04-24T13:32:26.173Z"
+    },
+    {
+      "petId": 92091,
+      "name": "Luna 983",
+      "category": "Cats",
+      "availabilityStatus": "available",
+      "price": 2432.46,
+      "syncedAt": "2026-04-24T13:32:26.032Z"
+    },
+    {
+      "petId": 91383,
+      "name": "Buddy 984",
+      "category": "Dogs",
+      "availabilityStatus": "available",
+      "price": 2246.06,
+      "syncedAt": "2026-04-24T13:32:26.231Z"
+    },
+    {
       "petId": 1003,
       "name": "Cockatiel",
       "category": "Birds",
       "availabilityStatus": "sold",
       "price": 300,
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     },
     {
       "petId": 1002,
@@ -14,7 +86,7 @@
       "category": "Cats",
       "availabilityStatus": "pending",
       "price": 900,
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     },
     {
       "petId": 1001,
@@ -22,26 +94,91 @@
       "category": "Dogs",
       "availabilityStatus": "available",
       "price": 1200,
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     }
   ],
   "crmCustomers": [
+    {
+      "userId": 1777037549098,
+      "username": "caretaker-5441",
+      "email": "caretaker-5441@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:25.235Z"
+    },
+    {
+      "userId": 98454,
+      "username": "petlover-1553",
+      "email": "petlover-1553@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:25.657Z"
+    },
+    {
+      "userId": 95525,
+      "username": "adopter-4329",
+      "email": "adopter-4329@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:25.909Z"
+    },
+    {
+      "userId": 95461,
+      "username": "qauser-6427",
+      "email": "qauser-6427@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:26.053Z"
+    },
+    {
+      "userId": 95303,
+      "username": "sandbox-5105",
+      "email": "sandbox-5105@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:25.670Z"
+    },
+    {
+      "userId": 95161,
+      "username": "qauser-8628",
+      "email": "qauser-8628@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:25.692Z"
+    },
+    {
+      "userId": 92000,
+      "username": "caretaker-1287",
+      "email": "caretaker-1287@pethub.test",
+      "role": "admin",
+      "syncedAt": "2026-04-24T13:32:25.768Z"
+    },
+    {
+      "userId": 91361,
+      "username": "petlover-4960",
+      "email": "petlover-4960@pethub.test",
+      "role": "customer",
+      "syncedAt": "2026-04-24T13:32:26.250Z"
+    },
     {
       "userId": 2002,
       "username": "buyer01",
       "email": "buyer01@localpetstore.test",
       "role": "customer",
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     },
     {
       "userId": 2001,
       "username": "admin",
       "email": "admin@localpetstore.test",
       "role": "admin",
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     }
   ],
   "hrEmployees": [
+    {
+      "employeeId": 48695,
+      "userId": 92000,
+      "employeeCode": "EMP-3787",
+      "department": "Finance",
+      "title": "Supervisor",
+      "status": "active",
+      "syncedAt": "2026-04-24T13:32:25.934Z"
+    },
     {
       "employeeId": 4001,
       "userId": 2001,
@@ -49,10 +186,20 @@
       "department": "Operations",
       "title": "Store Administrator",
       "status": "active",
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     }
   ],
   "customerProfiles": [
+    {
+      "customerId": 51232,
+      "userId": 95525,
+      "customerNumber": "CUST-3638",
+      "segment": "retail",
+      "loyaltyTier": "bronze",
+      "lifetimeValue": 635.52,
+      "status": "active",
+      "syncedAt": "2026-04-24T13:32:25.954Z"
+    },
     {
       "customerId": 5001,
       "userId": 2002,
@@ -61,17 +208,41 @@
       "loyaltyTier": "silver",
       "lifetimeValue": 900,
       "status": "active",
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     }
   ],
   "billingOrders": [
     {
-      "orderId": 1777036185514,
+      "orderId": 1777037589229,
+      "userId": 1777037549098,
+      "petId": 1777037547457,
+      "amount": 1152.75,
+      "orderStatus": "placed",
+      "syncedAt": "2026-04-24T13:32:25.254Z"
+    },
+    {
+      "orderId": 1777037543114,
       "userId": 2002,
       "petId": 1002,
       "amount": 900,
       "orderStatus": "placed",
-      "syncedAt": "2026-04-24T13:09:45.517Z"
+      "syncedAt": "2026-04-24T13:32:23.116Z"
+    },
+    {
+      "orderId": 93152,
+      "userId": 91361,
+      "petId": 91383,
+      "amount": 2246.06,
+      "orderStatus": "placed",
+      "syncedAt": "2026-04-24T13:32:26.268Z"
+    },
+    {
+      "orderId": 92133,
+      "userId": 95461,
+      "petId": 92091,
+      "amount": 2432.46,
+      "orderStatus": "approved",
+      "syncedAt": "2026-04-24T13:32:26.093Z"
     },
     {
       "orderId": 3001,
@@ -79,16 +250,198 @@
       "petId": 1002,
       "amount": 900,
       "orderStatus": "placed",
-      "syncedAt": "2026-04-24T13:09:28.996Z"
+      "syncedAt": "2026-04-24T13:31:41.099Z"
     }
   ],
   "analyticsEvents": [
     {
-      "eventId": 1,
+      "eventId": 27,
       "eventType": "order.created",
       "entityType": "order",
-      "entityId": 1777036185514,
-      "createdAt": "2026-04-24T13:09:45.517Z"
+      "entityId": 93152,
+      "createdAt": "2026-04-24T13:32:26.268Z"
+    },
+    {
+      "eventId": 26,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 91361,
+      "createdAt": "2026-04-24T13:32:26.250Z"
+    },
+    {
+      "eventId": 25,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 91383,
+      "createdAt": "2026-04-24T13:32:26.231Z"
+    },
+    {
+      "eventId": 24,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 92518,
+      "createdAt": "2026-04-24T13:32:26.173Z"
+    },
+    {
+      "eventId": 23,
+      "eventType": "order.status-updated",
+      "entityType": "order",
+      "entityId": 92133,
+      "createdAt": "2026-04-24T13:32:26.094Z"
+    },
+    {
+      "eventId": 22,
+      "eventType": "order.created",
+      "entityType": "order",
+      "entityId": 92133,
+      "createdAt": "2026-04-24T13:32:26.075Z"
+    },
+    {
+      "eventId": 21,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 95461,
+      "createdAt": "2026-04-24T13:32:26.053Z"
+    },
+    {
+      "eventId": 20,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 92091,
+      "createdAt": "2026-04-24T13:32:26.032Z"
+    },
+    {
+      "eventId": 19,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 95525,
+      "createdAt": "2026-04-24T13:32:25.909Z"
+    },
+    {
+      "eventId": 18,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 92000,
+      "createdAt": "2026-04-24T13:32:25.768Z"
+    },
+    {
+      "eventId": 17,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 95161,
+      "createdAt": "2026-04-24T13:32:25.692Z"
+    },
+    {
+      "eventId": 16,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 95303,
+      "createdAt": "2026-04-24T13:32:25.670Z"
+    },
+    {
+      "eventId": 15,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 98454,
+      "createdAt": "2026-04-24T13:32:25.657Z"
+    },
+    {
+      "eventId": 14,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 93266,
+      "createdAt": "2026-04-24T13:32:25.623Z"
+    },
+    {
+      "eventId": 13,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 93266,
+      "createdAt": "2026-04-24T13:32:25.593Z"
+    },
+    {
+      "eventId": 12,
+      "eventType": "pet.updated",
+      "entityType": "pet",
+      "entityId": 95699,
+      "createdAt": "2026-04-24T13:32:25.524Z"
+    },
+    {
+      "eventId": 11,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 95699,
+      "createdAt": "2026-04-24T13:32:25.480Z"
+    },
+    {
+      "eventId": 10,
+      "eventType": "pet.updated",
+      "entityType": "pet",
+      "entityId": 96120,
+      "createdAt": "2026-04-24T13:32:25.439Z"
+    },
+    {
+      "eventId": 9,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 96120,
+      "createdAt": "2026-04-24T13:32:25.420Z"
+    },
+    {
+      "eventId": 8,
+      "eventType": "pet.updated",
+      "entityType": "pet",
+      "entityId": 1777037638136,
+      "createdAt": "2026-04-24T13:32:25.334Z"
+    },
+    {
+      "eventId": 7,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 1777037638136,
+      "createdAt": "2026-04-24T13:32:25.314Z"
+    },
+    {
+      "eventId": 6,
+      "eventType": "order.created",
+      "entityType": "order",
+      "entityId": 1777037589229,
+      "createdAt": "2026-04-24T13:32:25.254Z"
+    },
+    {
+      "eventId": 5,
+      "eventType": "user.created",
+      "entityType": "user",
+      "entityId": 1777037549098,
+      "createdAt": "2026-04-24T13:32:25.235Z"
+    },
+    {
+      "eventId": 4,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 1777037547457,
+      "createdAt": "2026-04-24T13:32:25.210Z"
+    },
+    {
+      "eventId": 3,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 1777037550203,
+      "createdAt": "2026-04-24T13:32:25.133Z"
+    },
+    {
+      "eventId": 2,
+      "eventType": "order.created",
+      "entityType": "order",
+      "entityId": 1777037543114,
+      "createdAt": "2026-04-24T13:32:23.117Z"
+    },
+    {
+      "eventId": 1,
+      "eventType": "pet.created",
+      "entityType": "pet",
+      "entityId": 92568,
+      "createdAt": "2026-04-24T13:31:52.027Z"
     }
   ]
 }
