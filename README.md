@@ -35,7 +35,7 @@ This repository now also includes a **local advanced Petstore app** with a local
 - `tests/targets/pethub-local/api`
   - PetHub Local API specs
 - `tests/targets/pethub-local/ui`
-  - PetHub Local UI specs
+  - PetHub Local admin, storefront (`/shop`), and ops portal (`/ops`) UI specs
 - `apps/pethub-local`
   - PetHub Local Express + embedded-database app
 - `.windsurf/workflows`

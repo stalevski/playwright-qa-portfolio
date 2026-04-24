@@ -1,12 +1,12 @@
 {
   "inventoryReplica": [
     {
-      "petId": 96779,
-      "name": "Milo 490",
+      "petId": 99700,
+      "name": "Buddy 612",
       "category": "Dogs",
       "availabilityStatus": "available",
-      "price": 1339.02,
-      "syncedAt": "2026-04-24T08:31:08.395Z"
+      "price": 1393.28,
+      "syncedAt": "2026-04-24T12:47:35.359Z"
     },
     {
       "petId": 1003,
@@ -14,7 +14,7 @@
       "category": "Birds",
       "availabilityStatus": "sold",
       "price": 300,
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "petId": 1002,
@@ -22,7 +22,7 @@
       "category": "Cats",
       "availabilityStatus": "pending",
       "price": 900,
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "petId": 1001,
@@ -30,7 +30,7 @@
       "category": "Dogs",
       "availabilityStatus": "available",
       "price": 1200,
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "crmCustomers": [
@@ -39,14 +39,14 @@
       "username": "buyer01",
       "email": "buyer01@localpetstore.test",
       "role": "customer",
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "userId": 2001,
       "username": "admin",
       "email": "admin@localpetstore.test",
       "role": "admin",
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "hrEmployees": [
@@ -57,7 +57,7 @@
       "department": "Operations",
       "title": "Store Administrator",
       "status": "active",
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "customerProfiles": [
@@ -69,26 +69,41 @@
       "loyaltyTier": "silver",
       "lifetimeValue": 900,
       "status": "active",
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "billingOrders": [
+    {
+      "orderId": 1777034860403,
+      "userId": 2002,
+      "petId": 1002,
+      "amount": 900,
+      "orderStatus": "placed",
+      "syncedAt": "2026-04-24T12:47:40.405Z"
+    },
     {
       "orderId": 3001,
       "userId": 2002,
       "petId": 1002,
       "amount": 900,
       "orderStatus": "placed",
-      "syncedAt": "2026-04-24T08:30:57.924Z"
+      "syncedAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "analyticsEvents": [
     {
+      "eventId": 2,
+      "eventType": "order.created",
+      "entityType": "order",
+      "entityId": 1777034860403,
+      "createdAt": "2026-04-24T12:47:40.405Z"
+    },
+    {
       "eventId": 1,
       "eventType": "pet.created",
       "entityType": "pet",
-      "entityId": 96779,
-      "createdAt": "2026-04-24T08:31:08.395Z"
+      "entityId": 99700,
+      "createdAt": "2026-04-24T12:47:35.360Z"
     }
   ]
 }

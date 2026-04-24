@@ -1,14 +1,14 @@
 {
   "pets": [
     {
-      "id": 96779,
-      "name": "Milo 490",
+      "id": 99700,
+      "name": "Buddy 612",
       "category": "Dogs",
       "status": "available",
-      "price": 1339.02,
-      "notes": "Indoor pet with recent health check completed for smoke coverage",
-      "createdAt": "2026-04-24T08:31:08.395Z",
-      "updatedAt": "2026-04-24T08:31:08.395Z"
+      "price": 1393.28,
+      "notes": "Indoor pet with recent health check completed for relation testing",
+      "createdAt": "2026-04-24T12:47:35.359Z",
+      "updatedAt": "2026-04-24T12:47:35.359Z"
     },
     {
       "id": 1001,
@@ -17,8 +17,8 @@
       "status": "available",
       "price": 1200,
       "notes": "Friendly and family trained",
-      "createdAt": "2026-04-24T08:30:57.924Z",
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z",
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 1002,
@@ -34,8 +34,8 @@
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T08:30:57.924Z",
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z",
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 1003,
@@ -51,8 +51,8 @@
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T08:30:57.924Z",
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z",
+      "updatedAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "users": [
@@ -66,7 +66,7 @@
       "password": "Password123!",
       "phone": "1002003000",
       "userStatus": 1,
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z"
     },
     {
       "id": 2002,
@@ -78,7 +78,7 @@
       "password": "Password123!",
       "phone": "1234567890",
       "userStatus": 1,
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.053Z"
     }
   ],
   "employees": [
@@ -90,8 +90,8 @@
       "title": "Store Administrator",
       "location": "HQ",
       "status": "active",
-      "hireDate": "2026-04-24T08:30:57.924Z",
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "hireDate": "2026-04-24T12:47:23.054Z",
+      "createdAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "customers": [
@@ -103,10 +103,20 @@
       "loyaltyTier": "silver",
       "status": "active",
       "lifetimeValue": 900,
-      "createdAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "orders": [
+    {
+      "id": 1777034860403,
+      "petId": 1002,
+      "userId": 2002,
+      "quantity": 1,
+      "status": "placed",
+      "totalAmount": 900,
+      "createdAt": "2026-04-24T12:47:40.405Z",
+      "updatedAt": "2026-04-24T12:47:40.405Z"
+    },
     {
       "id": 3001,
       "petId": 1002,
@@ -114,32 +124,52 @@
       "quantity": 1,
       "status": "placed",
       "totalAmount": 900,
-      "createdAt": "2026-04-24T08:30:57.924Z",
-      "updatedAt": "2026-04-24T08:30:57.924Z"
+      "createdAt": "2026-04-24T12:47:23.054Z",
+      "updatedAt": "2026-04-24T12:47:23.054Z"
     }
   ],
   "auditLog": [
     {
+      "id": 2,
+      "entityType": "order",
+      "entityId": 1777034860403,
+      "action": "created",
+      "details": "Order 1777034860403 created",
+      "createdAt": "2026-04-24T12:47:40.405Z"
+    },
+    {
       "id": 1,
       "entityType": "pet",
-      "entityId": 96779,
+      "entityId": 99700,
       "action": "created",
-      "details": "Pet Milo 490 created",
-      "createdAt": "2026-04-24T08:31:08.396Z"
+      "details": "Pet Buddy 612 created",
+      "createdAt": "2026-04-24T12:47:35.360Z"
     }
   ],
   "events": [
     {
+      "id": 2,
+      "type": "order.created",
+      "entityType": "order",
+      "entityId": 1777034860403,
+      "payload": {
+        "petId": 1002,
+        "userId": 2002,
+        "status": "placed"
+      },
+      "createdAt": "2026-04-24T12:47:40.405Z"
+    },
+    {
       "id": 1,
       "type": "pet.created",
       "entityType": "pet",
-      "entityId": 96779,
+      "entityId": 99700,
       "payload": {
-        "petName": "Milo 490",
+        "petName": "Buddy 612",
         "category": "Dogs",
         "status": "available"
       },
-      "createdAt": "2026-04-24T08:31:08.395Z"
+      "createdAt": "2026-04-24T12:47:35.360Z"
     }
   ],
   "sessions": []
