@@ -124,10 +124,21 @@ export class PetStoreHomePage extends BasePage {
       }
     }
 
+    // Remove any banner currently in the DOM AND inject a stylesheet so it
+    // stays hidden if the consent script re-renders it. The ch2 banner is
+    // known to lazy-render on Chromium and intercept clicks on the Authorize
+    // button between dismissal and the next action.
     await this.page.evaluate(() => {
       document.querySelectorAll('.ch2, .ch2-region-eu, .ch2-container').forEach((element) => {
         element.remove();
       });
+      if (!document.getElementById('cookie-banner-suppressor')) {
+        const style = document.createElement('style');
+        style.id = 'cookie-banner-suppressor';
+        style.textContent =
+          '.ch2, .ch2-region-eu, .ch2-container { display: none !important; pointer-events: none !important; visibility: hidden !important; }';
+        document.head.appendChild(style);
+      }
     });
   }
 
