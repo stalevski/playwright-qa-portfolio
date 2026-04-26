@@ -7,6 +7,7 @@ export class LocalPetStorePage extends BasePage {
   readonly petsTable: Locator;
   readonly createPetSection: Locator;
   readonly createPetButton: Locator;
+  readonly updatePetWithFormSection: Locator;
   readonly petRows: Locator;
   readonly ordersHeading: Locator;
   readonly ordersTable: Locator;
@@ -23,6 +24,7 @@ export class LocalPetStorePage extends BasePage {
     this.petsTable = this.petsHeading.locator('..').locator('table');
     this.createPetSection = page.getByRole('heading', { name: 'Create Pet', exact: true }).locator('..');
     this.createPetButton = page.getByRole('button', { name: 'Create pet' });
+    this.updatePetWithFormSection = page.getByRole('heading', { name: 'Update Pet With Form Data', exact: true }).locator('..');
     this.petRows = this.petsTable.locator('tbody tr');
     this.ordersHeading = page.getByRole('heading', { name: 'Orders', exact: true });
     this.ordersTable = this.ordersHeading.locator('..').locator('table');
@@ -61,7 +63,30 @@ export class LocalPetStorePage extends BasePage {
     await this.createPetSection.locator('select[name="status"]').selectOption(pet.status);
     await this.createPetSection.getByPlaceholder('Price').fill(String(pet.price));
     await this.createPetSection.getByPlaceholder('Notes').fill(pet.notes);
-    await this.createPetSection.getByRole('button', { name: 'Create pet' }).click();
+    await Promise.all([
+      this.page.waitForResponse(
+        (response) => /\/pets(?:\?.*)?$/.test(response.url()) && response.request().method() === 'POST',
+      ),
+      this.createPetSection.getByRole('button', { name: 'Create pet' }).click(),
+    ]);
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.assertLoaded();
+  }
+
+  async updatePetWithFormData(pet: {
+    id: number;
+    name: string;
+    status: 'available' | 'pending' | 'sold';
+  }): Promise<void> {
+    await this.updatePetWithFormSection.getByPlaceholder('Pet ID').fill(String(pet.id));
+    await this.updatePetWithFormSection.getByPlaceholder('Updated name').fill(pet.name);
+    await this.updatePetWithFormSection.locator('select[name="status"]').selectOption(pet.status);
+    await Promise.all([
+      this.page.waitForResponse((response) => response.url().endsWith('/api/pets/form-update')),
+      this.updatePetWithFormSection.getByRole('button', { name: 'Execute' }).click(),
+    ]);
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.assertLoaded();
   }
 
   async assertPetVisible(pet: { id: number; name: string; category: string; status: string }): Promise<void> {

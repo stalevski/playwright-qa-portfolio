@@ -149,7 +149,14 @@ PetHub Local specs live under `tests/targets/pethub-local`.
 npm.cmd test
 ```
 
-For PetHub Local projects, Playwright now uses `webServer` to automatically start the app and reuse an already running instance when possible.
+`npm test` runs the external suite first (Swagger Petstore + Sauce Demo, fully parallel) and then the PetHub Local suite (sequential, `workers: 1`). The two suites use dedicated Playwright configs:
+
+- `playwright.config.ts` - external targets, full parallelism, no local web server
+- `playwright.local.config.ts` - PetHub Local UI + API, single worker, owns the `webServer` and `globalSetup` that resets the lowdb-backed database
+
+The split exists because the locally-hosted PetHub app stores state in a single shared JSON file (lowdb). Multiple test files writing concurrently can corrupt that state, so all PetHub Local specs are serialized through one Express process and one shared database file.
+
+For PetHub Local projects, Playwright uses `webServer` to automatically start the app and reuse an already running instance when possible.
 
 That means `test:pethub-local`, `test:pethub-local:ui`, and `test:pethub-local:api` no longer require you to manually start the app first.
 
@@ -201,28 +208,37 @@ Run only the PetHub Local UI suite:
 npm.cmd run test:pethub-local:ui
 ```
 
-### Parallel execution note
-
-The Playwright config keeps parallel execution enabled for normal framework usage.
-
-The `pethub-local` target uses a shared local Express app with JSON-backed persistence files. Because of that, full-suite highly parallel execution can expose shared-state issues when multiple local UI/API tests mutate the same data at the same time.
-
-If you hit intermittent local-only failures during a full parallel run, prefer one of these approaches:
-
-- run the affected `pethub-local` spec or target in isolation
-- run the local UI or local API suite separately
-- temporarily reduce workers when validating the local target
-
-UI only:
+Run only the external (parallel) targets:
 
 ```powershell
-& "C:\Program Files\nodejs\node.exe" .\node_modules\playwright\cli.js test tests/targets/swagger-petstore/ui tests/targets/pethub-local/ui
+npm.cmd run test:external
 ```
 
-API only:
+Run only the local (serial) target:
 
 ```powershell
-& "C:\Program Files\nodejs\node.exe" .\node_modules\playwright\cli.js test tests/targets/swagger-petstore/api tests/targets/pethub-local/api
+npm.cmd run test:local
+```
+
+UI across all targets:
+
+```powershell
+npm.cmd run test:ui
+```
+
+API across all targets:
+
+```powershell
+npm.cmd run test:api
+```
+
+### Reports
+
+The two configs write to separate HTML reports so they don't overwrite each other:
+
+```powershell
+npm.cmd run report         # external suite
+npm.cmd run report:local   # PetHub Local suite
 ```
 
 ## Lint and format
