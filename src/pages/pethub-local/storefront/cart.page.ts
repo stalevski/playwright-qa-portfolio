@@ -48,6 +48,7 @@ export class StorefrontCartPage extends BasePage {
 
   async proceedToCheckout(): Promise<void> {
     await this.checkoutLink.click();
+    await this.page.waitForURL(/\/shop\/checkout(?:\?.*)?$/);
   }
 
   async continueShopping(): Promise<void> {

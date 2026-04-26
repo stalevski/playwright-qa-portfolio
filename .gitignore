@@ -1,6 +1,8 @@
 node_modules/
 playwright-report/
+playwright-report-local/
 test-results/
+test-results-local/
 .env
 *.log
 tmp-*.js

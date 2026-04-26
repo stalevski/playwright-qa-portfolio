@@ -13,13 +13,14 @@ export class SauceDemoMenuComponent {
 
   async open(): Promise<void> {
     for (let attempt = 0; attempt < 3; attempt += 1) {
-      await this.burgerMenuButton.click({ force: true });
+      await this.burgerMenuButton.click();
 
-      if (await this.logoutLink.isVisible().catch(() => false)) {
+      try {
+        await expect(this.logoutLink).toBeVisible({ timeout: 1_000 });
         return;
+      } catch {
+        // retry
       }
-
-      await this.page.waitForTimeout(250);
     }
 
     await expect(this.logoutLink).toBeVisible();

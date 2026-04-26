@@ -29,6 +29,10 @@ export class StorefrontLoginPage extends BasePage {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+    await Promise.race([
+      this.page.waitForURL(/\/shop\/inventory(?:\?.*)?$/),
+      this.errorBanner.waitFor({ state: 'visible' }),
+    ]);
   }
 
   async assertErrorContains(text: string): Promise<void> {

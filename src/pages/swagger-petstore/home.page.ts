@@ -48,11 +48,11 @@ export class PetStoreHomePage extends BasePage {
 
   async openAuthorizeModal(): Promise<void> {
     await this.dismissCookieBanner();
-    await this.click(this.authorizeButton, { force: true });
+    await this.authorizeButton.click();
 
     if (!(await this.authModalHeading.isVisible().catch(() => false))) {
       await this.dismissCookieBanner();
-      await this.click(this.authorizeButton, { force: true });
+      await this.authorizeButton.click();
     }
 
     await expect(this.authModalHeading).toBeVisible();
@@ -60,7 +60,7 @@ export class PetStoreHomePage extends BasePage {
 
   async closeAuthorizeModal(): Promise<void> {
     await this.dismissCookieBanner();
-    await this.click(this.authModalCloseButton, { force: true });
+    await this.authModalCloseButton.click();
     await expect(this.authorizeButton).toBeVisible();
   }
 
@@ -78,10 +78,10 @@ export class PetStoreHomePage extends BasePage {
 
     await this.openOperation(operation);
     await this.dismissCookieBanner();
-    await tryItOutButton.click({ force: true });
+    await tryItOutButton.click();
     await operation.locator('textarea.body-param__text').fill(JSON.stringify(pet, null, 2));
     await this.dismissCookieBanner();
-    await executeButton.click({ force: true });
+    await executeButton.click();
 
     await expect(responseContainer).toContainText('200');
     await expect(responseContainer).toContainText(`"id": ${pet.id}`);
@@ -95,10 +95,10 @@ export class PetStoreHomePage extends BasePage {
 
     await this.openOperation(operation);
     await this.dismissCookieBanner();
-    await tryItOutButton.click({ force: true });
+    await tryItOutButton.click();
     await operation.getByPlaceholder('petId').fill(String(petId));
     await this.dismissCookieBanner();
-    await executeButton.click({ force: true });
+    await executeButton.click();
   }
 
   async assertPetDetailsVisible(pet: PetDto): Promise<void> {
@@ -120,7 +120,7 @@ export class PetStoreHomePage extends BasePage {
 
     for (const button of knownConsentButtons) {
       if (await button.isVisible().catch(() => false)) {
-        await button.click({ force: true }).catch(() => undefined);
+        await button.click().catch(() => undefined);
       }
     }
 
@@ -162,10 +162,7 @@ export class PetStoreHomePage extends BasePage {
         break;
       }
 
-      await operationToggle
-        .first()
-        .click({ force: true })
-        .catch(() => undefined);
+      await operationToggle.first().click().catch(() => undefined);
       await this.dismissCookieBanner();
     }
 

@@ -35,6 +35,10 @@ export class StorefrontCheckoutPage extends BasePage {
 
   async submit(): Promise<void> {
     await this.submitButton.click();
+    await Promise.race([
+      this.page.waitForURL(/\/shop\/complete(?:\?.*)?$/),
+      this.errorBanner.waitFor({ state: 'visible' }),
+    ]);
   }
 
   async assertErrorContains(text: string): Promise<void> {

@@ -90,18 +90,6 @@ apiRouter.post('/pets', async (request: Request, response: Response) => {
   response.status(201).json(pet);
 });
 
-apiRouter.post('/pets/:id', async (request: Request, response: Response) => {
-  const pet = await updatePetWithFormCommand(Number(request.params.id), {
-    name: request.body.name ? String(request.body.name) : undefined,
-    status: request.body.status,
-  });
-  if (!pet) {
-    respondNotFound(response, 'Pet not found');
-    return;
-  }
-  response.json({ code: 200, type: 'unknown', message: String(pet.id) });
-});
-
 apiRouter.post('/pets/form-update', async (request: Request, response: Response) => {
   const pet = await updatePetWithFormCommand(Number(request.body.petId), {
     name: request.body.name ? String(request.body.name) : undefined,
@@ -112,6 +100,18 @@ apiRouter.post('/pets/form-update', async (request: Request, response: Response)
     return;
   }
   response.redirect('/');
+});
+
+apiRouter.post('/pets/:id', async (request: Request, response: Response) => {
+  const pet = await updatePetWithFormCommand(Number(request.params.id), {
+    name: request.body.name ? String(request.body.name) : undefined,
+    status: request.body.status,
+  });
+  if (!pet) {
+    respondNotFound(response, 'Pet not found');
+    return;
+  }
+  response.json({ code: 200, type: 'unknown', message: String(pet.id) });
 });
 
 apiRouter.post('/pets/:id/uploadImage', async (request: Request, response: Response) => {

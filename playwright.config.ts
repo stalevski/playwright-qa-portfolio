@@ -1,15 +1,23 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import { localAppPort, testTargets } from './test-targets.config';
+import { testTargets } from './test-targets.config';
 
 dotenv.config();
 
 const swaggerPetstoreUiBaseUrl = testTargets.swaggerPetstore.uiBaseUrl;
 const swaggerPetstoreApiBaseUrl = testTargets.swaggerPetstore.apiBaseUrl;
 const sauceDemoUiBaseUrl = testTargets.sauceDemo.uiBaseUrl;
-const pethubLocalUiBaseUrl = testTargets.pethubLocal.uiBaseUrl;
-const pethubLocalApiBaseUrl = testTargets.pethubLocal.apiBaseUrl;
 
+/**
+ * Default config for external targets (Swagger Petstore, Sauce Demo).
+ *
+ * These targets are public/demo sites with no shared mutable state owned by
+ * this repo, so they run with full parallelism across browsers and files.
+ *
+ * The locally-hosted PetHub app has its own dedicated config at
+ * `playwright.local.config.ts` because its lowdb-backed database cannot
+ * tolerate concurrent writes from parallel test files.
+ */
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -32,16 +40,6 @@ export default defineConfig({
       Accept: 'application/json',
     },
   },
-  webServer: {
-    command: 'npm run app:start',
-    url: pethubLocalUiBaseUrl,
-    env: {
-      APP_PORT: localAppPort,
-    },
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
-  globalSetup: './src/core/global-setup.ts',
   projects: [
     {
       name: 'swagger-petstore-ui-chromium',
@@ -79,28 +77,6 @@ export default defineConfig({
       name: 'sauce-demo-ui-webkit',
       testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Safari'], baseURL: sauceDemoUiBaseUrl },
-    },
-    {
-      name: 'pethub-local-ui-chromium',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'], baseURL: pethubLocalUiBaseUrl },
-    },
-    {
-      name: 'pethub-local-ui-firefox',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Firefox'], baseURL: pethubLocalUiBaseUrl },
-    },
-    {
-      name: 'pethub-local-ui-webkit',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Safari'], baseURL: pethubLocalUiBaseUrl },
-    },
-    {
-      name: 'pethub-local-api',
-      testMatch: /tests\/targets\/pethub-local\/api\/.*\.api\.spec\.ts/,
-      use: {
-        baseURL: pethubLocalApiBaseUrl,
-      },
     },
   ],
   outputDir: 'test-results',

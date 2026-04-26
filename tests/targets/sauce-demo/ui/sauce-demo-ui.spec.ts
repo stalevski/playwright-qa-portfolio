@@ -1,26 +1,19 @@
 import { test, expect } from '@sauce-demo-fixtures';
+import { sauceDemoPassword, sauceDemoProducts, sauceDemoUsers } from '@helpers/test-data';
 
 test.describe('Sauce Demo UI', () => {
-  const standardUser = 'standard_user';
-  const lockedOutUser = 'locked_out_user';
-  const problemUser = 'problem_user';
-  const performanceGlitchUser = 'performance_glitch_user';
-  const password = 'secret_sauce';
-  const backpack = 'Sauce Labs Backpack';
-  const bikeLight = 'Sauce Labs Bike Light';
-
   test.describe('Login', () => {
     test('logs in successfully with the standard user', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
       await sauceDemoLoginPage.assertLoaded();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.assertLoaded();
       expect(await sauceDemoInventoryPage.getItemCount()).toBeGreaterThan(0);
     });
 
     test('shows an error for a locked out user', async ({ sauceDemoLoginPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(lockedOutUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.lockedOut, sauceDemoPassword);
       await sauceDemoLoginPage.assertErrorContains('Sorry, this user has been locked out.');
     });
 
@@ -38,13 +31,13 @@ test.describe('Sauce Demo UI', () => {
 
     test('requires password when username is filled', async ({ sauceDemoLoginPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, '');
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, '');
       await sauceDemoLoginPage.assertErrorContains('Password is required');
     });
 
     test('problem_user still reaches the inventory page', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(problemUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.problem, sauceDemoPassword);
       await sauceDemoInventoryPage.assertLoaded();
     });
 
@@ -54,7 +47,7 @@ test.describe('Sauce Demo UI', () => {
     }) => {
       test.slow();
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(performanceGlitchUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.performanceGlitch, sauceDemoPassword);
       await sauceDemoInventoryPage.assertLoaded();
     });
   });
@@ -66,14 +59,14 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoProductDetailsPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.openItemDetails(backpack);
-      await sauceDemoProductDetailsPage.assertLoaded(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.openItemDetails(sauceDemoProducts.backpack);
+      await sauceDemoProductDetailsPage.assertLoaded(sauceDemoProducts.backpack);
     });
 
     test('sorts inventory by name A to Z', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.sortBy('az');
       const names = await sauceDemoInventoryPage.getItemNames();
       const expected = [...names].sort((left, right) => left.localeCompare(right));
@@ -82,7 +75,7 @@ test.describe('Sauce Demo UI', () => {
 
     test('sorts inventory by name Z to A', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.sortBy('za');
       const names = await sauceDemoInventoryPage.getItemNames();
       const expected = [...names].sort((left, right) => right.localeCompare(left));
@@ -91,7 +84,7 @@ test.describe('Sauce Demo UI', () => {
 
     test('sorts inventory by price low to high', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.sortBy('lohi');
       const prices = await sauceDemoInventoryPage.getPrices();
       const expected = [...prices].sort((left, right) => left - right);
@@ -100,7 +93,7 @@ test.describe('Sauce Demo UI', () => {
 
     test('sorts inventory by price high to low', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.sortBy('hilo');
       const prices = await sauceDemoInventoryPage.getPrices();
       const expected = [...prices].sort((left, right) => right - left);
@@ -112,14 +105,14 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoInventoryPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.assertCartBadgeCount(1);
-      await sauceDemoInventoryPage.addItemToCart(bikeLight);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.bikeLight);
       await sauceDemoInventoryPage.assertCartBadgeCount(2);
-      await sauceDemoInventoryPage.removeItemFromCart(backpack);
+      await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.assertCartBadgeCount(1);
-      await sauceDemoInventoryPage.removeItemFromCart(bikeLight);
+      await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.bikeLight);
       await sauceDemoInventoryPage.assertCartBadgeHidden();
     });
   });
@@ -131,8 +124,8 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoProductDetailsPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.openItemDetails(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.openItemDetails(sauceDemoProducts.backpack);
       await sauceDemoProductDetailsPage.addToCart();
       await sauceDemoProductDetailsPage.backToProducts();
       await sauceDemoInventoryPage.assertCartBadgeCount(1);
@@ -144,9 +137,9 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoProductDetailsPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
-      await sauceDemoInventoryPage.openItemDetails(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
+      await sauceDemoInventoryPage.openItemDetails(sauceDemoProducts.backpack);
       await sauceDemoProductDetailsPage.removeFromCart();
       await sauceDemoProductDetailsPage.backToProducts();
       await sauceDemoInventoryPage.assertCartBadgeHidden();
@@ -158,8 +151,8 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoProductDetailsPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.openItemDetails(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.openItemDetails(sauceDemoProducts.backpack);
       await sauceDemoProductDetailsPage.backToProducts();
       await sauceDemoInventoryPage.assertLoaded();
     });
@@ -172,11 +165,11 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCartPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.openCart();
-      await sauceDemoCartPage.assertContainsItems([backpack]);
-      await sauceDemoCartPage.removeItem(backpack);
+      await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack]);
+      await sauceDemoCartPage.removeItem(sauceDemoProducts.backpack);
       expect(await sauceDemoCartPage.getItemCount()).toBe(0);
       await sauceDemoInventoryPage.assertCartBadgeHidden();
     });
@@ -187,8 +180,8 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCartPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.openCart();
       await sauceDemoCartPage.continueShopping();
       await sauceDemoInventoryPage.assertLoaded();
@@ -206,10 +199,10 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCheckoutCompletePage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.openCart();
-      await sauceDemoCartPage.assertContainsItems([backpack]);
+      await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack]);
       await sauceDemoCartPage.checkout();
       await sauceDemoCheckoutInformationPage.fillInformation('Ivan', 'Stalevski', '1000');
       await sauceDemoCheckoutInformationPage.continue();
@@ -232,11 +225,11 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCheckoutOverviewPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
-      await sauceDemoInventoryPage.addItemToCart(bikeLight);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.bikeLight);
       await sauceDemoInventoryPage.openCart();
-      await sauceDemoCartPage.assertContainsItems([backpack, bikeLight]);
+      await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack, sauceDemoProducts.bikeLight]);
       await sauceDemoCartPage.checkout();
       await sauceDemoCheckoutInformationPage.fillInformation('Ivan', 'Stalevski', '1000');
       await sauceDemoCheckoutInformationPage.continue();
@@ -263,8 +256,8 @@ test.describe('Sauce Demo UI', () => {
         sauceDemoCheckoutInformationPage,
       }) => {
         await sauceDemoLoginPage.goto();
-        await sauceDemoLoginPage.login(standardUser, password);
-        await sauceDemoInventoryPage.addItemToCart(backpack);
+        await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+        await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
         await sauceDemoInventoryPage.openCart();
         await sauceDemoCartPage.checkout();
         await sauceDemoCheckoutInformationPage.fillInformation(
@@ -284,12 +277,12 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCheckoutInformationPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.openCart();
       await sauceDemoCartPage.checkout();
       await sauceDemoCheckoutInformationPage.cancel();
-      await sauceDemoCartPage.assertContainsItems([backpack]);
+      await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack]);
     });
 
     test('cancel on overview page returns to the inventory', async ({
@@ -300,8 +293,8 @@ test.describe('Sauce Demo UI', () => {
       sauceDemoCheckoutOverviewPage,
     }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.openCart();
       await sauceDemoCartPage.checkout();
       await sauceDemoCheckoutInformationPage.fillInformation('Ivan', 'Stalevski', '1000');
@@ -315,8 +308,8 @@ test.describe('Sauce Demo UI', () => {
   test.describe('Menu', () => {
     test('resets app state from the menu', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
-      await sauceDemoInventoryPage.addItemToCart(backpack);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
       await sauceDemoInventoryPage.assertCartBadgeCount(1);
       await sauceDemoInventoryPage.menu.resetAppState();
       await sauceDemoInventoryPage.assertCartBadgeHidden();
@@ -324,7 +317,7 @@ test.describe('Sauce Demo UI', () => {
 
     test('logs out from the burger menu', async ({ sauceDemoLoginPage, sauceDemoInventoryPage }) => {
       await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(standardUser, password);
+      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
       await sauceDemoInventoryPage.menu.logout();
       await sauceDemoLoginPage.assertLoaded();
     });
@@ -333,7 +326,7 @@ test.describe('Sauce Demo UI', () => {
   test.describe('Session protection', () => {
     test('blocks direct access to /inventory.html without a session', async ({ page, sauceDemoInventoryPage }) => {
       await page.goto('/inventory.html');
-      await expect(sauceDemoInventoryPage.inventoryContainer).not.toBeVisible();
+      await expect(sauceDemoInventoryPage.inventoryContainer).toBeHidden();
     });
   });
 });

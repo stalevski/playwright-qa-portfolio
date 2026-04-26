@@ -31,4 +31,29 @@ test.describe('Local Petstore UI', () => {
     await localHomePage.assertPetVisible(localPet);
     await localHomePage.assertAuditEntryVisible(`Pet ${localPet.name} created`);
   });
+
+  test('updates a created pet through the homepage form-update flow', async ({ localHomePage }) => {
+    const createdPet = RandomDataGenerator.createLocalPet({
+      category: 'Cats',
+      status: 'available',
+    });
+    const updatedPet = {
+      ...createdPet,
+      name: `${createdPet.name} Updated`,
+      status: 'sold' as const,
+    };
+
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+    await localHomePage.createPet(createdPet);
+    await localHomePage.assertPetVisible(createdPet);
+
+    await localHomePage.updatePetWithFormData({
+      id: createdPet.id,
+      name: updatedPet.name,
+      status: updatedPet.status,
+    });
+
+    await localHomePage.assertPetVisible(updatedPet);
+  });
 });
