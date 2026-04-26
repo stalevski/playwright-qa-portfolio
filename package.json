@@ -21,7 +21,10 @@
     "test:debug": "playwright test --debug",
     "report": "playwright show-report",
     "report:local": "playwright show-report playwright-report-local",
-    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"apps/**/*.ts\" \"playwright.config.ts\" \"playwright.local.config.ts\" \"test-targets.config.ts\"",
+    "docs:pdf": "tsx scripts/md-to-pdf.ts docs/sauce-demo-bugs.md",
+    "docs:pdf:petstore": "tsx scripts/md-to-pdf.ts docs/swagger-petstore-bugs.md",
+    "docs:pdf:all": "npm run docs:pdf && npm run docs:pdf:petstore",
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"apps/**/*.ts\" \"scripts/**/*.ts\" \"playwright.config.ts\" \"playwright.local.config.ts\" \"test-targets.config.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -33,12 +36,14 @@
   "devDependencies": {
     "@playwright/test": "^1.53.0",
     "@types/express": "^5.0.3",
+    "@types/marked": "^5.0.2",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-playwright": "^1.8.3",
+    "marked": "^18.0.2",
     "prettier": "^3.3.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
