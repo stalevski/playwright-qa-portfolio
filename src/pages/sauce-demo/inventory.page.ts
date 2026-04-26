@@ -70,4 +70,31 @@ export class SauceDemoInventoryPage extends BasePage {
   async assertCartBadgeHidden(): Promise<void> {
     await expect(this.shoppingCartBadge).toHaveCount(0);
   }
+
+  cartButtonOf(itemName: string): Locator {
+    return this.inventoryItems.filter({ hasText: itemName }).getByRole('button');
+  }
+
+  async assertItemInCart(itemName: string): Promise<void> {
+    await expect(this.cartButtonOf(itemName)).toHaveText('Remove');
+  }
+
+  async assertItemNotInCart(itemName: string): Promise<void> {
+    await expect(this.cartButtonOf(itemName)).toHaveText('Add to cart');
+  }
+
+  async getItemImageSrcs(): Promise<string[]> {
+    const images = this.inventoryItems.locator('img.inventory_item_img');
+    const count = await images.count();
+    const srcs: string[] = [];
+    for (let i = 0; i < count; i += 1) {
+      srcs.push((await images.nth(i).getAttribute('src')) ?? '');
+    }
+    return srcs;
+  }
+
+  async getItemImageSrc(itemName: string): Promise<string> {
+    const image = this.inventoryItems.filter({ hasText: itemName }).locator('img.inventory_item_img');
+    return (await image.getAttribute('src')) ?? '';
+  }
 }
