@@ -66,7 +66,7 @@ jobs:
 
       - name: Upload PetHub Local HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-local
           path: playwright-report-local/
@@ -74,7 +74,7 @@ jobs:
 
       - name: Upload PetHub Local test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results-local
           path: test-results-local/
@@ -124,7 +124,7 @@ jobs:
 
       - name: Upload external HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -132,7 +132,7 @@ jobs:
 
       - name: Upload external test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results
           path: test-results/
