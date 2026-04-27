@@ -130,7 +130,7 @@ type DatabaseSchema = {
   sessions: SessionRecord[];
 };
 
-const databaseFile = 'apps/pethub-local/data/petstore-db.json';
+const databaseFile = 'apps/pethub-local/data/pethub-local-db.json';
 const directory = dirname(databaseFile);
 if (!existsSync(directory)) {
   mkdirSync(directory, { recursive: true });
