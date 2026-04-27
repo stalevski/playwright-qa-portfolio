@@ -1,8 +1,12 @@
-# PetHub QA Lab
+# Playwright QA Portfolio
 
-Playwright end-to-end and API automation framework for `https://petstore.swagger.io/`.
+End-to-end and API test automation portfolio in TypeScript and Playwright. Demonstrates page-object architecture, builder-based test data, multi-target test design, event-driven CQRS-style read models, and CI hardening.
 
-This repository now also includes a **local advanced Petstore app** with a local persistent database so you can practice against a deterministic target instead of a public demo site.
+The portfolio exercises three target systems:
+
+- **Swagger Petstore** — public REST API and UI demo (`https://petstore.swagger.io/`)
+- **Sauce Demo** — public e-commerce UI demo (`https://www.saucedemo.com/`)
+- **PetHub Local** — a self-contained Express + lowdb application included in this repo for deterministic local QA practice (see `apps/pethub-local`)
 
 ## Returning to this project after a while?
 

@@ -41,11 +41,11 @@ export const renderAdminHomePage = async (): Promise<string> => {
 
   return `<!DOCTYPE html>
 <html lang="en">
-${renderHead('PetHub QA Lab')}
+${renderHead('PetHub Local')}
 <body>
   <header>
     <div class="brand">
-      <h1 style="margin: 0; font-size: 20px;">PetHub QA Lab</h1>
+      <h1 style="margin: 0; font-size: 20px;">PetHub Local</h1>
       <span>Local QA sandbox for Playwright UI, API, event-driven CQRS flows, read models, downstream databases, and Swagger-style Petstore practice.</span>
     </div>
     <nav aria-label="Main">
