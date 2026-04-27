@@ -8,7 +8,7 @@ test.describe('Local Petstore API', () => {
     const health = await localApiClient.getHealth();
 
     expect(health.status).toBe('ok');
-    expect(health.service).toBe('pethub-qa-lab');
+    expect(health.service).toBe('pethub-local');
   });
 
   test('creates and updates a pet', async ({ localApiClient }) => {

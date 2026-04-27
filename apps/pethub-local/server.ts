@@ -21,7 +21,7 @@ const start = async (): Promise<void> => {
   await initializeLocalApp();
   app.listen(port, () => {
     // eslint-disable-next-line no-console -- intentional startup banner
-    console.log(`PetHub QA Lab running at http://127.0.0.1:${port}`);
+    console.log(`PetHub Local app running at http://127.0.0.1:${port}`);
   });
 };
 

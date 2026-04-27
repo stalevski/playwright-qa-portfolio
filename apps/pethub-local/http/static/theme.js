@@ -1,8 +1,9 @@
-/* PetHub QA Lab — theme toggle and toast helpers.
+/* PetHub Local — theme toggle and toast helpers.
  * The data-theme attribute on <html> is set inline in <head> before this file
  * loads to prevent a flash of incorrect colours; this script wires the toggle
  * button and reacts to OS preference changes.
  */
+/* eslint-env browser */
 (function () {
   var STORAGE_KEY = 'pethub-theme';
   var docEl = document.documentElement;
