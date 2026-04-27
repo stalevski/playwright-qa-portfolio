@@ -1,12 +1,132 @@
 {
   "petCatalog": [
     {
+      "id": 1018,
+      "name": "Syrian Hamster",
+      "category": "Hamsters",
+      "status": "sold",
+      "price": 50,
+      "updatedAt": "2026-04-24T02:53:45.192Z"
+    },
+    {
+      "id": 1017,
+      "name": "Guinea Pig Pair",
+      "category": "Small Mammals",
+      "status": "available",
+      "price": 120,
+      "updatedAt": "2026-04-22T02:53:45.192Z"
+    },
+    {
+      "id": 1016,
+      "name": "Holland Lop Rabbit",
+      "category": "Small Mammals",
+      "status": "available",
+      "price": 150,
+      "updatedAt": "2026-04-18T02:53:45.192Z"
+    },
+    {
+      "id": 1015,
+      "name": "Corn Snake",
+      "category": "Reptiles",
+      "status": "pending",
+      "price": 180,
+      "updatedAt": "2026-04-26T02:53:45.192Z"
+    },
+    {
+      "id": 1014,
+      "name": "Bearded Dragon",
+      "category": "Reptiles",
+      "status": "available",
+      "price": 400,
+      "updatedAt": "2026-04-07T02:53:45.192Z"
+    },
+    {
+      "id": 1013,
+      "name": "Goldfish Pair",
+      "category": "Fish",
+      "status": "available",
+      "price": 35,
+      "updatedAt": "2026-04-24T02:53:45.192Z"
+    },
+    {
+      "id": 1012,
+      "name": "Betta Fish",
+      "category": "Fish",
+      "status": "available",
+      "price": 45,
+      "updatedAt": "2026-04-23T02:53:45.192Z"
+    },
+    {
+      "id": 1011,
+      "name": "Canary",
+      "category": "Birds",
+      "status": "available",
+      "price": 250,
+      "updatedAt": "2026-04-21T02:53:45.192Z"
+    },
+    {
+      "id": 1010,
+      "name": "African Grey Parrot",
+      "category": "Birds",
+      "status": "available",
+      "price": 2200,
+      "updatedAt": "2026-04-15T02:53:45.192Z"
+    },
+    {
+      "id": 1009,
+      "name": "Persian Cat",
+      "category": "Cats",
+      "status": "sold",
+      "price": 1300,
+      "updatedAt": "2026-04-22T02:53:45.192Z"
+    },
+    {
+      "id": 1008,
+      "name": "Siamese Kitten",
+      "category": "Cats",
+      "status": "available",
+      "price": 850,
+      "updatedAt": "2026-04-20T02:53:45.192Z"
+    },
+    {
+      "id": 1007,
+      "name": "Maine Coon",
+      "category": "Cats",
+      "status": "available",
+      "price": 1400,
+      "updatedAt": "2026-04-09T02:53:45.192Z"
+    },
+    {
+      "id": 1006,
+      "name": "Border Collie",
+      "category": "Dogs",
+      "status": "pending",
+      "price": 1100,
+      "updatedAt": "2026-04-25T02:53:45.192Z"
+    },
+    {
+      "id": 1005,
+      "name": "Labrador Puppy",
+      "category": "Dogs",
+      "status": "available",
+      "price": 1500,
+      "updatedAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 1004,
+      "name": "French Bulldog",
+      "category": "Dogs",
+      "status": "available",
+      "price": 2800,
+      "updatedAt": "2026-04-06T02:53:45.192Z"
+    },
+    {
       "id": 1003,
       "name": "Cockatiel",
       "category": "Birds",
       "status": "sold",
       "price": 300,
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "updatedAt": "2026-04-19T02:53:45.192Z"
     },
     {
       "id": 1002,
@@ -14,7 +134,7 @@
       "category": "Cats",
       "status": "pending",
       "price": 900,
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "updatedAt": "2026-04-02T02:53:45.192Z"
     },
     {
       "id": 1001,
@@ -22,26 +142,86 @@
       "category": "Dogs",
       "status": "available",
       "price": 1200,
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "updatedAt": "2026-03-30T02:53:45.192Z"
     }
   ],
   "userDirectory": [
+    {
+      "id": 2008,
+      "username": "taylor.sales",
+      "email": "taylor.sales@localpetstore.test",
+      "role": "staff",
+      "createdAt": "2026-03-18T02:53:45.192Z"
+    },
+    {
+      "id": 2007,
+      "username": "lopez.vet",
+      "email": "lopez.vet@localpetstore.test",
+      "role": "staff",
+      "createdAt": "2026-03-08T02:53:45.192Z"
+    },
+    {
+      "id": 2006,
+      "username": "carlos.ruiz",
+      "email": "carlos.ruiz@localpetstore.test",
+      "role": "customer",
+      "createdAt": "2026-04-19T02:53:45.192Z"
+    },
+    {
+      "id": 2005,
+      "username": "sara.kim",
+      "email": "sara.kim@localpetstore.test",
+      "role": "customer",
+      "createdAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 2004,
+      "username": "daniel.park",
+      "email": "daniel.park@localpetstore.test",
+      "role": "customer",
+      "createdAt": "2026-04-05T02:53:45.192Z"
+    },
+    {
+      "id": 2003,
+      "username": "emma.chen",
+      "email": "emma.chen@localpetstore.test",
+      "role": "customer",
+      "createdAt": "2026-03-28T02:53:45.192Z"
+    },
     {
       "id": 2002,
       "username": "buyer01",
       "email": "buyer01@localpetstore.test",
       "role": "customer",
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-03-13T02:53:45.192Z"
     },
     {
       "id": 2001,
       "username": "admin",
       "email": "admin@localpetstore.test",
       "role": "admin",
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-02-26T02:53:45.192Z"
     }
   ],
   "employeeDirectory": [
+    {
+      "id": 4003,
+      "userId": 2008,
+      "employeeCode": "EMP-4003",
+      "department": "Retail",
+      "title": "Sales Associate",
+      "status": "active",
+      "createdAt": "2025-12-28T02:53:45.192Z"
+    },
+    {
+      "id": 4002,
+      "userId": 2007,
+      "employeeCode": "EMP-4002",
+      "department": "Veterinary",
+      "title": "Veterinarian",
+      "status": "active",
+      "createdAt": "2025-10-29T02:53:45.192Z"
+    },
     {
       "id": 4001,
       "userId": 2001,
@@ -49,10 +229,50 @@
       "department": "Operations",
       "title": "Store Administrator",
       "status": "active",
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2025-04-27T02:53:45.192Z"
     }
   ],
   "customerRegistry": [
+    {
+      "id": 5005,
+      "userId": 2006,
+      "customerNumber": "CUST-5005",
+      "segment": "rescue",
+      "loyaltyTier": "silver",
+      "status": "prospect",
+      "lifetimeValue": 0,
+      "createdAt": "2026-04-19T02:53:45.192Z"
+    },
+    {
+      "id": 5004,
+      "userId": 2005,
+      "customerNumber": "CUST-5004",
+      "segment": "breeder",
+      "loyaltyTier": "platinum",
+      "status": "active",
+      "lifetimeValue": 8200,
+      "createdAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 5003,
+      "userId": 2004,
+      "customerNumber": "CUST-5003",
+      "segment": "retail",
+      "loyaltyTier": "bronze",
+      "status": "active",
+      "lifetimeValue": 50,
+      "createdAt": "2026-04-05T02:53:45.192Z"
+    },
+    {
+      "id": 5002,
+      "userId": 2003,
+      "customerNumber": "CUST-5002",
+      "segment": "vip",
+      "loyaltyTier": "gold",
+      "status": "active",
+      "lifetimeValue": 3500,
+      "createdAt": "2026-03-28T02:53:45.192Z"
+    },
     {
       "id": 5001,
       "userId": 2002,
@@ -61,17 +281,105 @@
       "loyaltyTier": "silver",
       "status": "active",
       "lifetimeValue": 900,
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-03-13T02:53:45.192Z"
     }
   ],
   "orderLedger": [
+    {
+      "id": 3012,
+      "petId": 1012,
+      "userId": 2006,
+      "status": "placed",
+      "totalAmount": 90,
+      "updatedAt": "2026-04-27T02:08:45.192Z"
+    },
+    {
+      "id": 3011,
+      "petId": 1007,
+      "userId": 2002,
+      "status": "approved",
+      "totalAmount": 1400,
+      "updatedAt": "2026-04-26T14:53:45.192Z"
+    },
+    {
+      "id": 3010,
+      "petId": 1011,
+      "userId": 2005,
+      "status": "placed",
+      "totalAmount": 250,
+      "updatedAt": "2026-04-26T20:53:45.192Z"
+    },
+    {
+      "id": 3009,
+      "petId": 1014,
+      "userId": 2004,
+      "status": "cancelled",
+      "totalAmount": 400,
+      "updatedAt": "2026-04-23T02:53:45.192Z"
+    },
+    {
+      "id": 3008,
+      "petId": 1010,
+      "userId": 2003,
+      "status": "approved",
+      "totalAmount": 2200,
+      "updatedAt": "2026-04-26T06:53:45.192Z"
+    },
+    {
+      "id": 3007,
+      "petId": 1004,
+      "userId": 2006,
+      "status": "placed",
+      "totalAmount": 2800,
+      "updatedAt": "2026-04-26T08:53:45.192Z"
+    },
+    {
+      "id": 3006,
+      "petId": 1015,
+      "userId": 2005,
+      "status": "placed",
+      "totalAmount": 180,
+      "updatedAt": "2026-04-26T02:53:45.192Z"
+    },
+    {
+      "id": 3005,
+      "petId": 1006,
+      "userId": 2003,
+      "status": "approved",
+      "totalAmount": 1100,
+      "updatedAt": "2026-04-25T02:53:45.192Z"
+    },
+    {
+      "id": 3004,
+      "petId": 1018,
+      "userId": 2004,
+      "status": "completed",
+      "totalAmount": 50,
+      "updatedAt": "2026-04-24T02:53:45.192Z"
+    },
+    {
+      "id": 3003,
+      "petId": 1009,
+      "userId": 2003,
+      "status": "completed",
+      "totalAmount": 1300,
+      "updatedAt": "2026-04-22T02:53:45.192Z"
+    },
+    {
+      "id": 3002,
+      "petId": 1003,
+      "userId": 2002,
+      "status": "completed",
+      "totalAmount": 300,
+      "updatedAt": "2026-04-19T02:53:45.192Z"
+    },
     {
       "id": 3001,
       "petId": 1002,
       "userId": 2002,
       "status": "placed",
       "totalAmount": 900,
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "updatedAt": "2026-04-25T02:53:45.192Z"
     }
   ],
   "auditFeed": [],
