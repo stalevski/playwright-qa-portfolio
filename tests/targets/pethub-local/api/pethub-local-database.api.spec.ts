@@ -30,7 +30,7 @@ type ReadModelPetRow = {
   status: string;
 };
 
-const operationalDb = new JsonSqlDatabase('apps/pethub-local/data/petstore-db.json');
+const operationalDb = new JsonSqlDatabase('apps/pethub-local/data/pethub-local-db.json');
 const readModelsDb = new JsonSqlDatabase('apps/pethub-local/data/read-models-db.json');
 const nextUniqueId = (): number => Date.now() + Math.floor(Math.random() * 100000);
 
