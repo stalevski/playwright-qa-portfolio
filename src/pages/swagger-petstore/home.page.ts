@@ -173,7 +173,10 @@ export class PetStoreHomePage extends BasePage {
         break;
       }
 
-      await operationToggle.first().click().catch(() => undefined);
+      await operationToggle
+        .first()
+        .click()
+        .catch(() => undefined);
       await this.dismissCookieBanner();
     }
 

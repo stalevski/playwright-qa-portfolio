@@ -24,7 +24,9 @@ export class LocalPetStorePage extends BasePage {
     this.petsTable = this.petsHeading.locator('..').locator('table');
     this.createPetSection = page.getByRole('heading', { name: 'Create Pet', exact: true }).locator('..');
     this.createPetButton = page.getByRole('button', { name: 'Create pet' });
-    this.updatePetWithFormSection = page.getByRole('heading', { name: 'Update Pet With Form Data', exact: true }).locator('..');
+    this.updatePetWithFormSection = page
+      .getByRole('heading', { name: 'Update Pet With Form Data', exact: true })
+      .locator('..');
     this.petRows = this.petsTable.locator('tbody tr');
     this.ordersHeading = page.getByRole('heading', { name: 'Orders', exact: true });
     this.ordersTable = this.ordersHeading.locator('..').locator('table');
