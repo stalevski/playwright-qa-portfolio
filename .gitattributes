@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto-detect text files and force LF line endings in the working tree
+# on every platform. Overrides core.autocrlf, prevents Windows checkouts
+# from drifting to CRLF and breaking `prettier --check`.
+* text=auto eol=lf
