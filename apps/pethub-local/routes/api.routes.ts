@@ -45,7 +45,7 @@ import { respondNotFound } from '../http/responses';
 export const apiRouter = Router();
 
 apiRouter.get('/health', (_request: Request, response: Response) => {
-  response.json({ status: 'ok', service: 'pethub-qa-lab' });
+  response.json({ status: 'ok', service: 'pethub-local' });
 });
 
 apiRouter.get('/pets', async (_request: Request, response: Response) => {

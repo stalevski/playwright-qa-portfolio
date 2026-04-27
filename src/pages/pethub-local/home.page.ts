@@ -19,7 +19,7 @@ export class LocalPetStorePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.title = page.getByRole('heading', { name: 'PetHub QA Lab', exact: true });
+    this.title = page.getByRole('heading', { name: 'PetHub Local', exact: true });
     this.petsHeading = page.getByRole('heading', { name: 'Pets', exact: true });
     this.petsTable = this.petsHeading.locator('..').locator('table');
     this.createPetSection = page.getByRole('heading', { name: 'Create Pet', exact: true }).locator('..');
