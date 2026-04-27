@@ -6,9 +6,79 @@
       "category": "Dogs",
       "status": "available",
       "price": 1200,
-      "notes": "Friendly and family trained",
-      "createdAt": "2026-04-24T15:04:47.751Z",
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "notes": "Friendly and family trained. Vaccinated and microchipped.",
+      "tags": [
+        {
+          "id": 1,
+          "name": "family-friendly"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-03-30T02:53:45.192Z",
+      "updatedAt": "2026-03-30T02:53:45.192Z"
+    },
+    {
+      "id": 1004,
+      "name": "French Bulldog",
+      "category": "Dogs",
+      "status": "available",
+      "price": 2800,
+      "notes": "Pedigree puppy. Great for apartment living.",
+      "tags": [
+        {
+          "id": 2,
+          "name": "pedigree"
+        },
+        {
+          "id": 3,
+          "name": "apartment"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-06T02:53:45.192Z",
+      "updatedAt": "2026-04-06T02:53:45.192Z"
+    },
+    {
+      "id": 1005,
+      "name": "Labrador Puppy",
+      "category": "Dogs",
+      "status": "available",
+      "price": 1500,
+      "notes": "12 weeks old. Loves water and outdoor play.",
+      "tags": [
+        {
+          "id": 4,
+          "name": "puppy"
+        },
+        {
+          "id": 5,
+          "name": "outdoor"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-13T02:53:45.192Z",
+      "updatedAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 1006,
+      "name": "Border Collie",
+      "category": "Dogs",
+      "status": "pending",
+      "price": 1100,
+      "notes": "High-energy working breed. Basic obedience completed.",
+      "tags": [
+        {
+          "id": 6,
+          "name": "working"
+        },
+        {
+          "id": 7,
+          "name": "training-included"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-17T02:53:45.192Z",
+      "updatedAt": "2026-04-25T02:53:45.192Z"
     },
     {
       "id": 1002,
@@ -19,13 +89,76 @@
       "notes": "Indoor cat with vaccination record",
       "tags": [
         {
-          "id": 1,
+          "id": 8,
           "name": "indoor"
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T15:04:47.751Z",
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-04-02T02:53:45.192Z",
+      "updatedAt": "2026-04-02T02:53:45.192Z"
+    },
+    {
+      "id": 1007,
+      "name": "Maine Coon",
+      "category": "Cats",
+      "status": "available",
+      "price": 1400,
+      "notes": "Gentle giant. Hand-raised and socialised with children.",
+      "tags": [
+        {
+          "id": 9,
+          "name": "large-breed"
+        },
+        {
+          "id": 10,
+          "name": "long-hair"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-09T02:53:45.192Z",
+      "updatedAt": "2026-04-09T02:53:45.192Z"
+    },
+    {
+      "id": 1008,
+      "name": "Siamese Kitten",
+      "category": "Cats",
+      "status": "available",
+      "price": 850,
+      "notes": "Vocal and affectionate. Litter trained.",
+      "tags": [
+        {
+          "id": 11,
+          "name": "kitten"
+        },
+        {
+          "id": 8,
+          "name": "indoor"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-20T02:53:45.192Z",
+      "updatedAt": "2026-04-20T02:53:45.192Z"
+    },
+    {
+      "id": 1009,
+      "name": "Persian Cat",
+      "category": "Cats",
+      "status": "sold",
+      "price": 1300,
+      "notes": "Show-quality coat. Requires daily grooming.",
+      "tags": [
+        {
+          "id": 10,
+          "name": "long-hair"
+        },
+        {
+          "id": 12,
+          "name": "show-quality"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-03-23T02:53:45.192Z",
+      "updatedAt": "2026-04-22T02:53:45.192Z"
     },
     {
       "id": 1003,
@@ -36,13 +169,198 @@
       "notes": "Comes with cage and starter kit",
       "tags": [
         {
-          "id": 2,
+          "id": 13,
           "name": "starter-kit"
         }
       ],
       "photoUrls": [],
-      "createdAt": "2026-04-24T15:04:47.751Z",
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-03-18T02:53:45.192Z",
+      "updatedAt": "2026-04-19T02:53:45.192Z"
+    },
+    {
+      "id": 1010,
+      "name": "African Grey Parrot",
+      "category": "Birds",
+      "status": "available",
+      "price": 2200,
+      "notes": "Hand-tamed. Vocabulary of approximately 40 words.",
+      "tags": [
+        {
+          "id": 14,
+          "name": "exotic"
+        },
+        {
+          "id": 15,
+          "name": "hand-tamed"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-15T02:53:45.192Z",
+      "updatedAt": "2026-04-15T02:53:45.192Z"
+    },
+    {
+      "id": 1011,
+      "name": "Canary",
+      "category": "Birds",
+      "status": "available",
+      "price": 250,
+      "notes": "Bright song. Pair available on request.",
+      "tags": [
+        {
+          "id": 16,
+          "name": "songbird"
+        },
+        {
+          "id": 17,
+          "name": "beginner"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-21T02:53:45.192Z",
+      "updatedAt": "2026-04-21T02:53:45.192Z"
+    },
+    {
+      "id": 1012,
+      "name": "Betta Fish",
+      "category": "Fish",
+      "status": "available",
+      "price": 45,
+      "notes": "Vibrant red colour. Small tank suitable.",
+      "tags": [
+        {
+          "id": 17,
+          "name": "beginner"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-23T02:53:45.192Z",
+      "updatedAt": "2026-04-23T02:53:45.192Z"
+    },
+    {
+      "id": 1013,
+      "name": "Goldfish Pair",
+      "category": "Fish",
+      "status": "available",
+      "price": 35,
+      "notes": "Two fancy goldfish. Tank kit available separately.",
+      "tags": [
+        {
+          "id": 17,
+          "name": "beginner"
+        },
+        {
+          "id": 18,
+          "name": "pair"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-24T02:53:45.192Z",
+      "updatedAt": "2026-04-24T02:53:45.192Z"
+    },
+    {
+      "id": 1014,
+      "name": "Bearded Dragon",
+      "category": "Reptiles",
+      "status": "available",
+      "price": 400,
+      "notes": "Captive-bred. Eats greens and insects.",
+      "tags": [
+        {
+          "id": 14,
+          "name": "exotic"
+        },
+        {
+          "id": 19,
+          "name": "reptile"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-07T02:53:45.192Z",
+      "updatedAt": "2026-04-07T02:53:45.192Z"
+    },
+    {
+      "id": 1015,
+      "name": "Corn Snake",
+      "category": "Reptiles",
+      "status": "pending",
+      "price": 180,
+      "notes": "Docile temperament. Beginner-friendly snake.",
+      "tags": [
+        {
+          "id": 17,
+          "name": "beginner"
+        },
+        {
+          "id": 19,
+          "name": "reptile"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-16T02:53:45.192Z",
+      "updatedAt": "2026-04-26T02:53:45.192Z"
+    },
+    {
+      "id": 1016,
+      "name": "Holland Lop Rabbit",
+      "category": "Small Mammals",
+      "status": "available",
+      "price": 150,
+      "notes": "Floppy-eared rabbit. Litter trained.",
+      "tags": [
+        {
+          "id": 1,
+          "name": "family-friendly"
+        },
+        {
+          "id": 17,
+          "name": "beginner"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-18T02:53:45.192Z",
+      "updatedAt": "2026-04-18T02:53:45.192Z"
+    },
+    {
+      "id": 1017,
+      "name": "Guinea Pig Pair",
+      "category": "Small Mammals",
+      "status": "available",
+      "price": 120,
+      "notes": "Bonded pair. Needs to be sold together.",
+      "tags": [
+        {
+          "id": 18,
+          "name": "pair"
+        },
+        {
+          "id": 1,
+          "name": "family-friendly"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-22T02:53:45.192Z",
+      "updatedAt": "2026-04-22T02:53:45.192Z"
+    },
+    {
+      "id": 1018,
+      "name": "Syrian Hamster",
+      "category": "Hamsters",
+      "status": "sold",
+      "price": 50,
+      "notes": "Solitary species. Cage and wheel included.",
+      "tags": [
+        {
+          "id": 17,
+          "name": "beginner"
+        },
+        {
+          "id": 13,
+          "name": "starter-kit"
+        }
+      ],
+      "photoUrls": [],
+      "createdAt": "2026-04-12T02:53:45.192Z",
+      "updatedAt": "2026-04-24T02:53:45.192Z"
     }
   ],
   "users": [
@@ -56,7 +374,7 @@
       "password": "Password123!",
       "phone": "1002003000",
       "userStatus": 1,
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-02-26T02:53:45.192Z"
     },
     {
       "id": 2002,
@@ -68,7 +386,79 @@
       "password": "Password123!",
       "phone": "1234567890",
       "userStatus": 1,
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-03-13T02:53:45.192Z"
+    },
+    {
+      "id": 2003,
+      "username": "emma.chen",
+      "firstName": "Emma",
+      "lastName": "Chen",
+      "email": "emma.chen@localpetstore.test",
+      "role": "customer",
+      "password": "Password123!",
+      "phone": "1230011111",
+      "userStatus": 1,
+      "createdAt": "2026-03-28T02:53:45.192Z"
+    },
+    {
+      "id": 2004,
+      "username": "daniel.park",
+      "firstName": "Daniel",
+      "lastName": "Park",
+      "email": "daniel.park@localpetstore.test",
+      "role": "customer",
+      "password": "Password123!",
+      "phone": "1230022222",
+      "userStatus": 1,
+      "createdAt": "2026-04-05T02:53:45.192Z"
+    },
+    {
+      "id": 2005,
+      "username": "sara.kim",
+      "firstName": "Sara",
+      "lastName": "Kim",
+      "email": "sara.kim@localpetstore.test",
+      "role": "customer",
+      "password": "Password123!",
+      "phone": "1230033333",
+      "userStatus": 1,
+      "createdAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 2006,
+      "username": "carlos.ruiz",
+      "firstName": "Carlos",
+      "lastName": "Ruiz",
+      "email": "carlos.ruiz@localpetstore.test",
+      "role": "customer",
+      "password": "Password123!",
+      "phone": "1230044444",
+      "userStatus": 1,
+      "createdAt": "2026-04-19T02:53:45.192Z"
+    },
+    {
+      "id": 2007,
+      "username": "lopez.vet",
+      "firstName": "Maria",
+      "lastName": "Lopez",
+      "email": "lopez.vet@localpetstore.test",
+      "role": "staff",
+      "password": "Password123!",
+      "phone": "1004005000",
+      "userStatus": 1,
+      "createdAt": "2026-03-08T02:53:45.192Z"
+    },
+    {
+      "id": 2008,
+      "username": "taylor.sales",
+      "firstName": "Jordan",
+      "lastName": "Taylor",
+      "email": "taylor.sales@localpetstore.test",
+      "role": "staff",
+      "password": "Password123!",
+      "phone": "1006007000",
+      "userStatus": 1,
+      "createdAt": "2026-03-18T02:53:45.192Z"
     }
   ],
   "employees": [
@@ -80,8 +470,30 @@
       "title": "Store Administrator",
       "location": "HQ",
       "status": "active",
-      "hireDate": "2026-04-24T15:04:47.751Z",
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "hireDate": "2025-04-27T02:53:45.192Z",
+      "createdAt": "2025-04-27T02:53:45.192Z"
+    },
+    {
+      "id": 4002,
+      "userId": 2007,
+      "employeeCode": "EMP-4002",
+      "department": "Veterinary",
+      "title": "Veterinarian",
+      "location": "Clinic",
+      "status": "active",
+      "hireDate": "2025-10-29T02:53:45.192Z",
+      "createdAt": "2025-10-29T02:53:45.192Z"
+    },
+    {
+      "id": 4003,
+      "userId": 2008,
+      "employeeCode": "EMP-4003",
+      "department": "Retail",
+      "title": "Sales Associate",
+      "location": "Store Floor",
+      "status": "active",
+      "hireDate": "2025-12-28T02:53:45.192Z",
+      "createdAt": "2025-12-28T02:53:45.192Z"
     }
   ],
   "customers": [
@@ -93,7 +505,47 @@
       "loyaltyTier": "silver",
       "status": "active",
       "lifetimeValue": 900,
-      "createdAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-03-13T02:53:45.192Z"
+    },
+    {
+      "id": 5002,
+      "userId": 2003,
+      "customerNumber": "CUST-5002",
+      "segment": "vip",
+      "loyaltyTier": "gold",
+      "status": "active",
+      "lifetimeValue": 3500,
+      "createdAt": "2026-03-28T02:53:45.192Z"
+    },
+    {
+      "id": 5003,
+      "userId": 2004,
+      "customerNumber": "CUST-5003",
+      "segment": "retail",
+      "loyaltyTier": "bronze",
+      "status": "active",
+      "lifetimeValue": 50,
+      "createdAt": "2026-04-05T02:53:45.192Z"
+    },
+    {
+      "id": 5004,
+      "userId": 2005,
+      "customerNumber": "CUST-5004",
+      "segment": "breeder",
+      "loyaltyTier": "platinum",
+      "status": "active",
+      "lifetimeValue": 8200,
+      "createdAt": "2026-04-13T02:53:45.192Z"
+    },
+    {
+      "id": 5005,
+      "userId": 2006,
+      "customerNumber": "CUST-5005",
+      "segment": "rescue",
+      "loyaltyTier": "silver",
+      "status": "prospect",
+      "lifetimeValue": 0,
+      "createdAt": "2026-04-19T02:53:45.192Z"
     }
   ],
   "orders": [
@@ -104,8 +556,118 @@
       "quantity": 1,
       "status": "placed",
       "totalAmount": 900,
-      "createdAt": "2026-04-24T15:04:47.751Z",
-      "updatedAt": "2026-04-24T15:04:47.751Z"
+      "createdAt": "2026-04-25T02:53:45.192Z",
+      "updatedAt": "2026-04-25T02:53:45.192Z"
+    },
+    {
+      "id": 3002,
+      "petId": 1003,
+      "userId": 2002,
+      "quantity": 1,
+      "status": "completed",
+      "totalAmount": 300,
+      "createdAt": "2026-03-18T02:53:45.192Z",
+      "updatedAt": "2026-04-19T02:53:45.192Z"
+    },
+    {
+      "id": 3003,
+      "petId": 1009,
+      "userId": 2003,
+      "quantity": 1,
+      "status": "completed",
+      "totalAmount": 1300,
+      "createdAt": "2026-03-23T02:53:45.192Z",
+      "updatedAt": "2026-04-22T02:53:45.192Z"
+    },
+    {
+      "id": 3004,
+      "petId": 1018,
+      "userId": 2004,
+      "quantity": 1,
+      "status": "completed",
+      "totalAmount": 50,
+      "createdAt": "2026-04-12T02:53:45.192Z",
+      "updatedAt": "2026-04-24T02:53:45.192Z"
+    },
+    {
+      "id": 3005,
+      "petId": 1006,
+      "userId": 2003,
+      "quantity": 1,
+      "status": "approved",
+      "totalAmount": 1100,
+      "createdAt": "2026-04-17T02:53:45.192Z",
+      "updatedAt": "2026-04-25T02:53:45.192Z"
+    },
+    {
+      "id": 3006,
+      "petId": 1015,
+      "userId": 2005,
+      "quantity": 1,
+      "status": "placed",
+      "totalAmount": 180,
+      "createdAt": "2026-04-16T02:53:45.192Z",
+      "updatedAt": "2026-04-26T02:53:45.192Z"
+    },
+    {
+      "id": 3007,
+      "petId": 1004,
+      "userId": 2006,
+      "quantity": 1,
+      "status": "placed",
+      "totalAmount": 2800,
+      "createdAt": "2026-04-26T08:53:45.192Z",
+      "updatedAt": "2026-04-26T08:53:45.192Z"
+    },
+    {
+      "id": 3008,
+      "petId": 1010,
+      "userId": 2003,
+      "quantity": 1,
+      "status": "approved",
+      "totalAmount": 2200,
+      "createdAt": "2026-04-21T02:53:45.192Z",
+      "updatedAt": "2026-04-26T06:53:45.192Z"
+    },
+    {
+      "id": 3009,
+      "petId": 1014,
+      "userId": 2004,
+      "quantity": 1,
+      "status": "cancelled",
+      "totalAmount": 400,
+      "createdAt": "2026-04-20T02:53:45.192Z",
+      "updatedAt": "2026-04-23T02:53:45.192Z"
+    },
+    {
+      "id": 3010,
+      "petId": 1011,
+      "userId": 2005,
+      "quantity": 1,
+      "status": "placed",
+      "totalAmount": 250,
+      "createdAt": "2026-04-26T20:53:45.192Z",
+      "updatedAt": "2026-04-26T20:53:45.192Z"
+    },
+    {
+      "id": 3011,
+      "petId": 1007,
+      "userId": 2002,
+      "quantity": 1,
+      "status": "approved",
+      "totalAmount": 1400,
+      "createdAt": "2026-04-24T02:53:45.192Z",
+      "updatedAt": "2026-04-26T14:53:45.192Z"
+    },
+    {
+      "id": 3012,
+      "petId": 1012,
+      "userId": 2006,
+      "quantity": 2,
+      "status": "placed",
+      "totalAmount": 90,
+      "createdAt": "2026-04-27T02:08:45.192Z",
+      "updatedAt": "2026-04-27T02:08:45.192Z"
     }
   ],
   "auditLog": [],
