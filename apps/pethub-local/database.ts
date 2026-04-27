@@ -2,6 +2,13 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import {
+  buildSeedCustomers,
+  buildSeedEmployees,
+  buildSeedOrders,
+  buildSeedPets,
+  buildSeedUsers,
+} from './database.seed';
 import { initializeDownstreamSystems, syncDownstreamSystemsFromSource } from './downstream-systems';
 import { initializeReadModels, syncReadModelsFromSource } from './read-models';
 
@@ -188,116 +195,23 @@ export const initializeDatabase = async (): Promise<void> => {
   await ensureLoaded();
 
   if (database.data.pets.length === 0) {
-    const timestamp = now();
-    database.data.pets.push(
-      {
-        id: 1001,
-        name: 'Golden Retriever',
-        category: 'Dogs',
-        status: 'available',
-        price: 1200,
-        notes: 'Friendly and family trained',
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      },
-      {
-        id: 1002,
-        name: 'British Shorthair',
-        category: 'Cats',
-        status: 'pending',
-        price: 900,
-        notes: 'Indoor cat with vaccination record',
-        tags: [{ id: 1, name: 'indoor' }],
-        photoUrls: [],
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      },
-      {
-        id: 1003,
-        name: 'Cockatiel',
-        category: 'Birds',
-        status: 'sold',
-        price: 300,
-        notes: 'Comes with cage and starter kit',
-        tags: [{ id: 2, name: 'starter-kit' }],
-        photoUrls: [],
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      },
-    );
+    database.data.pets.push(...buildSeedPets());
   }
 
   if (database.data.users.length === 0) {
-    const timestamp = now();
-    database.data.users.push(
-      {
-        id: 2001,
-        username: 'admin',
-        firstName: 'Store',
-        lastName: 'Admin',
-        email: 'admin@localpetstore.test',
-        role: 'admin',
-        password: 'Password123!',
-        phone: '1002003000',
-        userStatus: 1,
-        createdAt: timestamp,
-      },
-      {
-        id: 2002,
-        username: 'buyer01',
-        firstName: 'Pet',
-        lastName: 'Buyer',
-        email: 'buyer01@localpetstore.test',
-        role: 'customer',
-        password: 'Password123!',
-        phone: '1234567890',
-        userStatus: 1,
-        createdAt: timestamp,
-      },
-    );
+    database.data.users.push(...buildSeedUsers());
   }
 
   if (database.data.employees.length === 0) {
-    const timestamp = now();
-    database.data.employees.push({
-      id: 4001,
-      userId: 2001,
-      employeeCode: 'EMP-4001',
-      department: 'Operations',
-      title: 'Store Administrator',
-      location: 'HQ',
-      status: 'active',
-      hireDate: timestamp,
-      createdAt: timestamp,
-    });
+    database.data.employees.push(...buildSeedEmployees());
   }
 
   if (database.data.customers.length === 0) {
-    const timestamp = now();
-    database.data.customers.push({
-      id: 5001,
-      userId: 2002,
-      customerNumber: 'CUST-5001',
-      segment: 'retail',
-      loyaltyTier: 'silver',
-      status: 'active',
-      lifetimeValue: 900,
-      createdAt: timestamp,
-    });
+    database.data.customers.push(...buildSeedCustomers());
   }
 
   if (database.data.orders.length === 0) {
-    const timestamp = now();
-    database.data.orders.push({
-      id: 3001,
-      petId: 1002,
-      userId: 2002,
-      quantity: 1,
-      status: 'placed',
-      totalAmount: 900,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    });
+    database.data.orders.push(...buildSeedOrders());
   }
 
   await initializeReadModels();
