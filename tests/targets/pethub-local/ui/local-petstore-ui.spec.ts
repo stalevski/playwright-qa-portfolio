@@ -56,4 +56,18 @@ test.describe('Local Petstore UI', () => {
 
     await localHomePage.assertPetVisible(updatedPet);
   });
+
+  test('admin dashboard exposes the shared theme toggle and reacts to clicks', async ({ localHomePage, page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+
+    const html = page.locator('html');
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+
+    const toggle = page.getByTestId('theme-toggle');
+    await expect(toggle).toBeVisible();
+    await toggle.click();
+    await expect(html).toHaveAttribute('data-theme', 'light');
+  });
 });

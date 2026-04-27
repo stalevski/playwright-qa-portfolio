@@ -5,7 +5,7 @@ import {
   getOrdersWithRelationsQuery,
   getReadModelsQuery,
 } from '../queries';
-import { renderStatCard } from '../http/render-helpers';
+import { renderHead, renderStatCard, renderThemeToggle } from '../http/render-helpers';
 
 export type OpsCaseSeverity = 'low' | 'medium' | 'high';
 
@@ -64,9 +64,9 @@ export const opsCases: OpsCase[] = [
 ];
 
 const severityColor: Record<OpsCaseSeverity, string> = {
-  low: '#0f766e',
-  medium: '#d97706',
-  high: '#dc2626',
+  low: 'var(--success)',
+  medium: 'var(--warning)',
+  high: 'var(--danger)',
 };
 
 export const renderOpsLayout = (options: {
@@ -75,53 +75,21 @@ export const renderOpsLayout = (options: {
   activeNav?: 'overview' | 'queue' | 'comparisons' | 'incidents';
 }): string => `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${options.title}</title>
-  <style>
-    body { font-family: Inter, Arial, sans-serif; margin: 0; background: #06111f; color: #e2e8f0; }
-    a { color: inherit; text-decoration: none; }
-    header { padding: 20px 28px; background: #0b1628; border-bottom: 1px solid #243449; display: flex; justify-content: space-between; align-items: center; }
-    .brand { display: grid; gap: 4px; }
-    .brand strong { font-size: 20px; }
-    .brand span { color: #9fb0c9; font-size: 13px; }
-    nav { display: flex; gap: 12px; flex-wrap: wrap; }
-    nav a { padding: 10px 14px; border-radius: 999px; border: 1px solid #31455f; background: #132238; }
-    nav a.active { background: #2563eb; border-color: #2563eb; }
-    main { padding: 28px; display: grid; gap: 24px; }
-    .hero { padding: 24px; border-radius: 22px; background: linear-gradient(135deg, #0f3a73, #4f46e5); }
-    .hero h1, .hero p { margin: 0; }
-    .hero p { margin-top: 10px; color: #dbeafe; max-width: 900px; }
-    .grid { display: grid; gap: 18px; }
-    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .two-column { grid-template-columns: 1.2fr 0.8fr; }
-    .three-column { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .card, section { background: #0c1728; border: 1px solid #243449; border-radius: 18px; padding: 20px; }
-    h1, h2, h3 { margin-top: 0; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #243449; font-size: 14px; vertical-align: top; }
-    .muted { color: #9fb0c9; }
-    .pill { display: inline-flex; padding: 5px 10px; border-radius: 999px; font-size: 12px; color: white; }
-    .list { display: grid; gap: 10px; }
-    .list div { padding: 12px 14px; border-radius: 12px; background: #101d31; border: 1px solid #22324a; }
-    .code { font-family: Consolas, monospace; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
-    @media (max-width: 1000px) { .stats, .two-column, .three-column { grid-template-columns: 1fr; } }
-  </style>
-</head>
+${renderHead(options.title)}
 <body>
   <header>
     <div class="brand">
       <strong>PetHub Operations Portal</strong>
       <span>Workflow monitoring, projections, downstream replicas, and investigation practice</span>
     </div>
-    <nav>
-      <a href="/" >Admin</a>
+    <nav aria-label="Operations">
+      <a href="/">Admin</a>
       <a href="/shop">Storefront</a>
       <a href="/ops" class="${options.activeNav === 'overview' ? 'active' : ''}">Overview</a>
       <a href="/ops/queue" class="${options.activeNav === 'queue' ? 'active' : ''}">Work Queue</a>
       <a href="/ops/comparisons" class="${options.activeNav === 'comparisons' ? 'active' : ''}">Comparisons</a>
       <a href="/ops/incidents" class="${options.activeNav === 'incidents' ? 'active' : ''}">Incidents</a>
+      ${renderThemeToggle()}
     </nav>
   </header>
   <main>

@@ -101,6 +101,7 @@ export type LocalAppEventType =
   | 'pet.updated'
   | 'pet.deleted'
   | 'user.created'
+  | 'user.updated'
   | 'order.created'
   | 'order.status-updated';
 

@@ -55,7 +55,10 @@ export class StorefrontInventoryPage extends BasePage {
 
   async addItemToCart(itemName: string): Promise<void> {
     const card = this.itemNames.filter({ hasText: itemName }).locator('..').locator('..');
-    await card.getByRole('button', { name: 'Add to cart' }).click();
+    await Promise.all([
+      this.page.waitForURL(/\/shop\/inventory(?:\?.*)?$/),
+      card.getByRole('button', { name: 'Add to cart' }).click(),
+    ]);
   }
 
   async openItemDetails(itemName: string): Promise<void> {
@@ -71,6 +74,6 @@ export class StorefrontInventoryPage extends BasePage {
   }
 
   async logout(): Promise<void> {
-    await this.logoutButton.click();
+    await Promise.all([this.page.waitForURL(/\/shop\/?$/), this.logoutButton.click()]);
   }
 }

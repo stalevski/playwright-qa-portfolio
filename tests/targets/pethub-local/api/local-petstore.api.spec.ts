@@ -257,4 +257,35 @@ test.describe('Local Petstore API', () => {
       ),
     ).toBeTruthy();
   });
+
+  test('emits a user.updated event (not user.created) when an existing user is updated', async ({ localApiClient }) => {
+    const user = RandomDataGenerator.createLocalUser({ role: 'customer' });
+    await localApiClient.createUser(user);
+    await localApiClient.updateUser(user.username, { ...user, firstName: 'Renamed' });
+
+    const events = await localApiClient.getEvents();
+    const updateEvent = events.find((event) => event.entityId === user.id && event.type === 'user.updated');
+    expect(updateEvent, 'user.updated event should be emitted on update').toBeDefined();
+
+    const audit = await localApiClient.getAuditLog();
+    const updateAudit = audit.find(
+      (entry) => entry.entityType === 'user' && entry.entityId === user.id && entry.action === 'updated',
+    );
+    expect(updateAudit?.details).toContain('updated');
+  });
+
+  test('admin reset endpoint clears arbitrary state and reseeds the seed data', async ({ localApiClient, request }) => {
+    const ephemeralPet = RandomDataGenerator.createLocalPet({ category: 'Dogs', status: 'available' });
+    await localApiClient.createPet(ephemeralPet);
+    expect((await localApiClient.getPets()).some((pet) => pet.id === ephemeralPet.id)).toBeTruthy();
+
+    const resetResponse = await request.post('admin/reset');
+    expect(resetResponse.status()).toBe(200);
+    const resetBody = await resetResponse.json();
+    expect(resetBody).toEqual({ status: 'ok', message: 'database reset and reseeded' });
+
+    const petsAfterReset = await localApiClient.getPets();
+    expect(petsAfterReset.some((pet) => pet.id === ephemeralPet.id)).toBeFalsy();
+    expect(petsAfterReset.some((pet) => pet.id === 1001 && pet.name === 'Golden Retriever')).toBeTruthy();
+  });
 });

@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import { createOrderCommand } from '../commands';
+import { getPetByIdQuery } from '../queries';
 import {
   clearStorefrontSessionCookie,
   getCartDetails,
@@ -83,7 +84,16 @@ storefrontRouter.get('/inventory', async (request: Request, response: Response) 
 
   const rawSort = String(request.query.sort ?? 'az');
   const sort: StorefrontSortValue = rawSort === 'za' || rawSort === 'lohi' || rawSort === 'hilo' ? rawSort : 'az';
-  response.send(await renderStorefrontInventory(session, sort));
+
+  const addedName = typeof request.query.added === 'string' ? request.query.added.trim() : '';
+  const removedName = typeof request.query.removed === 'string' ? request.query.removed.trim() : '';
+  const toast = addedName
+    ? { message: `${addedName} added to cart`, variant: 'success' as const }
+    : removedName
+      ? { message: `${removedName} removed from cart`, variant: 'success' as const }
+      : undefined;
+
+  response.send(await renderStorefrontInventory(session, sort, toast));
 });
 
 storefrontRouter.get('/item/:id', async (request: Request, response: Response) => {
@@ -109,7 +119,9 @@ storefrontRouter.post('/cart/add', async (request: Request, response: Response) 
     session.cart.push({ petId, quantity: 1 });
   }
 
-  response.redirect('/shop/inventory');
+  const pet = await getPetByIdQuery(petId);
+  const name = pet?.name ?? `pet #${petId}`;
+  response.redirect(`/shop/inventory?added=${encodeURIComponent(name)}`);
 });
 
 storefrontRouter.post('/cart/remove', (request: Request, response: Response) => {
