@@ -27,7 +27,11 @@
     "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"apps/**/*.ts\" \"scripts/**/*.ts\" \"playwright.config.ts\" \"playwright.local.config.ts\" \"test-targets.config.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "doctor": "node --version && npm --version && npx playwright --version && npx tsc --noEmit && echo Doctor: OK"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "express": "^4.21.2",

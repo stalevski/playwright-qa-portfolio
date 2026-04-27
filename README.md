@@ -4,6 +4,16 @@ Playwright end-to-end and API automation framework for `https://petstore.swagger
 
 This repository now also includes a **local advanced Petstore app** with a local persistent database so you can practice against a deterministic target instead of a public demo site.
 
+## Returning to this project after a while?
+
+If you have not touched this repo in months, run through this checklist before anything else:
+
+1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=20.0.0`). The pinned LTS major lives in `.nvmrc`.
+2. **Reinstall dependencies cleanly**: `npm.cmd ci` (uses `package-lock.json` exactly).
+3. **Run the environment doctor**: `npm.cmd run doctor` (prints versions and runs a TypeScript type check).
+4. **Smoke test the local app**: `npm.cmd run test:pethub-local` — fully self-contained, no external sites needed.
+5. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Check the most recent scheduled CI run on GitHub for context. External target jobs are configured as **informational** in CI so they do not block PRs.
+
 ## Stack
 
 - Playwright Test
