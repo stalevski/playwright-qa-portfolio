@@ -11,3 +11,13 @@ Thumbs.db
 blob-report/
 dist/
 coverage/
+
+# Build & lint caches
+*.tsbuildinfo
+.eslintcache
+
+# IDE / editor local files
+.idea/
+.history/
+*.swp
+*.swo
