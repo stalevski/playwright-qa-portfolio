@@ -120,4 +120,95 @@ test.describe('PetHub Storefront UI', () => {
     await localHomePage.goto();
     await localHomePage.assertOrderRelationVisible(String(orderId));
   });
+
+  test('sorts inventory by name Z to A', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    await storefrontInventoryPage.sortBy('za');
+    const names = await storefrontInventoryPage.getItemNames();
+    const expected = [...names].sort((left, right) => right.localeCompare(left));
+    expect(names).toEqual(expected);
+  });
+
+  test('sorts inventory by price high to low', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    await storefrontInventoryPage.sortBy('hilo');
+    const prices = await storefrontInventoryPage.getPrices();
+    const expected = [...prices].sort((left, right) => right - left);
+    expect(prices).toEqual(expected);
+  });
+
+  test('shows a confirmation toast after adding an item to the cart', async ({
+    storefrontLoginPage,
+    storefrontInventoryPage,
+    page,
+  }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    const [firstItem] = await storefrontInventoryPage.getItemNames();
+    await storefrontInventoryPage.addItemToCart(firstItem);
+    await expect(page.getByTestId('toast')).toContainText(`${firstItem} added to cart`);
+  });
+
+  test('removes an item from the cart and shows the empty cart message', async ({
+    storefrontLoginPage,
+    storefrontInventoryPage,
+    storefrontCartPage,
+  }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    const [firstItem] = await storefrontInventoryPage.getItemNames();
+    await storefrontInventoryPage.addItemToCart(firstItem);
+    await storefrontInventoryPage.assertCartBadgeCount(1);
+    await storefrontInventoryPage.openCart();
+    await storefrontCartPage.assertLoaded();
+    await storefrontCartPage.removeItem(firstItem);
+    await storefrontCartPage.assertEmpty();
+  });
+
+  test('logs the user out and returns to the login page', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    await storefrontInventoryPage.logout();
+    await storefrontLoginPage.assertLoaded();
+  });
+});
+
+test.describe('PetHub Storefront theme toggle', () => {
+  const standardUser = 'standard_user';
+  const password = 'secret_sauce';
+
+  test('toggles between dark and light themes and persists across reloads', async ({ storefrontLoginPage, page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+
+    const html = page.locator('html');
+    const toggle = page.getByTestId('theme-toggle').first();
+
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+    await expect(toggle).toBeVisible();
+
+    await toggle.click();
+    await expect(html).toHaveAttribute('data-theme', 'light');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+    await page.reload();
+    await expect(html).toHaveAttribute('data-theme', 'light');
+
+    await page.getByTestId('theme-toggle').first().click();
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+    await expect(page.getByTestId('theme-toggle').first()).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('respects the prefers-color-scheme media query when no choice is stored', async ({
+    storefrontLoginPage,
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: 'light' });
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  });
 });

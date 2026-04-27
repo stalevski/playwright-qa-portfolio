@@ -19,7 +19,7 @@ export class StorefrontCartPage extends BasePage {
       .locator('.row-between')
       .nth(1)
       .locator('xpath=ancestor::section//div[contains(@class, "row-between")]');
-    this.emptyMessage = page.getByText('Your cart is currently empty');
+    this.emptyMessage = page.getByTestId('empty-cart');
   }
 
   async goto(): Promise<void> {
@@ -43,7 +43,10 @@ export class StorefrontCartPage extends BasePage {
       .locator('section.panel')
       .filter({ hasText: itemName })
       .locator('form[action="/shop/cart/remove"]');
-    await row.getByRole('button', { name: 'Remove' }).first().click();
+    await Promise.all([
+      this.page.waitForURL(/\/shop\/cart(?:\?.*)?$/),
+      row.getByRole('button', { name: 'Remove' }).first().click(),
+    ]);
   }
 
   async proceedToCheckout(): Promise<void> {

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { getPetsQuery } from '../queries';
+import { renderHead, renderThemeToggle, renderToast } from '../http/render-helpers';
 
 export type StorefrontUser = {
   username: string;
@@ -159,55 +160,10 @@ export const renderStorefrontLayout = (options: {
   body: string;
   session?: StorefrontSession;
   activeNav?: 'inventory' | 'cart' | 'checkout';
+  toast?: { message: string; variant?: 'success' | 'error' };
 }): string => `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${options.title}</title>
-  <style>
-    body { font-family: Inter, Arial, sans-serif; margin: 0; background: #0b1020; color: #e5eefc; }
-    a { color: inherit; text-decoration: none; }
-    .shell { min-height: 100vh; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; background: #11162a; border-bottom: 1px solid #26304d; position: sticky; top: 0; }
-    .brand { display: grid; gap: 4px; }
-    .brand strong { font-size: 20px; }
-    .brand span { color: #93a4c7; font-size: 13px; }
-    .nav { display: flex; gap: 12px; align-items: center; }
-    .nav a, .nav button { background: ${options.activeNav ? '#18233f' : '#18233f'}; color: #e5eefc; border: 1px solid #334166; border-radius: 999px; padding: 10px 14px; font: inherit; cursor: pointer; }
-    .nav .active { background: #2563eb; border-color: #2563eb; }
-    .badge { display: inline-flex; min-width: 24px; justify-content: center; padding: 2px 8px; background: #f97316; color: white; border-radius: 999px; font-size: 12px; }
-    main { padding: 32px; display: grid; gap: 24px; }
-    .hero { display: grid; gap: 12px; background: linear-gradient(135deg, #1d4ed8, #7c3aed); padding: 28px; border-radius: 24px; }
-    .hero h1 { margin: 0; font-size: 34px; }
-    .hero p { margin: 0; max-width: 780px; color: #dbe6ff; }
-    .panel { background: #11162a; border: 1px solid #26304d; border-radius: 20px; padding: 24px; }
-    .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-    .product-card { background: #131b31; border: 1px solid #2d3b5d; border-radius: 18px; padding: 18px; display: grid; gap: 12px; }
-    .product-card .icon { font-size: 36px; }
-    .product-card .meta { color: #8da2cc; font-size: 14px; }
-    .price { font-size: 26px; font-weight: 700; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-    .row-between { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
-    .button, button, select, input { border-radius: 12px; font: inherit; }
-    .button, button { border: none; padding: 12px 14px; background: #2563eb; color: white; cursor: pointer; }
-    .button.secondary { background: #1f2937; border: 1px solid #334155; }
-    .button.ghost { background: transparent; border: 1px solid #334155; }
-    input, select { padding: 12px 14px; border: 1px solid #334155; background: #0f172a; color: #e5eefc; }
-    .stack { display: grid; gap: 14px; }
-    .error { padding: 12px 14px; border-radius: 14px; background: #451a1a; color: #fecaca; border: 1px solid #7f1d1d; }
-    .muted { color: #93a4c7; }
-    .summary { display: grid; gap: 10px; }
-    .summary div { display: flex; justify-content: space-between; }
-    .pill { border-radius: 999px; padding: 5px 10px; font-size: 12px; background: #1d4ed8; display: inline-block; }
-    .login-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
-    @media (max-width: 900px) {
-      .login-grid { grid-template-columns: 1fr; }
-      main { padding: 20px; }
-      .topbar { padding: 16px 20px; }
-    }
-  </style>
-</head>
+${renderHead(options.title)}
 <body>
   <div class="shell">
     <header class="topbar">
@@ -215,17 +171,19 @@ export const renderStorefrontLayout = (options: {
         <strong>PetHub Outfitters</strong>
         <span>Self-hosted QA storefront for inventory, cart, and checkout practice</span>
       </div>
-      <nav class="nav">
+      <nav class="nav" aria-label="Storefront">
         <a href="/">Admin</a>
         <a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}">Inventory</a>
         <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}">Cart ${options.session ? `<span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span>` : ''}</a>
         <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}">Checkout</a>
         ${options.session ? `<form method="post" action="/shop/logout"><button type="submit">Logout</button></form>` : `<a href="/shop" class="button secondary">Sign in</a>`}
+        ${renderThemeToggle()}
       </nav>
     </header>
     <main>
       ${options.body}
     </main>
+    ${renderToast(options.toast?.message, options.toast?.variant ?? 'success')}
   </div>
 </body>
 </html>`;
@@ -248,8 +206,10 @@ export const renderStorefrontLogin = (error?: string): string =>
         </div>
         ${error ? `<div class="error" data-test="error">${error}</div>` : ''}
         <form method="post" action="/shop/login" class="stack">
-          <input data-test="username" name="username" type="text" placeholder="Username" />
-          <input data-test="password" name="password" type="password" placeholder="Password" />
+          <label class="sr-only" for="shop-username">Username</label>
+          <input id="shop-username" data-test="username" name="username" type="text" placeholder="Username" autocomplete="username" />
+          <label class="sr-only" for="shop-password">Password</label>
+          <input id="shop-password" data-test="password" name="password" type="password" placeholder="Password" autocomplete="current-password" />
           <button data-test="login-button" type="submit">Sign in</button>
         </form>
       </section>
@@ -266,6 +226,7 @@ export const renderStorefrontLogin = (error?: string): string =>
 export const renderStorefrontInventory = async (
   session: StorefrontSession,
   sort: StorefrontSortValue = 'az',
+  toast?: { message: string; variant?: 'success' | 'error' },
 ): Promise<string> => {
   const items = sortStorefrontInventory(await getStorefrontInventory(), sort);
   return renderStorefrontLayout({
@@ -273,6 +234,7 @@ export const renderStorefrontInventory = async (
     heading: 'Inventory',
     session,
     activeNav: 'inventory',
+    toast,
     body: `
       <section class="hero">
         <span class="pill">Welcome back, ${session.username}</span>
@@ -295,7 +257,12 @@ export const renderStorefrontInventory = async (
             </select>
           </form>
         </div>
-        <div data-test="inventory-container" class="grid">
+        <div data-test="inventory-container" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+          ${
+            items.length === 0
+              ? '<p class="muted">No pets are currently available. Restock the catalogue from the admin dashboard.</p>'
+              : ''
+          }
           ${items
             .map(
               (item) => `
@@ -394,7 +361,7 @@ export const renderStorefrontCart = async (session: StorefrontSession): Promise<
         </div>
         ${
           items.length === 0
-            ? '<p class="muted">Your cart is empty.</p>'
+            ? '<p class="muted" data-test="empty-cart">Your cart is currently empty.</p>'
             : items
                 .map(
                   (item) => `
@@ -455,9 +422,12 @@ export const renderStorefrontCheckout = async (session: StorefrontSession, error
           </div>
           ${error ? `<div class="error" data-test="error">${error}</div>` : ''}
           <form method="post" action="/shop/checkout" class="stack">
-            <input data-test="firstName" name="firstName" placeholder="First Name" value="${session.checkout?.firstName ?? ''}" />
-            <input data-test="lastName" name="lastName" placeholder="Last Name" value="${session.checkout?.lastName ?? ''}" />
-            <input data-test="postalCode" name="postalCode" placeholder="Postal Code" value="${session.checkout?.postalCode ?? ''}" />
+            <label class="sr-only" for="shop-first-name">First Name</label>
+            <input id="shop-first-name" data-test="firstName" name="firstName" placeholder="First Name" value="${session.checkout?.firstName ?? ''}" autocomplete="given-name" />
+            <label class="sr-only" for="shop-last-name">Last Name</label>
+            <input id="shop-last-name" data-test="lastName" name="lastName" placeholder="Last Name" value="${session.checkout?.lastName ?? ''}" autocomplete="family-name" />
+            <label class="sr-only" for="shop-postal-code">Postal Code</label>
+            <input id="shop-postal-code" data-test="postalCode" name="postalCode" placeholder="Postal Code" value="${session.checkout?.postalCode ?? ''}" autocomplete="postal-code" />
             <button data-test="continue" type="submit">Continue</button>
           </form>
         </section>
