@@ -87,6 +87,7 @@ export type LocalAppEventType =
   | 'pet.updated'
   | 'pet.deleted'
   | 'user.created'
+  | 'user.updated'
   | 'order.created'
   | 'order.status-updated';
 
@@ -492,7 +493,7 @@ export const updateUser = async (
     ...user,
   };
   database.data.users[index] = updatedUser;
-  emitEvent('user.created', 'user', updatedUser.id, {
+  emitEvent('user.updated', 'user', updatedUser.id, {
     username: updatedUser.username,
     role: updatedUser.role,
   });
@@ -801,6 +802,15 @@ const toAuditRecord = (
         entityId,
         action: 'created',
         details: `User ${String(payload.username ?? entityId)} created`,
+        createdAt,
+      };
+    case 'user.updated':
+      return {
+        id: nextId,
+        entityType,
+        entityId,
+        action: 'updated',
+        details: `User ${String(payload.username ?? entityId)} updated`,
         createdAt,
       };
     case 'order.created':
