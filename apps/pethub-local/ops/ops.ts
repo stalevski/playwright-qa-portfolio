@@ -63,10 +63,20 @@ export const opsCases: OpsCase[] = [
   },
 ];
 
-const severityColor: Record<OpsCaseSeverity, string> = {
-  low: 'var(--success)',
-  medium: 'var(--warning)',
-  high: 'var(--danger)',
+/**
+ * Style fragments for the severity pill, encoded as inline `style` strings
+ * so they can be dropped straight into the template literals below.
+ *
+ * The pill class defaults to white text on the chosen background. The
+ * `medium` (warning orange) variant overrides the foreground to a dark
+ * gray because white-on-orange (`#d97706`) only reaches a 3.18:1 contrast
+ * ratio, below the WCAG 2.1 AA minimum of 4.5:1 for normal text. Dark text
+ * on the same orange clears AA at ~5.9:1.
+ */
+const severityStyle: Record<OpsCaseSeverity, string> = {
+  low: 'background: var(--success);',
+  medium: 'background: var(--warning); color: #1f2937;',
+  high: 'background: var(--danger);',
 };
 
 export const renderOpsLayout = (options: {
@@ -170,7 +180,7 @@ export const renderOpsOverview = async (): Promise<string> => {
         </section>
       </div>
       <div class="grid three-column">
-        ${opsCases.map((incident) => `<section><span class="pill" style="background: ${severityColor[incident.severity]};">${incident.severity}</span><h3 style="margin-top: 12px;">${incident.title}</h3><p class="muted">${incident.summary}</p><a href="/ops/incidents/${incident.slug}" style="color: #93c5fd;">Open investigation</a></section>`).join('')}
+        ${opsCases.map((incident) => `<section><span class="pill" style="${severityStyle[incident.severity]}">${incident.severity}</span><h3 style="margin-top: 12px;">${incident.title}</h3><p class="muted">${incident.summary}</p><a href="/ops/incidents/${incident.slug}" style="color: var(--accent);">Open investigation</a></section>`).join('')}
       </div>`,
   });
 };
@@ -188,7 +198,7 @@ export const renderOpsQueue = async (): Promise<string> => {
           : order.totalAmount > 1000
             ? 'High-value order requires downstream verification'
             : 'Routine verification';
-      return `<tr><td><span class="pill" style="background: ${severityColor[severity]};">${severity}</span></td><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${investigation}</td></tr>`;
+      return `<tr><td><span class="pill" style="${severityStyle[severity]}">${severity}</span></td><td>#${order.id}</td><td>${order.user?.username ?? order.userId}</td><td>${order.status}</td><td>${ledger?.status ?? 'missing'}</td><td>${investigation}</td></tr>`;
     })
     .join('');
 
@@ -269,7 +279,7 @@ export const renderOpsIncidents = async (): Promise<string> =>
       <p>These scenarios are intentionally designed to train investigation habits: source-vs-projection validation, downstream gaps, and workflow integrity checks.</p>
     </section>
     <div class="grid three-column">
-      ${opsCases.map((incident) => `<section><span class="pill" style="background: ${severityColor[incident.severity]};">${incident.severity}</span><h2 style="margin-top: 12px;">${incident.title}</h2><p class="muted">${incident.summary}</p><a href="/ops/incidents/${incident.slug}" style="color: #93c5fd;">Open detail</a></section>`).join('')}
+      ${opsCases.map((incident) => `<section><span class="pill" style="${severityStyle[incident.severity]}">${incident.severity}</span><h2 style="margin-top: 12px;">${incident.title}</h2><p class="muted">${incident.summary}</p><a href="/ops/incidents/${incident.slug}" style="color: var(--accent);">Open detail</a></section>`).join('')}
     </div>`,
   });
 
@@ -280,7 +290,7 @@ export const renderOpsIncidentDetail = async (incident: OpsCase): Promise<string
     activeNav: 'incidents',
     body: `
       <section class="hero">
-        <span class="pill" style="background: ${severityColor[incident.severity]};">${incident.severity}</span>
+        <span class="pill" style="${severityStyle[incident.severity]}">${incident.severity}</span>
         <h1 style="margin-top: 12px;">${incident.title}</h1>
         <p>${incident.summary}</p>
       </section>

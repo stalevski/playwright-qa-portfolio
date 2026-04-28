@@ -73,6 +73,17 @@ export default defineConfig({
         baseURL: pethubLocalApiBaseUrl,
       },
     },
+    /**
+     * Accessibility tests for the PetHub Local app. Uses `@axe-core/playwright`
+     * to assert no `critical` or `serious` WCAG 2.0/2.1 A+AA violations on the
+     * admin, storefront, and ops-portal surfaces. Lower-impact issues are
+     * surfaced by Axe but not enforced.
+     */
+    {
+      name: 'pethub-local-a11y',
+      testMatch: /tests\/targets\/pethub-local\/a11y\/.*\.a11y\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], baseURL: pethubLocalUiBaseUrl },
+    },
   ],
   outputDir: 'test-results-local',
 });
