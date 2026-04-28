@@ -21,3 +21,6 @@ coverage/
 .history/
 *.swp
 *.swo
+
+# Playwright auth state files (regenerated per run via setup projects)
+playwright/.auth/

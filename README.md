@@ -332,6 +332,23 @@ API across all targets:
 npm.cmd run test:api
 ```
 
+### Authentication state reuse (Sauce Demo)
+
+The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the redundant login flow.
+
+A dedicated **setup project** (`sauce-demo-setup`) runs before the `sauce-demo-ui-*` projects, logs in once as `standard_user`, and saves the resulting browser state (cookies + localStorage) to `playwright/.auth/sauce-demo-standard.json`. Each Sauce Demo UI project loads that file via `storageState` so individual tests start already authenticated.
+
+Tests that need a logged-out browser (login flow specs, session-protection specs, known-defect specs that exercise multiple user accounts) opt out per `describe` block:
+
+```typescript
+test.describe('Login', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+  // tests in this block start logged out
+});
+```
+
+The `playwright/.auth/` directory is gitignored - the setup project regenerates it on every run.
+
 ### Test tiers (`@smoke`, `@critical`)
 
 Tests are tagged inline with Playwright's `tag` annotation so subsets can be run for tiered CI feedback.
