@@ -47,7 +47,7 @@ Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
   - `npx prettier --write src/pages/sauce-demo/**/*.ts tests/targets/sauce-demo/**/*.ts`
 - validation examples:
   - `npm run lint`
-  - `npx playwright test tests/targets/sauce-demo/ui/sauce-demo-ui.spec.ts --project=sauce-demo-ui-chromium`
+  - `npx playwright test --project=sauce-demo-ui-chromium`
   - `npx playwright test tests/targets/swagger-petstore/ui/petstore-ui.spec.ts --project=swagger-petstore-ui-chromium`
 
 ## Decision rules
