@@ -26,12 +26,6 @@ The admin dashboard at `/` aggregates every backend concept the test suite exerc
 
 Three independent JSON databases live under `apps/pethub-local/data/`: operational, read models, and downstream replicas. Tests compare them with SQL-style joins via `JsonSqlDatabase`.
 
-### Theme system
-
-![Admin dashboard - light theme](docs/screenshots/02-admin-dashboard-light.png)
-
-The same dashboard in light mode. The theme toggle (top-right) is wired into `localStorage`, falls back to the OS `prefers-color-scheme` media query, and is covered by dedicated specs in `tests/targets/pethub-local/ui/storefront-ui.spec.ts`.
-
 ### Storefront — login
 
 ![Storefront login](docs/screenshots/03-storefront-login.png)
