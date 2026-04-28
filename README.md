@@ -346,20 +346,79 @@ Tests are tagged `@a11y` so they can also be excluded from the default suite via
 
 ### Authentication state reuse (Sauce Demo)
 
-The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the redundant login flow.
+The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the redundant login flow. One login runs in a dedicated setup project, the resulting browser state (cookies + localStorage) is saved to disk, and every UI project then loads that file before each test.
 
-A dedicated **setup project** (`sauce-demo-setup`) runs before the `sauce-demo-ui-*` projects, logs in once as `standard_user`, and saves the resulting browser state (cookies + localStorage) to `playwright/.auth/sauce-demo-standard.json`. Each Sauce Demo UI project loads that file via `storageState` so individual tests start already authenticated.
+**Where this is implemented in the repo:**
 
-Tests that need a logged-out browser (login flow specs, session-protection specs, known-defect specs that exercise multiple user accounts) opt out per `describe` block:
+| Concern                                          | File                                                                                               |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Setup project that logs in and saves state       | `tests/targets/sauce-demo/sauce-demo.setup.ts`                                                     |
+| Project wiring (`dependencies` + `storageState`) | `playwright.config.ts`                                                                             |
+| Opt-out for tests that need a logged-out browser | `tests/targets/sauce-demo/ui/login.spec.ts`, `session-protection.spec.ts`, `known-defects.spec.ts` |
+
+#### How to add `storageState` to another target — 3 steps
+
+**Step 1 — Create a setup spec that logs in and saves browser state.** Place it next to the target's tests, not inside the `ui/` folder. Use the same page objects as the rest of the suite so the login flow stays DRY.
+
+```typescript
+// tests/targets/<target>/<target>.setup.ts
+import { test as setup } from '@playwright/test';
+import { MyLoginPage } from '@pages/<target>/login.page';
+
+const STORAGE_STATE_FILE = 'playwright/.auth/<target>-standard.json';
+
+setup('authenticate as standard_user', async ({ page }) => {
+  const loginPage = new MyLoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('standard_user', 'secret_sauce');
+  // assert post-login state, e.g. inventory page is loaded
+
+  await page.context().storageState({ path: STORAGE_STATE_FILE });
+});
+```
+
+**Step 2 — Register a setup project and wire each UI project to depend on it.** The setup project runs first; UI projects inherit the saved state.
+
+```typescript
+// playwright.config.ts
+projects: [
+  {
+    name: '<target>-setup',
+    testMatch: /tests\/targets\/<target>\/<target>\.setup\.ts/,
+    use: { baseURL: targetUiBaseUrl },
+  },
+  {
+    name: '<target>-ui-chromium',
+    testMatch: /tests\/targets\/<target>\/ui\/.*\.spec\.ts/,
+    dependencies: ['<target>-setup'],
+    use: {
+      ...devices['Desktop Chrome'],
+      baseURL: targetUiBaseUrl,
+      storageState: 'playwright/.auth/<target>-standard.json',
+    },
+  },
+  // repeat for firefox, webkit, etc.
+];
+```
+
+**Step 3 — Opt out per `describe` for tests that need a logged-out browser.** Tests that verify the login flow itself, session protection, or alternative users must override the project-level `storageState` at the top of the describe so they start with a clean session.
 
 ```typescript
 test.describe('Login', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
-  // tests in this block start logged out
+
+  // every test in this block starts logged out
+  test('shows an error for invalid credentials', async ({ page }) => {
+    /* ... */
+  });
 });
 ```
 
-The `playwright/.auth/` directory is gitignored - the setup project regenerates it on every run.
+**Don't forget:** add the auth directory to `.gitignore` so the generated state file is never committed. The setup project regenerates it on every run.
+
+```gitignore
+playwright/.auth/
+```
 
 ### Test tiers (`@smoke`, `@critical`)
 
