@@ -8,6 +8,92 @@ The portfolio exercises three target systems:
 - **Sauce Demo** — public e-commerce UI demo (`https://www.saucedemo.com/`)
 - **PetHub Local** — a self-contained Express + lowdb application included in this repo for deterministic local QA practice (see `apps/pethub-local`)
 
+## Visual tour
+
+A guided walkthrough of the PetHub Local app. All images below are produced deterministically by `npm.cmd run screenshots`, which resets the database and walks Playwright through the canonical flows.
+
+### Admin dashboard
+
+![Admin dashboard - dark theme](docs/screenshots/01-admin-dashboard.png)
+
+The admin dashboard at `/` aggregates every backend concept the test suite exercises in one place:
+
+- **Pets, Users, Customers, Employees, Orders** — operational tables
+- **Audit log + relations** — every mutation has a row tying user, pet, and order together
+- **Read models** — separate JSON store; eventually-consistent projections fed by domain events (CQRS-style)
+- **Downstream systems** — third JSON store; simulates billing / analytics replicas
+- **Swagger-style explorer** — interactive API surface for ad hoc testing
+
+Three independent JSON databases live under `apps/pethub-local/data/`: operational, read models, and downstream replicas. Tests compare them with SQL-style joins via `JsonSqlDatabase`.
+
+### Theme system
+
+![Admin dashboard - light theme](docs/screenshots/02-admin-dashboard-light.png)
+
+The same dashboard in light mode. The theme toggle (top-right) is wired into `localStorage`, falls back to the OS `prefers-color-scheme` media query, and is covered by dedicated specs in `tests/targets/pethub-local/ui/storefront-ui.spec.ts`.
+
+### Storefront — login
+
+![Storefront login](docs/screenshots/03-storefront-login.png)
+
+The `/shop` storefront is intentionally Sauce-Demo-shaped so the same Playwright patterns (page objects, fixtures, `data-test` selectors) used against the public Sauce Demo target also apply here. Demo accounts are listed inline so the page itself doubles as a credential reference.
+
+### Storefront — inventory
+
+![Inventory grid](docs/screenshots/04-storefront-inventory.png)
+
+15 pets are visible (12 available + 3 pending; 3 sold pets are filtered out by design). Tags, categories, and varied prices feed sort and filter assertions across multiple browsers.
+
+### Storefront — price-sorted inventory
+
+![Inventory sorted low to high](docs/screenshots/05-storefront-inventory-sorted.png)
+
+Server-side sort via `?sort=lohi`. The price ladder runs from $35 (Goldfish Pair) to $2,800 (French Bulldog), giving sort tests something meaningful to assert on.
+
+### Storefront — item details
+
+![Item detail page](docs/screenshots/06-storefront-item-details.png)
+
+Drill-down view at `/shop/item/:id`. Used by tests that assert deep-link navigation, back-button preservation, and add-to-cart from a non-list context.
+
+### Storefront — cart
+
+![Cart with three pets](docs/screenshots/07-storefront-cart.png)
+
+Session-scoped cart (in-memory, not persisted to lowdb) with three pets selected. The cart badge reflects line count, the subtotal sums line totals, and Remove rebuilds the session state.
+
+### Storefront — order confirmation
+
+![Order confirmation](docs/screenshots/08-storefront-complete.png)
+
+End of the checkout flow. POSTing the checkout form creates an order in the operational database, emits an `order.created` event, projects to the read model, and replicates to the downstream JSON store — all of which the API specs verify in `tests/targets/pethub-local/api/`.
+
+### Operations portal — overview
+
+![Operations portal overview](docs/screenshots/09-ops-overview.png)
+
+A dedicated `/ops` portal designed for QA investigation rather than end-customer interaction. Hero copy is intentionally optimistic so testers must dig into the underlying data to confirm reality.
+
+### Operations portal — cross-system comparisons
+
+![Cross-system comparison view](docs/screenshots/10-ops-comparisons.png)
+
+The most distinctive view of the app: side-by-side dump of source orders, read-model projections, and downstream replicas. This is where mismatches between the three databases become visible. Used to practice the kind of multi-database investigation common in real backend QA work.
+
+### Regenerating screenshots
+
+Screenshots are produced by Playwright against the running app:
+
+```powershell
+# Terminal A — start the app
+npm.cmd run app:start
+
+# Terminal B — capture all 10 images
+npm.cmd run screenshots
+```
+
+The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` first so each run produces images against the canonical seed data, then walks the storefront flow end-to-end (login → inventory → details → cart → checkout → confirmation) before capturing the ops portal views.
+
 ## Returning to this project after a while?
 
 If you have not touched this repo in months, run through this checklist before anything else:
