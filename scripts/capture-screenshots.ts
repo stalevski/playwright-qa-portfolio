@@ -64,18 +64,13 @@ const setTheme =
 const captureAdmin = async (browser: Browser): Promise<void> => {
   log('Capturing admin dashboard...');
 
-  for (const variant of [
-    { theme: 'dark' as const, file: '01-admin-dashboard' },
-    { theme: 'light' as const, file: '02-admin-dashboard-light' },
-  ]) {
-    const context = await browser.newContext({ viewport: VIEWPORT });
-    const page = await context.newPage();
-    await setTheme(variant.theme)(page);
-    await page.goto(`${BASE_URL}/`);
-    await page.getByRole('heading', { name: 'PetHub Local', exact: true }).waitFor();
-    await takeShot(page, variant.file, true);
-    await context.close();
-  }
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+  await setTheme('dark')(page);
+  await page.goto(`${BASE_URL}/`);
+  await page.getByRole('heading', { name: 'PetHub Local', exact: true }).waitFor();
+  await takeShot(page, '01-admin-dashboard', true);
+  await context.close();
 };
 
 const captureStorefront = async (browser: Browser): Promise<void> => {
