@@ -24,15 +24,16 @@ test.describe('PetHub Storefront UI', () => {
     await storefrontLoginPage.assertErrorContains('do not match any user');
   });
 
-  test('logs in a standard user and lists available inventory', async ({
-    storefrontLoginPage,
-    storefrontInventoryPage,
-  }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    await storefrontInventoryPage.assertLoaded();
-    expect(await storefrontInventoryPage.getItemCount()).toBeGreaterThan(0);
-  });
+  test(
+    'logs in a standard user and lists available inventory',
+    { tag: '@smoke' },
+    async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+      await storefrontLoginPage.goto();
+      await storefrontLoginPage.login(standardUser, password);
+      await storefrontInventoryPage.assertLoaded();
+      expect(await storefrontInventoryPage.getItemCount()).toBeGreaterThan(0);
+    },
+  );
 
   test('sorts inventory by name A to Z', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
     await storefrontLoginPage.goto();
