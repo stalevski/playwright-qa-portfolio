@@ -14,7 +14,7 @@ test.describe('Petstore API - Pet endpoints', () => {
     expect(response.message).toContain('bytes');
   });
 
-  test('adds a new pet to the store', async ({ apiClient }) => {
+  test('adds a new pet to the store', { tag: ['@smoke', '@critical'] }, async ({ apiClient }) => {
     const pet = createPetDto();
 
     const createdPet = await apiClient.createPet(pet);
