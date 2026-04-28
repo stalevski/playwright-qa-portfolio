@@ -63,20 +63,46 @@ export default defineConfig({
         baseURL: swaggerPetstoreApiBaseUrl,
       },
     },
+    /**
+     * Sauce Demo auth setup: runs before any sauce-demo-ui-* project, logs in
+     * once as standard_user, and writes browser state to playwright/.auth/.
+     * The UI projects below load that state via `storageState` so tests start
+     * already authenticated. See `tests/targets/sauce-demo/sauce-demo.setup.ts`.
+     */
+    {
+      name: 'sauce-demo-setup',
+      testMatch: /sauce-demo\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'], baseURL: sauceDemoUiBaseUrl },
+    },
     {
       name: 'sauce-demo-ui-chromium',
       testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'], baseURL: sauceDemoUiBaseUrl },
+      dependencies: ['sauce-demo-setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: sauceDemoUiBaseUrl,
+        storageState: 'playwright/.auth/sauce-demo-standard.json',
+      },
     },
     {
       name: 'sauce-demo-ui-firefox',
       testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Firefox'], baseURL: sauceDemoUiBaseUrl },
+      dependencies: ['sauce-demo-setup'],
+      use: {
+        ...devices['Desktop Firefox'],
+        baseURL: sauceDemoUiBaseUrl,
+        storageState: 'playwright/.auth/sauce-demo-standard.json',
+      },
     },
     {
       name: 'sauce-demo-ui-webkit',
       testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Safari'], baseURL: sauceDemoUiBaseUrl },
+      dependencies: ['sauce-demo-setup'],
+      use: {
+        ...devices['Desktop Safari'],
+        baseURL: sauceDemoUiBaseUrl,
+        storageState: 'playwright/.auth/sauce-demo-standard.json',
+      },
     },
   ],
   outputDir: 'test-results',
