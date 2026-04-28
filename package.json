@@ -17,6 +17,8 @@
     "test:pethub-local:api": "playwright test --config playwright.local.config.ts --project=pethub-local-api",
     "test:ui": "playwright test tests/targets/swagger-petstore/ui tests/targets/sauce-demo/ui && playwright test --config playwright.local.config.ts tests/targets/pethub-local/ui",
     "test:api": "playwright test tests/targets/swagger-petstore/api && playwright test --config playwright.local.config.ts tests/targets/pethub-local/api",
+    "test:smoke": "playwright test --grep @smoke && playwright test --config playwright.local.config.ts --grep @smoke",
+    "test:critical": "playwright test --grep @critical && playwright test --config playwright.local.config.ts --grep @critical",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "report": "playwright show-report",

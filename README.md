@@ -332,6 +332,35 @@ API across all targets:
 npm.cmd run test:api
 ```
 
+### Test tiers (`@smoke`, `@critical`)
+
+Tests are tagged inline with Playwright's `tag` annotation so subsets can be run for tiered CI feedback.
+
+| Tier                  | Run when                      | Target time       | What is included                                                                   |
+| --------------------- | ----------------------------- | ----------------- | ---------------------------------------------------------------------------------- |
+| `@smoke`              | Every PR / commit             | <1 min            | The minimum viable end-to-end signal across all three targets - is each one alive? |
+| `@critical`           | Before deploy / merge to main | <2 min            | Subset of smoke covering business-critical happy paths only                        |
+| Untagged (full suite) | Nightly / on demand           | Whatever it takes | Everything else - all positive paths, negative paths, and pinned-defect specs      |
+
+Run subsets:
+
+```powershell
+npm.cmd run test:smoke      # ~15 tests across all targets
+npm.cmd run test:critical   # ~6 tests; must-pass before deploy
+```
+
+Tagged test count today: **8 distinct tests** are `@smoke` (some run on multiple browsers, expanding the count). **5 of those 8** are also `@critical`. The full suite remains the default `npm.cmd test`.
+
+Tags are applied inline:
+
+```typescript
+test('returns service health', { tag: ['@smoke', '@critical'] }, async ({ localApiClient }) => {
+  // ...
+});
+```
+
+To extend the smoke tier, add `{ tag: '@smoke' }` to the new test - no other config changes are needed.
+
 ### Reports
 
 The two configs write to separate HTML reports so they don't overwrite each other:

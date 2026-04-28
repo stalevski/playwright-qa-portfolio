@@ -190,32 +190,36 @@ test.describe('Sauce Demo UI', () => {
   });
 
   test.describe('Checkout', () => {
-    test('completes checkout for a single item', async ({
-      sauceDemoLoginPage,
-      sauceDemoInventoryPage,
-      sauceDemoCartPage,
-      sauceDemoCheckoutInformationPage,
-      sauceDemoCheckoutOverviewPage,
-      sauceDemoCheckoutCompletePage,
-    }) => {
-      await sauceDemoLoginPage.goto();
-      await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
-      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
-      await sauceDemoInventoryPage.openCart();
-      await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack]);
-      await sauceDemoCartPage.checkout();
-      await sauceDemoCheckoutInformationPage.fillInformation('Ivan', 'Stalevski', '1000');
-      await sauceDemoCheckoutInformationPage.continue();
-      await sauceDemoCheckoutOverviewPage.assertLoaded();
-      const itemTotal = await sauceDemoCheckoutOverviewPage.getItemTotal();
-      const tax = await sauceDemoCheckoutOverviewPage.getTax();
-      const total = await sauceDemoCheckoutOverviewPage.getTotal();
-      expect(total).toBeCloseTo(itemTotal + tax, 2);
-      await sauceDemoCheckoutOverviewPage.finish();
-      await sauceDemoCheckoutCompletePage.assertLoaded();
-      await sauceDemoCheckoutCompletePage.backHome();
-      await sauceDemoInventoryPage.assertLoaded();
-    });
+    test(
+      'completes checkout for a single item',
+      { tag: ['@smoke', '@critical'] },
+      async ({
+        sauceDemoLoginPage,
+        sauceDemoInventoryPage,
+        sauceDemoCartPage,
+        sauceDemoCheckoutInformationPage,
+        sauceDemoCheckoutOverviewPage,
+        sauceDemoCheckoutCompletePage,
+      }) => {
+        await sauceDemoLoginPage.goto();
+        await sauceDemoLoginPage.login(sauceDemoUsers.standard, sauceDemoPassword);
+        await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
+        await sauceDemoInventoryPage.openCart();
+        await sauceDemoCartPage.assertContainsItems([sauceDemoProducts.backpack]);
+        await sauceDemoCartPage.checkout();
+        await sauceDemoCheckoutInformationPage.fillInformation('Ivan', 'Stalevski', '1000');
+        await sauceDemoCheckoutInformationPage.continue();
+        await sauceDemoCheckoutOverviewPage.assertLoaded();
+        const itemTotal = await sauceDemoCheckoutOverviewPage.getItemTotal();
+        const tax = await sauceDemoCheckoutOverviewPage.getTax();
+        const total = await sauceDemoCheckoutOverviewPage.getTotal();
+        expect(total).toBeCloseTo(itemTotal + tax, 2);
+        await sauceDemoCheckoutOverviewPage.finish();
+        await sauceDemoCheckoutCompletePage.assertLoaded();
+        await sauceDemoCheckoutCompletePage.backHome();
+        await sauceDemoInventoryPage.assertLoaded();
+      },
+    );
 
     test('multi-item checkout sums line prices into the item total', async ({
       sauceDemoLoginPage,

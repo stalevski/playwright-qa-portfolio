@@ -2,7 +2,7 @@ import { test, expect } from '@swagger-petstore-fixtures';
 import { createPetDto } from '@helpers/test-data';
 
 test.describe('Petstore Swagger UI', () => {
-  test('loads the landing page and core sections', async ({ homePage }) => {
+  test('loads the landing page and core sections', { tag: '@smoke' }, async ({ homePage }) => {
     await homePage.goto();
     await homePage.assertLoaded();
     await homePage.assertTagVisible('pet');
