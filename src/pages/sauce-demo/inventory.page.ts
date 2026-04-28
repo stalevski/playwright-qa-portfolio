@@ -24,6 +24,10 @@ export class SauceDemoInventoryPage extends BasePage {
     this.menu = new SauceDemoMenuComponent(page);
   }
 
+  async goto(): Promise<void> {
+    await this.visit('/inventory.html');
+  }
+
   async assertLoaded(): Promise<void> {
     await expect(this.inventoryContainer).toBeVisible();
     await expect(this.shoppingCartLink).toBeVisible();
