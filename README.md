@@ -332,6 +332,24 @@ API across all targets:
 npm.cmd run test:api
 ```
 
+### Accessibility (`@a11y`)
+
+A dedicated `pethub-local-a11y` Playwright project runs WCAG 2.0 / 2.1 A and AA checks against the local app using `@axe-core/playwright`. Specs live under `tests/targets/pethub-local/a11y/` and cover:
+
+- **Admin** — `/` dashboard
+- **Storefront** — `/shop` login, `/shop/inventory`, `/shop/item/:id`, `/shop/cart`, `/shop/checkout`
+- **Ops portal** — `/ops`, `/ops/queue`, `/ops/comparisons`, `/ops/incidents`
+
+The shared helper `src/helpers/a11y.ts` filters Axe violations to `critical` or `serious` impact and fails the test if any are found. Lower-impact issues are still surfaced in the report but not enforced.
+
+Run only the a11y suite:
+
+```powershell
+npm.cmd run test:a11y
+```
+
+Tests are tagged `@a11y` so they can also be excluded from the default suite via `--grep-invert @a11y` if needed.
+
 ### Authentication state reuse (Sauce Demo)
 
 The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the redundant login flow.
