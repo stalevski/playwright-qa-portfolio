@@ -4,14 +4,14 @@ import { RandomDataGenerator } from '@helpers/random-data-generator';
 test.describe('Local Petstore API', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('returns service health', async ({ localApiClient }) => {
+  test('returns service health', { tag: ['@smoke', '@critical'] }, async ({ localApiClient }) => {
     const health = await localApiClient.getHealth();
 
     expect(health.status).toBe('ok');
     expect(health.service).toBe('pethub-local');
   });
 
-  test('creates and updates a pet', async ({ localApiClient }) => {
+  test('creates and updates a pet', { tag: ['@smoke', '@critical'] }, async ({ localApiClient }) => {
     const pet = RandomDataGenerator.createLocalPet({
       category: 'Dogs',
       status: 'pending',

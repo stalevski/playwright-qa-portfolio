@@ -7,7 +7,7 @@ const localPet = RandomDataGenerator.createLocalPet({
 });
 
 test.describe('Local Petstore UI', () => {
-  test('loads the admin dashboard', async ({ localHomePage }) => {
+  test('loads the admin dashboard', { tag: '@smoke' }, async ({ localHomePage }) => {
     await localHomePage.goto();
     await localHomePage.assertLoaded();
     await localHomePage.assertOrderRelationVisible('buyer01');
