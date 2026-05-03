@@ -90,13 +90,14 @@ The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` firs
 
 ## Returning to this project after a while?
 
-If you have not touched this repo in months, run through this checklist before anything else:
+If you have not touched this repo in months, run through this checklist before anything else. For a longer absence (a year or more), the `/repo-revival` workflow scripts the same flow with extra checks for accumulated rot.
 
-1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=20.0.0`). The pinned LTS major lives in `.nvmrc`.
+1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=20.0.0`). The pinned LTS major lives in `.nvmrc`. If Node 20 is past EOL, bump `.nvmrc` to the current LTS.
 2. **Reinstall dependencies cleanly**: `npm.cmd ci` (uses `package-lock.json` exactly).
 3. **Run the environment doctor**: `npm.cmd run doctor` (prints versions and runs a TypeScript type check).
 4. **Smoke test the local app**: `npm.cmd run test:pethub-local` — fully self-contained, no external sites needed.
-5. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Check the most recent scheduled CI run on GitHub for context. External target jobs are configured as **informational** in CI so they do not block PRs.
+5. **If `npx playwright install` fails with download errors**, the browser binaries for the pinned Playwright version may have rotated out of Microsoft's CDN. Bump Playwright with `npm.cmd install -D @playwright/test@latest`, then `npx playwright install`. Page objects, fixtures, and configs are version-tolerant so this is usually a one-line fix.
+6. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Check the most recent scheduled CI run on GitHub for context. External target jobs are configured as **informational** in CI so they do not block PRs.
 
 ## Stack
 
