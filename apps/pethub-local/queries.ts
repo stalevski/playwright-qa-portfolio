@@ -52,6 +52,16 @@ export const getUserRelationsQuery = async (id: number) => getUserByIdWithRelati
 
 export const getOrdersQuery = async () => getOrders();
 
+/**
+ * Returns the next safe `orders.id`. Used by the storefront checkout route so
+ * order ids are deterministic and collision-free instead of `Date.now()`,
+ * which can collide on rapid sequential checkouts within the same millisecond.
+ */
+export const nextOrderIdQuery = async (): Promise<number> => {
+  const orders = await getOrders();
+  return orders.reduce((max, order) => Math.max(max, order.id), 0) + 1;
+};
+
 export const getInventoryQuery = async () => getInventory();
 
 export const getOrdersWithRelationsQuery = async () => getOrdersWithRelations();

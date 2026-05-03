@@ -6,6 +6,7 @@ export type StorefrontSort = 'az' | 'za' | 'lohi' | 'hilo';
 export class StorefrontInventoryPage extends BasePage {
   readonly heading: Locator;
   readonly sortDropdown: Locator;
+  readonly inventoryItems: Locator;
   readonly itemNames: Locator;
   readonly itemPrices: Locator;
   readonly cartBadge: Locator;
@@ -16,6 +17,7 @@ export class StorefrontInventoryPage extends BasePage {
     super(page);
     this.heading = page.getByRole('heading', { name: 'Available pets', exact: true });
     this.sortDropdown = page.getByTestId('product-sort-container');
+    this.inventoryItems = page.getByTestId('inventory-item');
     this.itemNames = page.getByTestId('inventory-item-name');
     this.itemPrices = page.getByTestId('inventory-item-price');
     this.cartBadge = page.getByTestId('shopping-cart-badge');
@@ -54,7 +56,7 @@ export class StorefrontInventoryPage extends BasePage {
   }
 
   async addItemToCart(itemName: string): Promise<void> {
-    const card = this.itemNames.filter({ hasText: itemName }).locator('..').locator('..');
+    const card = this.inventoryItems.filter({ hasText: itemName });
     await Promise.all([
       this.page.waitForURL(/\/shop\/inventory(?:\?.*)?$/),
       card.getByRole('button', { name: 'Add to cart' }).click(),

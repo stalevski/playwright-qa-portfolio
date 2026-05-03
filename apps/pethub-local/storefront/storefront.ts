@@ -5,7 +5,14 @@ import { renderHead, renderThemeToggle, renderToast } from '../http/render-helpe
 export type StorefrontUser = {
   username: string;
   password: string;
-  firstName: string;
+  /**
+   * Real `userId` from the seeded `users` table that orders placed by this
+   * storefront persona should be attributed to. Storefront usernames
+   * (`standard_user`, `problem_user`, ...) are practice mocks that don't
+   * correspond to real API users by name, so we explicitly map each one to
+   * a seeded user id rather than hardcoding 2002 at order-creation time.
+   */
+  userId: number;
   role: string;
   locked?: boolean;
 };
@@ -18,6 +25,7 @@ export type StorefrontCartItem = {
 export type StorefrontSession = {
   id: string;
   username: string;
+  userId: number;
   cart: StorefrontCartItem[];
   checkout?: {
     firstName: string;
@@ -29,10 +37,10 @@ export type StorefrontSession = {
 export type StorefrontSortValue = 'az' | 'za' | 'lohi' | 'hilo';
 
 export const storefrontUsers: StorefrontUser[] = [
-  { username: 'standard_user', password: 'secret_sauce', firstName: 'Standard', role: 'customer' },
-  { username: 'problem_user', password: 'secret_sauce', firstName: 'Problem', role: 'customer' },
-  { username: 'performance_user', password: 'secret_sauce', firstName: 'Performance', role: 'customer' },
-  { username: 'locked_out_user', password: 'secret_sauce', firstName: 'Locked', role: 'customer', locked: true },
+  { username: 'standard_user', password: 'secret_sauce', userId: 2002, role: 'customer' },
+  { username: 'problem_user', password: 'secret_sauce', userId: 2003, role: 'customer' },
+  { username: 'performance_user', password: 'secret_sauce', userId: 2004, role: 'customer' },
+  { username: 'locked_out_user', password: 'secret_sauce', userId: 2005, role: 'customer', locked: true },
 ];
 
 export const storefrontSessions = new Map<string, StorefrontSession>();
@@ -359,13 +367,13 @@ export const renderStorefrontCart = async (session: StorefrontSession): Promise<
           <h2 style="margin: 0;">Cart items</h2>
           <a class="button secondary" href="/shop/inventory">Continue shopping</a>
         </div>
-        ${
-          items.length === 0
-            ? '<p class="muted" data-test="empty-cart">Your cart is currently empty.</p>'
-            : items
-                .map(
-                  (item) => `
-          <div class="product-card">
+          ${
+            items.length === 0
+              ? '<p class="muted" data-test="empty-cart">Your cart is currently empty.</p>'
+              : items
+                  .map(
+                    (item) => `
+          <div class="product-card" data-test="cart-item">
             <div class="row-between">
               <div>
                 <strong data-test="inventory-item-name">${item.name}</strong>
@@ -384,9 +392,9 @@ export const renderStorefrontCart = async (session: StorefrontSession): Promise<
               <strong>$${item.lineTotal.toFixed(2)}</strong>
             </div>
           </div>`,
-                )
-                .join('')
-        }
+                  )
+                  .join('')
+          }
         <div class="summary">
           <div><span class="muted">Subtotal</span><strong>$${subtotal.toFixed(2)}</strong></div>
         </div>
@@ -402,7 +410,7 @@ export const renderStorefrontCheckout = async (session: StorefrontSession, error
   const items = await getCartDetails(session);
   const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
   const tax = Number((subtotal * 0.08).toFixed(2));
-  const total = subtotal;
+  const total = Number((subtotal + tax).toFixed(2));
   return renderStorefrontLayout({
     title: 'Checkout',
     heading: 'Checkout',

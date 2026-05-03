@@ -157,22 +157,16 @@ const database = new Low<DatabaseSchema>(adapter, {
 
 const now = () => new Date().toISOString();
 
+/**
+ * Computes the next safe id for a record array. Avoids the
+ * `(records[0]?.id ?? 0) + 1` pattern, which is only correct when callers
+ * always insert with `unshift` and never reorder.
+ */
+const nextId = <T extends { id: number }>(records: readonly T[]): number =>
+  records.reduce((max, record) => Math.max(max, record.id), 0) + 1;
+
 const ensureLoaded = async (): Promise<void> => {
   await database.read();
-  database.data ||= {
-    pets: [],
-    users: [],
-    employees: [],
-    customers: [],
-    orders: [],
-    auditLog: [],
-    events: [],
-    sessions: [],
-  };
-  database.data.events ||= [];
-  database.data.sessions ||= [];
-  database.data.employees ||= [];
-  database.data.customers ||= [];
 };
 
 export const resetDatabase = async (): Promise<void> => {
@@ -527,7 +521,7 @@ export const loginUser = async (username: string, password: string): Promise<Ses
 
   const createdAt = now();
   const session: SessionRecord = {
-    id: (database.data.sessions[0]?.id ?? 0) + 1,
+    id: nextId(database.data.sessions),
     username,
     token: `session-${Date.now()}`,
     createdAt,
@@ -613,10 +607,12 @@ export const getUserByIdWithRelations = async (id: number): Promise<UserWithRela
   };
 };
 
-const addAudit = (entityType: string, entityId: number, action: string, details: string): void => {
-  const nextId = (database.data?.auditLog[0]?.id ?? 0) + 1;
-  database.data?.auditLog.unshift({
-    id: nextId,
+const addAudit = (entityType: 'pet' | 'user' | 'order', entityId: number, action: string, details: string): void => {
+  if (!database.data) {
+    return;
+  }
+  database.data.auditLog.unshift({
+    id: nextId(database.data.auditLog),
     entityType,
     entityId,
     action,
@@ -631,11 +627,13 @@ const emitEvent = (
   entityId: number,
   payload: Record<string, unknown>,
 ): void => {
-  const nextId = (database.data?.events[0]?.id ?? 0) + 1;
+  if (!database.data) {
+    return;
+  }
   const createdAt = now();
 
-  database.data?.events.unshift({
-    id: nextId,
+  database.data.events.unshift({
+    id: nextId(database.data.events),
     type,
     entityType,
     entityId,
@@ -644,7 +642,7 @@ const emitEvent = (
   });
 
   const auditEntry = toAuditRecord(type, entityType, entityId, payload, createdAt);
-  addAudit(auditEntry.entityType, auditEntry.entityId, auditEntry.action, auditEntry.details);
+  addAudit(entityType, entityId, auditEntry.action, auditEntry.details);
 };
 
 const syncDerivedStores = async (): Promise<void> => {
@@ -679,12 +677,12 @@ const toAuditRecord = (
   payload: Record<string, unknown>,
   createdAt: string,
 ): AuditRecord => {
-  const nextId = (database.data?.auditLog[0]?.id ?? 0) + 1;
+  const id = nextId(database.data?.auditLog ?? []);
 
   switch (type) {
     case 'pet.created':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'created',
@@ -693,7 +691,7 @@ const toAuditRecord = (
       };
     case 'pet.updated':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'updated',
@@ -702,7 +700,7 @@ const toAuditRecord = (
       };
     case 'pet.deleted':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'deleted',
@@ -711,7 +709,7 @@ const toAuditRecord = (
       };
     case 'user.created':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'created',
@@ -720,7 +718,7 @@ const toAuditRecord = (
       };
     case 'user.updated':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'updated',
@@ -729,7 +727,7 @@ const toAuditRecord = (
       };
     case 'order.created':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'created',
@@ -738,12 +736,16 @@ const toAuditRecord = (
       };
     case 'order.status-updated':
       return {
-        id: nextId,
+        id,
         entityType,
         entityId,
         action: 'status-updated',
         details: `Order ${entityId} changed to ${String(payload.status ?? 'unknown')}`,
         createdAt,
       };
+    default: {
+      const exhaustive: never = type;
+      throw new Error(`Unhandled LocalAppEventType in toAuditRecord: ${String(exhaustive)}`);
+    }
   }
 };
