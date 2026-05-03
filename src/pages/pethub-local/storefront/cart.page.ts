@@ -13,12 +13,7 @@ export class StorefrontCartPage extends BasePage {
     this.heading = page.getByRole('heading', { name: 'Cart items', exact: true });
     this.continueShoppingLink = page.getByTestId('continue-shopping');
     this.checkoutLink = page.getByTestId('checkout');
-    this.cartItems = page
-      .locator('main section')
-      .first()
-      .locator('.row-between')
-      .nth(1)
-      .locator('xpath=ancestor::section//div[contains(@class, "row-between")]');
+    this.cartItems = page.getByTestId('cart-item');
     this.emptyMessage = page.getByTestId('empty-cart');
   }
 
@@ -31,7 +26,7 @@ export class StorefrontCartPage extends BasePage {
   }
 
   async assertItemVisible(itemName: string): Promise<void> {
-    await expect(this.page.getByText(itemName).first()).toBeVisible();
+    await expect(this.cartItems.filter({ hasText: itemName })).toBeVisible();
   }
 
   async assertEmpty(): Promise<void> {
@@ -39,10 +34,7 @@ export class StorefrontCartPage extends BasePage {
   }
 
   async removeItem(itemName: string): Promise<void> {
-    const row = this.page
-      .locator('section.panel')
-      .filter({ hasText: itemName })
-      .locator('form[action="/shop/cart/remove"]');
+    const row = this.cartItems.filter({ hasText: itemName });
     await Promise.all([
       this.page.waitForURL(/\/shop\/cart(?:\?.*)?$/),
       row.getByRole('button', { name: 'Remove' }).first().click(),

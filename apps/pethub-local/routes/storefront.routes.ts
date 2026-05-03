@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import { createOrderCommand } from '../commands';
-import { getPetByIdQuery } from '../queries';
+import { getPetByIdQuery, nextOrderIdQuery } from '../queries';
 import {
   clearStorefrontSessionCookie,
   getCartDetails,
@@ -61,6 +61,7 @@ storefrontRouter.post('/login', (request: Request, response: Response) => {
   storefrontSessions.set(sessionId, {
     id: sessionId,
     username: user.username,
+    userId: user.userId,
     cart: [],
   });
   setStorefrontSessionCookie(response, sessionId);
@@ -188,11 +189,11 @@ storefrontRouter.post('/checkout', async (request: Request, response: Response) 
   }
 
   const firstLine = cartItems[0];
-  const nextOrderId = Date.now();
+  const nextOrderId = await nextOrderIdQuery();
   await createOrderCommand({
     id: nextOrderId,
     petId: firstLine.id,
-    userId: 2002,
+    userId: session.userId,
     quantity: cartItems.reduce((sum, item) => sum + item.quantity, 0),
     status: 'placed',
     totalAmount: cartItems.reduce((sum, item) => sum + item.lineTotal, 0),
