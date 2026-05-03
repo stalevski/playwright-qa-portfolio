@@ -9,6 +9,14 @@ const swaggerPetstoreApiBaseUrl = testTargets.swaggerPetstore.apiBaseUrl;
 const sauceDemoUiBaseUrl = testTargets.sauceDemo.uiBaseUrl;
 
 /**
+ * Browser state captured by `sauce-demo-setup` (logs in once as `standard_user`)
+ * and reused by every `sauce-demo-ui-*` project so individual UI tests start
+ * already authenticated. The file is gitignored; the setup project regenerates
+ * it on every run. Hoisted to a single constant so all UI projects stay in sync.
+ */
+const SAUCE_DEMO_STORAGE_STATE = 'playwright/.auth/sauce-demo-standard.json';
+
+/**
  * Default config for external targets (Swagger Petstore, Sauce Demo).
  *
  * These targets are public/demo sites with no shared mutable state owned by
@@ -81,7 +89,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         baseURL: sauceDemoUiBaseUrl,
-        storageState: 'playwright/.auth/sauce-demo-standard.json',
+        storageState: SAUCE_DEMO_STORAGE_STATE,
       },
     },
     {
@@ -91,7 +99,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         baseURL: sauceDemoUiBaseUrl,
-        storageState: 'playwright/.auth/sauce-demo-standard.json',
+        storageState: SAUCE_DEMO_STORAGE_STATE,
       },
     },
     {
@@ -101,7 +109,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Safari'],
         baseURL: sauceDemoUiBaseUrl,
-        storageState: 'playwright/.auth/sauce-demo-standard.json',
+        storageState: SAUCE_DEMO_STORAGE_STATE,
       },
     },
   ],

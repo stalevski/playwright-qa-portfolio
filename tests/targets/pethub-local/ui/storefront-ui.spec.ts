@@ -1,4 +1,5 @@
 import { test, expect } from '@pethub-local-fixtures';
+import { testTargets } from '@config';
 
 test.describe('PetHub Storefront UI', () => {
   const standardUser = 'standard_user';
@@ -120,6 +121,66 @@ test.describe('PetHub Storefront UI', () => {
     expect(orderId).toBeGreaterThan(0);
     await localHomePage.goto();
     await localHomePage.assertOrderRelationVisible(String(orderId));
+  });
+
+  test('checkout summary total equals item total + tax', async ({
+    storefrontLoginPage,
+    storefrontInventoryPage,
+    storefrontCartPage,
+    storefrontCheckoutPage,
+    page,
+  }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    const [firstItem] = await storefrontInventoryPage.getItemNames();
+    await storefrontInventoryPage.addItemToCart(firstItem);
+    await storefrontInventoryPage.openCart();
+    await storefrontCartPage.proceedToCheckout();
+    await storefrontCheckoutPage.assertLoaded();
+
+    const parseAmount = (text: string | null): number => Number(String(text ?? '').replace(/[^0-9.]/g, ''));
+    const subtotal = parseAmount(await page.getByTestId('subtotal-label').textContent());
+    const tax = parseAmount(await page.getByTestId('tax-label').textContent());
+    const total = parseAmount(await page.getByTestId('total-label').textContent());
+
+    expect(subtotal).toBeGreaterThan(0);
+    expect(tax).toBeGreaterThan(0);
+    expect(total).toBeCloseTo(subtotal + tax, 2);
+  });
+
+  test('storefront order is attributed to the logged-in user, not a hardcoded id', async ({
+    storefrontLoginPage,
+    storefrontInventoryPage,
+    storefrontCartPage,
+    storefrontCheckoutPage,
+    storefrontCompletePage,
+    request,
+  }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.login(standardUser, password);
+    const [firstItem] = await storefrontInventoryPage.getItemNames();
+    await storefrontInventoryPage.addItemToCart(firstItem);
+    await storefrontInventoryPage.openCart();
+    await storefrontCartPage.proceedToCheckout();
+    await storefrontCheckoutPage.fillInformation({
+      firstName: 'Pat',
+      lastName: 'Shopper',
+      postalCode: '1000',
+    });
+    await storefrontCheckoutPage.submit();
+    await storefrontCompletePage.assertLoaded();
+    const orderId = await storefrontCompletePage.getOrderId();
+
+    // `standard_user` storefront persona maps to seeded API user `buyer01` (id 2002).
+    // Before the bug fix, every storefront order was hardcoded under userId 2002 regardless
+    // of who logged in - this assertion now ties the order back to the persona's mapped user.
+    // We hit the API directly (absolute URL) because this UI project's baseURL does not include `/api`.
+    const orderUrl = `${testTargets.pethubLocal.apiBaseUrl}orders/${orderId}/relations`;
+    const response = await request.get(orderUrl);
+    expect(response.ok(), `Expected 2xx for ${orderUrl}, got ${response.status()}`).toBeTruthy();
+    const order = (await response.json()) as { userId: number; user?: { username: string } };
+    expect(order.userId).toBe(2002);
+    expect(order.user?.username).toBe('buyer01');
   });
 
   test('sorts inventory by name Z to A', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
