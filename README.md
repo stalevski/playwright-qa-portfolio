@@ -498,3 +498,9 @@ This repository keeps **explicit Playwright code** as the source of truth. AI is
 ### Important principle
 
 Do **not** treat AI-generated steps as the runtime test layer. Keep committed tests as readable Playwright code with page objects, API clients, DTOs, and builders.
+
+## License
+
+© 2026 stalevski. All rights reserved.
+
+This repository is public for demonstration and educational review only. No permission is granted to use, copy, modify, merge, publish, distribute, or sublicense the code without explicit written permission. For inquiries, please open an issue or contact the repository owner.
