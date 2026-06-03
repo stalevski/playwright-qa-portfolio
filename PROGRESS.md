@@ -53,23 +53,19 @@ _Last updated: 2026-06-03_
 ## 4. TODO / backlog
 
 - [ ] Broaden `@smoke` / `@critical` tag coverage so grep-based CI selection is meaningful.
-- [ ] Add `SAUCE_DEMO_BASE_URL` to [.env.example](.env.example) (read in `test-targets.config.ts`).
+- [x] Add `SAUCE_DEMO_BASE_URL` to [.env.example](.env.example) (read in `test-targets.config.ts`).
 - [ ] Decide on `BasePage` helpers — adopt across pages or trim the unused ones.
-- [ ] Confirm whether `RandomDataGenerator` is used anywhere; prune if dead.
-- [ ] Add a `patch()` verb to `BaseApiClient` and refactor `updateOrderStatus` to use it.
+- [x] Add a `patch()` verb to `BaseApiClient` and refactor `updateOrderStatus` to use it.
 - [ ] Expand a11y coverage beyond the current `pethub-local-a11y` project if desired.
 
 ## 5. Known issues / tech-debt
 
-| Item                                         | Where                                                                                                    |     Severity     | Notes                                                                                                                                                     |
-| -------------------------------------------- | -------------------------------------------------------------------------------------------------------- | :--------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Regex-based SQL parser                       | [src/helpers/sql/json-sql-database.ts](src/helpers/sql/json-sql-database.ts)                             | High (long-term) | Hand-rolled; narrow grammar (single join, `=` + `AND` only). New query shapes require extending the parser. Consider `sql.js`/`better-sqlite3` in-memory. |
-| `BasePage` helpers unused                    | [src/core/ui/base.page.ts](src/core/ui/base.page.ts)                                                     |       Low        | Helpers used in ~1 of 20 pages; pages call `expect`/`locator` directly.                                                                                   |
-| `RandomDataGenerator` likely dead            | [src/helpers/random-data-generator.ts](src/helpers/random-data-generator.ts)                             |       Low        | No test import found; tests use builders + `createXDto`. Verify, then prune.                                                                              |
-| `updateOrderStatus` breaks verb pattern      | [src/helpers/api-clients/pethub-local-api.client.ts](src/helpers/api-clients/pethub-local-api.client.ts) |       Low        | Uses raw `request.patch` chain; base client has no `patch`.                                                                                               |
-| Uneven tag coverage                          | `tests/targets/**`                                                                                       |      Medium      | Only a few tests carry `@smoke`/`@critical`.                                                                                                              |
-| Magic seed IDs in tests                      | `tests/targets/**`                                                                                       |       Low        | Hardcoded IDs (e.g. `1010`) couple tests to `database.seed.ts`. Mitigated by comments.                                                                    |
-| `.env.example` missing `SAUCE_DEMO_BASE_URL` | [.env.example](.env.example)                                                                             |     Trivial      | Falls back to default; harmless but inconsistent.                                                                                                         |
+| Item                      | Where                                                                        |     Severity     | Notes                                                                                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------- | :--------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Regex-based SQL parser    | [src/helpers/sql/json-sql-database.ts](src/helpers/sql/json-sql-database.ts) | High (long-term) | Hand-rolled; narrow grammar (single join, `=` + `AND` only). New query shapes require extending the parser. Consider `sql.js`/`better-sqlite3` in-memory. |
+| `BasePage` helpers unused | [src/core/ui/base.page.ts](src/core/ui/base.page.ts)                         |       Low        | Helpers used in ~1 of 20 pages; pages call `expect`/`locator` directly.                                                                                   |
+| Uneven tag coverage       | `tests/targets/**`                                                           |      Medium      | Only a few tests carry `@smoke`/`@critical`.                                                                                                              |
+| Magic seed IDs in tests   | `tests/targets/**`                                                           |       Low        | Hardcoded IDs (e.g. `1010`) couple tests to `database.seed.ts`. Mitigated by comments.                                                                    |
 
 ## 6. Decision log
 
