@@ -175,10 +175,7 @@ export class LocalPetStoreApiClient extends BaseApiClient {
   }
 
   async updateOrderStatus(id: number, status: LocalOrderDto['status']): Promise<LocalOrderDto> {
-    return this.request.patch(`orders/${id}/status`, { data: { status } }).then(async (response) => {
-      await this.expectOk(response);
-      return response.json() as Promise<LocalOrderDto>;
-    });
+    return this.patch<{ status: LocalOrderDto['status'] }, LocalOrderDto>(`orders/${id}/status`, { status });
   }
 
   async getAuditLog(): Promise<AuditLogDto[]> {
