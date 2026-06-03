@@ -45,6 +45,15 @@ export abstract class BaseApiClient {
     return response.json() as Promise<TResponse>;
   }
 
+  protected async patch<TRequest, TResponse>(path: string, payload: TRequest): Promise<TResponse> {
+    const response = await this.request.patch(path, {
+      data: payload,
+    });
+
+    await this.expectOk(response);
+    return response.json() as Promise<TResponse>;
+  }
+
   protected async delete(path: string): Promise<APIResponse> {
     const response = await this.request.delete(path);
     await this.expectOk(response);
