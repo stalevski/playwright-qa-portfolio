@@ -1,5 +1,6 @@
 import {
   getAuditLogRelationsQuery,
+  getActiveSessionQuery,
   getCustomersQuery,
   getDownstreamSystemsQuery,
   getEmployeesQuery,
@@ -38,6 +39,7 @@ export const renderAdminHomePage = async (): Promise<string> => {
   const readModels = await getReadModelsQuery();
   const downstreamSystems = await getDownstreamSystemsQuery();
   const inventory = await getInventoryQuery();
+  const activeSession = await getActiveSessionQuery();
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -137,6 +139,17 @@ ${renderHead('PetHub Local')}
     <section>
       <h2>Swagger-style Explorer</h2>
       <p class="muted">Manual UI helpers for common Swagger Petstore operations against the local app.</p>
+      <p class="muted">
+        Note: these mirror the public Petstore operations for QA practice. User Login is
+        intentionally stateless — it records a session but does not gate this dashboard.
+      </p>
+      <p data-test="explorer-session-status">
+        ${
+          activeSession
+            ? `<span class="pill">Active session</span> <code>${activeSession.username}</code>`
+            : '<span class="muted">No active session.</span>'
+        }
+      </p>
       <div class="three-column">
         <form method="get" action="/api/pets/findByStatus">
           <h3>Find Pets by Status</h3>
