@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-06-03_
+_Last updated: 2026-06-04_
 
 ---
 
@@ -21,14 +21,14 @@ _Last updated: 2026-06-03_
 - **CI** (`.github/workflows/playwright.yml`): `lint` → `test-local`
   (required) + `test-external` (informational, `continue-on-error`), plus a
   weekly cron to detect external-target drift.
-- **Tooling**: ESLint + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 20),
+- **Tooling**: ESLint + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 22),
   `npm run doctor`, screenshot/PDF helper scripts.
 - **AI assist**: `.windsurf/workflows/*` (plan / generate / heal / coverage /
   repo-revival), plus `AGENTS.md` + `.github/copilot-instructions.md`.
 
 ## 2. Resume on a new machine (checklist)
 
-1. **Node version** — use Node 20 (see [.nvmrc](.nvmrc)). `nvm use` if available.
+1. **Node version** — use Node 22 (see [.nvmrc](.nvmrc)). `nvm use` if available.
 2. **Install deps** — `npm ci` (clean, lockfile-exact).
 3. **Install browsers** — `npx playwright install` (add `--with-deps` on Linux/CI).
 4. **Sanity check** — `npm run doctor` (prints node/npm/playwright versions and runs `tsc --noEmit`).
@@ -57,6 +57,7 @@ _Last updated: 2026-06-03_
 - [ ] Decide on `BasePage` helpers — adopt across pages or trim the unused ones.
 - [x] Add a `patch()` verb to `BaseApiClient` and refactor `updateOrderStatus` to use it.
 - [ ] Expand a11y coverage beyond the current `pethub-local-a11y` project if desired.
+- [ ] Migrate ESLint 8 (EOL) → 9 flat config + bump `typescript-eslint` to v8.
 
 ## 5. Known issues / tech-debt
 
@@ -66,11 +67,28 @@ _Last updated: 2026-06-03_
 | `BasePage` helpers unused | [src/core/ui/base.page.ts](src/core/ui/base.page.ts)                         |       Low        | Helpers used in ~1 of 20 pages; pages call `expect`/`locator` directly.                                                                                   |
 | Uneven tag coverage       | `tests/targets/**`                                                           |      Medium      | Only a few tests carry `@smoke`/`@critical`.                                                                                                              |
 | Magic seed IDs in tests   | `tests/targets/**`                                                           |       Low        | Hardcoded IDs (e.g. `1010`) couple tests to `database.seed.ts`. Mitigated by comments.                                                                    |
+| ESLint 8 is end-of-life   | [package.json](package.json)                                                 |      Medium      | `eslint@^8.57` (EOL Oct 2024) + `typescript-eslint@^7`. Works today; newer plugins increasingly need ESLint 9 flat config. Migrate when convenient.       |
 
 ## 6. Decision log
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-04** — Clarified the admin **Swagger-style Explorer** login for humans:
+  added a caption noting the Petstore-style login is intentionally stateless (records
+  a session but does not gate the dashboard) and an active-session badge
+  (`data-test="explorer-session-status"`) so the action has visible feedback. Backed
+  by a read-only `getActiveSession` query; no change to the API/test contract.
+  Inline result panels were considered but deferred (needs client JS + would touch UI
+  test expectations).
+- **2026-06-04** — Bumped Node pin 20 → 22 (`.nvmrc`, `engines`, docs) because
+  Node 20 reached end-of-life (~April 2026); 22 is Active LTS. CI installs from
+  `.nvmrc`, so this moves CI off an EOL runtime.
+- **2026-06-04** — Centralized `pethub-local` storefront credentials in
+  [src/helpers/test-data.ts](src/helpers/test-data.ts) (`pethubLocalUsers` /
+  `pethubLocalPassword`); specs and the screenshot script import them. The app
+  ([storefront.ts](apps/pethub-local/storefront/storefront.ts)) keeps its own
+  copy as the runtime source of truth. Storefront password changed off the
+  Sauce-Demo value, and login error copy rebranded away from `Epic sadface:`.
 - **2026-06-03** — Adopted `AGENTS.md` as the single source of truth for AI agents;
   `.github/copilot-instructions.md` is a thin pointer. Deep rules stay in
   `TEST_AUTOMATION_STANDARDS.md`. Windsurf workflows retained as task playbooks.
