@@ -1,10 +1,11 @@
 import { test, expect } from '@pethub-local-fixtures';
 import { testTargets } from '@config';
+import { pethubLocalPassword, pethubLocalUsers } from '@helpers/test-data';
 
 test.describe('PetHub Storefront UI', () => {
-  const standardUser = 'standard_user';
-  const lockedOutUser = 'locked_out_user';
-  const password = 'secret_sauce';
+  const standardUser = pethubLocalUsers.standard;
+  const lockedOutUser = pethubLocalUsers.lockedOut;
+  const password = pethubLocalPassword;
 
   test('rejects login with empty credentials', async ({ storefrontLoginPage }) => {
     await storefrontLoginPage.goto();
@@ -238,8 +239,8 @@ test.describe('PetHub Storefront UI', () => {
 });
 
 test.describe('PetHub Storefront theme toggle', () => {
-  const standardUser = 'standard_user';
-  const password = 'secret_sauce';
+  const standardUser = pethubLocalUsers.standard;
+  const password = pethubLocalPassword;
 
   test('toggles between dark and light themes and persists across reloads', async ({ storefrontLoginPage, page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });

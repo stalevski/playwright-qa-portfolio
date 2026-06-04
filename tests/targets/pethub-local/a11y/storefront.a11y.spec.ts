@@ -1,8 +1,9 @@
 import { test } from '@pethub-local-fixtures';
 import { assertNoSeriousA11yViolations } from '@helpers/a11y';
+import { pethubLocalPassword, pethubLocalUsers } from '@helpers/test-data';
 
-const standardUser = 'standard_user';
-const password = 'secret_sauce';
+const standardUser = pethubLocalUsers.standard;
+const password = pethubLocalPassword;
 
 test.describe('PetHub Local storefront a11y', { tag: '@a11y' }, () => {
   test('login page has no critical or serious WCAG violations', async ({ storefrontLoginPage, page }) => {

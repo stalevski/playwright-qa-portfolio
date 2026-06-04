@@ -15,11 +15,12 @@
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { chromium, type Browser, type Page } from 'playwright';
+import { pethubLocalPassword, pethubLocalUsers } from '@helpers/test-data';
 
 const BASE_URL = process.env.APP_URL ?? 'http://127.0.0.1:3000';
 const OUTPUT_DIR = resolve(process.cwd(), 'docs/screenshots');
 const VIEWPORT = { width: 1440, height: 900 };
-const STOREFRONT_USER = { username: 'standard_user', password: 'secret_sauce' };
+const STOREFRONT_USER = { username: pethubLocalUsers.standard, password: pethubLocalPassword };
 
 const log = (message: string): void => {
   // eslint-disable-next-line no-console -- intentional progress output

@@ -37,10 +37,10 @@ export type StorefrontSession = {
 export type StorefrontSortValue = 'az' | 'za' | 'lohi' | 'hilo';
 
 export const storefrontUsers: StorefrontUser[] = [
-  { username: 'standard_user', password: 'secret_sauce', userId: 2002, role: 'customer' },
-  { username: 'problem_user', password: 'secret_sauce', userId: 2003, role: 'customer' },
-  { username: 'performance_user', password: 'secret_sauce', userId: 2004, role: 'customer' },
-  { username: 'locked_out_user', password: 'secret_sauce', userId: 2005, role: 'customer', locked: true },
+  { username: 'standard_user', password: 'pethub123', userId: 2002, role: 'customer' },
+  { username: 'problem_user', password: 'pethub123', userId: 2003, role: 'customer' },
+  { username: 'performance_user', password: 'pethub123', userId: 2004, role: 'customer' },
+  { username: 'locked_out_user', password: 'pethub123', userId: 2005, role: 'customer', locked: true },
 ];
 
 export const storefrontSessions = new Map<string, StorefrontSession>();
