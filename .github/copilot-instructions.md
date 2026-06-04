@@ -13,7 +13,7 @@ Quick context:
   typed API clients (`extends BaseApiClient`), DTO builders, per-target fixtures.
 - Run: `npm run app:start`, `npm test` (external then local), `npm run test:local`
   (serial — lowdb is a single shared file), `npm run lint`, `npm run doctor`.
-  Node 20 (`.nvmrc`).
+  Node 22 (`.nvmrc`).
 - Before "done": `npm run lint` + `npm run format:check` pass, `tsc --noEmit`
   clean, run the affected target's suite, and update
   [PROGRESS.md](../PROGRESS.md) if status/backlog/tech-debt changed.
