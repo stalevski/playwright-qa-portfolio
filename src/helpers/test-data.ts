@@ -16,6 +16,21 @@ export const sauceDemoUsers = {
 
 export const sauceDemoPassword = 'secret_sauce';
 
+/**
+ * Storefront personas for the in-repo `pethub-local` app. These mirror the
+ * accounts defined in `apps/pethub-local/storefront/storefront.ts` (the app is
+ * the runtime source of truth that validates logins); this constant is the
+ * single place tests and tooling reference them, so update both if they change.
+ */
+export const pethubLocalUsers = {
+  standard: 'standard_user',
+  problem: 'problem_user',
+  performance: 'performance_user',
+  lockedOut: 'locked_out_user',
+} as const;
+
+export const pethubLocalPassword = 'pethub123';
+
 export const sauceDemoProducts = {
   backpack: 'Sauce Labs Backpack',
   bikeLight: 'Sauce Labs Bike Light',

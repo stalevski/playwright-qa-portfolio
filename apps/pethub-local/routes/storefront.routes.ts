@@ -35,12 +35,12 @@ storefrontRouter.post('/login', (request: Request, response: Response) => {
   const password = String(request.body.password ?? '').trim();
 
   if (!username) {
-    response.status(400).send(renderStorefrontLogin('Epic sadface: Username is required'));
+    response.status(400).send(renderStorefrontLogin("We couldn't sign you in: Username is required"));
     return;
   }
 
   if (!password) {
-    response.status(400).send(renderStorefrontLogin('Epic sadface: Password is required'));
+    response.status(400).send(renderStorefrontLogin("We couldn't sign you in: Password is required"));
     return;
   }
 
@@ -48,12 +48,14 @@ storefrontRouter.post('/login', (request: Request, response: Response) => {
   if (!user) {
     response
       .status(400)
-      .send(renderStorefrontLogin('Epic sadface: Username and password do not match any user in this service'));
+      .send(
+        renderStorefrontLogin("We couldn't sign you in: Username and password do not match any user in this service"),
+      );
     return;
   }
 
   if (user.locked) {
-    response.status(400).send(renderStorefrontLogin('Epic sadface: Sorry, this user has been locked out.'));
+    response.status(400).send(renderStorefrontLogin("We couldn't sign you in: Sorry, this user has been locked out."));
     return;
   }
 
