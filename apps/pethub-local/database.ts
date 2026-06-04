@@ -538,6 +538,11 @@ export const logoutUser = async (): Promise<void> => {
   await database.write();
 };
 
+export const getActiveSession = async (): Promise<SessionRecord | undefined> => {
+  await ensureLoaded();
+  return database.data.sessions[0];
+};
+
 export const getAuditLog = async (): Promise<AuditRecord[]> => {
   await ensureLoaded();
   return [...database.data.auditLog].sort((left, right) => right.id - left.id).slice(0, 100);
