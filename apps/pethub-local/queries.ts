@@ -1,6 +1,7 @@
 import {
   findPetsByStatus,
   findPetsByTags,
+  getActiveSession,
   getCustomerById,
   getCustomers,
   getEmployeeById,
@@ -35,6 +36,8 @@ export const findPetsByStatusQuery = async (status: 'available' | 'pending' | 's
 export const findPetsByTagsQuery = async (tags: string[]) => findPetsByTags(tags);
 
 export const getUsersQuery = async () => getUsers();
+
+export const getActiveSessionQuery = async () => getActiveSession();
 
 export const getEmployeesQuery = async () => getEmployees();
 
