@@ -35,7 +35,7 @@
     "doctor": "node --version && npm --version && npx playwright --version && npx tsc --noEmit && echo Doctor: OK"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "express": "^4.21.2",
