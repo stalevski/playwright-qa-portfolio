@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import {
@@ -137,7 +137,9 @@ type DatabaseSchema = {
   sessions: SessionRecord[];
 };
 
-const databaseFile = 'apps/pethub-local/data/pethub-local-db.json';
+// Resolve the data file relative to this module so the app runs from any
+// working directory, not only the repository root.
+const databaseFile = join(__dirname, 'data', 'pethub-local-db.json');
 const directory = dirname(databaseFile);
 if (!existsSync(directory)) {
   mkdirSync(directory, { recursive: true });

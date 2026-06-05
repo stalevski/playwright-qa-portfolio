@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import type {
@@ -73,7 +73,9 @@ export type ReadModelSnapshot = {
   eventFeed: EventFeedItem[];
 };
 
-const readModelFile = 'apps/pethub-local/data/read-models-db.json';
+// Resolve the data file relative to this module so the app runs from any
+// working directory, not only the repository root.
+const readModelFile = join(__dirname, 'data', 'read-models-db.json');
 const directory = dirname(readModelFile);
 if (!existsSync(directory)) {
   mkdirSync(directory, { recursive: true });
