@@ -12,10 +12,20 @@ on:
     # even when nobody is pushing. Monday 06:00 UTC.
     - cron: '0 6 * * 1'
 
+# Cancel superseded runs on the same ref so rapid pushes don't pile up.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: the workflow only needs to read repository contents.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint and format
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
