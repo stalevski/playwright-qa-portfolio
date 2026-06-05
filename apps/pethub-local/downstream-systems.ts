@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import type { CustomerRecord, EmployeeRecord, LocalAppEvent, OrderRecord, PetRecord, UserRecord } from './database';
@@ -68,7 +68,9 @@ export type DownstreamSystemSnapshot = {
   analyticsEvents: AnalyticsEventRecord[];
 };
 
-const downstreamFile = 'apps/pethub-local/data/downstream-systems-db.json';
+// Resolve the data file relative to this module so the app runs from any
+// working directory, not only the repository root.
+const downstreamFile = join(__dirname, 'data', 'downstream-systems-db.json');
 const directory = dirname(downstreamFile);
 if (!existsSync(directory)) {
   mkdirSync(directory, { recursive: true });
