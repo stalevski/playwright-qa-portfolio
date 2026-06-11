@@ -59,7 +59,7 @@ test.describe('Petstore API - Pet endpoints', () => {
     expect(pets.some((candidate) => candidate.id === pet.id)).toBeTruthy();
   });
 
-  test('gets a pet by id', async ({ apiClient }) => {
+  test('gets a pet by id', { tag: '@smoke' }, async ({ apiClient }) => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
 

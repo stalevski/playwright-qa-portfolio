@@ -55,16 +55,17 @@ test.describe('PetHub Storefront UI', () => {
     expect(prices).toEqual(sorted);
   });
 
-  test('adds an item to the cart and shows the cart badge', async ({
-    storefrontLoginPage,
-    storefrontInventoryPage,
-  }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    const [firstItem] = await storefrontInventoryPage.getItemNames();
-    await storefrontInventoryPage.addItemToCart(firstItem);
-    await storefrontInventoryPage.assertCartBadgeCount(1);
-  });
+  test(
+    'adds an item to the cart and shows the cart badge',
+    { tag: '@critical' },
+    async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+      await storefrontLoginPage.goto();
+      await storefrontLoginPage.login(standardUser, password);
+      const [firstItem] = await storefrontInventoryPage.getItemNames();
+      await storefrontInventoryPage.addItemToCart(firstItem);
+      await storefrontInventoryPage.assertCartBadgeCount(1);
+    },
+  );
 
   test('opens item details from the inventory and allows returning back', async ({
     storefrontLoginPage,
@@ -97,32 +98,36 @@ test.describe('PetHub Storefront UI', () => {
     await storefrontCheckoutPage.assertErrorContains('First Name is required');
   });
 
-  test('completes a checkout flow and records a new order', async ({
-    storefrontLoginPage,
-    storefrontInventoryPage,
-    storefrontCartPage,
-    storefrontCheckoutPage,
-    storefrontCompletePage,
-    localHomePage,
-  }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    const [firstItem] = await storefrontInventoryPage.getItemNames();
-    await storefrontInventoryPage.addItemToCart(firstItem);
-    await storefrontInventoryPage.openCart();
-    await storefrontCartPage.proceedToCheckout();
-    await storefrontCheckoutPage.fillInformation({
-      firstName: 'Pat',
-      lastName: 'Shopper',
-      postalCode: '1000',
-    });
-    await storefrontCheckoutPage.submit();
-    await storefrontCompletePage.assertLoaded();
-    const orderId = await storefrontCompletePage.getOrderId();
-    expect(orderId).toBeGreaterThan(0);
-    await localHomePage.goto();
-    await localHomePage.assertOrderRelationVisible(String(orderId));
-  });
+  test(
+    'completes a checkout flow and records a new order',
+    { tag: ['@smoke', '@critical'] },
+    async ({
+      storefrontLoginPage,
+      storefrontInventoryPage,
+      storefrontCartPage,
+      storefrontCheckoutPage,
+      storefrontCompletePage,
+      localHomePage,
+    }) => {
+      await storefrontLoginPage.goto();
+      await storefrontLoginPage.login(standardUser, password);
+      const [firstItem] = await storefrontInventoryPage.getItemNames();
+      await storefrontInventoryPage.addItemToCart(firstItem);
+      await storefrontInventoryPage.openCart();
+      await storefrontCartPage.proceedToCheckout();
+      await storefrontCheckoutPage.fillInformation({
+        firstName: 'Pat',
+        lastName: 'Shopper',
+        postalCode: '1000',
+      });
+      await storefrontCheckoutPage.submit();
+      await storefrontCompletePage.assertLoaded();
+      const orderId = await storefrontCompletePage.getOrderId();
+      expect(orderId).toBeGreaterThan(0);
+      await localHomePage.goto();
+      await localHomePage.assertOrderRelationVisible(String(orderId));
+    },
+  );
 
   test('checkout summary total equals item total + tax', async ({
     storefrontLoginPage,

@@ -37,33 +37,38 @@ const nextUniqueId = (): number => Date.now() + Math.floor(Math.random() * 10000
 test.describe('Local Petstore database validation with SQL', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('validates a created pet persisted in the operational database', async ({ localApiClient }) => {
-    const pet = RandomDataGenerator.createLocalPet({
-      id: nextUniqueId(),
-      category: 'Dogs',
-      status: 'pending',
-    });
+  test(
+    'validates a created pet persisted in the operational database',
+    { tag: '@critical' },
+    async ({ localApiClient }) => {
+      const pet = RandomDataGenerator.createLocalPet({
+        id: nextUniqueId(),
+        category: 'Dogs',
+        status: 'pending',
+      });
 
-    await localApiClient.createPet(pet);
+      await localApiClient.createPet(pet);
 
-    await expect
-      .poll(async () => {
-        const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM pets WHERE id = ?', [
-          pet.id,
-        ]);
-        return countRow.total;
-      })
-      .toBe(1);
+      await expect
+        .poll(async () => {
+          const [countRow] = await operationalDb.query<CountRow>('SELECT COUNT(*) AS total FROM pets WHERE id = ?', [
+            pet.id,
+          ]);
+          return countRow.total;
+        })
+        .toBe(1);
 
-    const [persistedPet] = await operationalDb.query<PetRow>('SELECT id, name, status, price FROM pets WHERE id = ?', [
-      pet.id,
-    ]);
+      const [persistedPet] = await operationalDb.query<PetRow>(
+        'SELECT id, name, status, price FROM pets WHERE id = ?',
+        [pet.id],
+      );
 
-    expect(persistedPet.id).toBe(pet.id);
-    expect(persistedPet.name).toBe(pet.name);
-    expect(persistedPet.status).toBe(pet.status);
-    expect(persistedPet.price).toBe(pet.price);
-  });
+      expect(persistedPet.id).toBe(pet.id);
+      expect(persistedPet.name).toBe(pet.name);
+      expect(persistedPet.status).toBe(pet.status);
+      expect(persistedPet.price).toBe(pet.price);
+    },
+  );
 
   test('validates order relationships using SQL joins against the operational database', async ({ localApiClient }) => {
     const pet = RandomDataGenerator.createLocalPet({

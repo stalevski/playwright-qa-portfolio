@@ -24,7 +24,7 @@ test.describe('Local Petstore UI', () => {
     await expect(page.getByRole('button', { name: 'Execute' }).first()).toBeVisible();
   });
 
-  test('creates a pet and shows an audit entry', async ({ localHomePage }) => {
+  test('creates a pet and shows an audit entry', { tag: '@critical' }, async ({ localHomePage }) => {
     await localHomePage.goto();
     await localHomePage.assertLoaded();
     await localHomePage.createPet(localPet);
