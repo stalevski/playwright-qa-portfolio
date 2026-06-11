@@ -16,11 +16,9 @@ async function globalSetup(): Promise<void> {
   try {
     const response = await context.post('admin/reset', { timeout: 10_000 });
     if (!response.ok()) {
-      // eslint-disable-next-line no-console
       console.warn(`[globalSetup] local DB reset returned ${response.status()}`);
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.warn('[globalSetup] local DB reset skipped:', error instanceof Error ? error.message : error);
   } finally {
     await context.dispose();

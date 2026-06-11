@@ -59,7 +59,7 @@ test.describe('Petstore API - User endpoints', () => {
     expect(deleteResponse.ok()).toBeTruthy();
   });
 
-  test('logs user into the system', async ({ apiClient }) => {
+  test('logs user into the system', { tag: '@smoke' }, async ({ apiClient }) => {
     const user = createUserDto();
     await apiClient.createUser(user);
 
@@ -68,7 +68,7 @@ test.describe('Petstore API - User endpoints', () => {
     expect(response.message).toContain('logged in user session');
   });
 
-  test('creates user', async ({ apiClient }) => {
+  test('creates user', { tag: '@smoke' }, async ({ apiClient }) => {
     const user = createUserDto();
 
     const response = await apiClient.createUser(user);

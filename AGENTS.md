@@ -64,7 +64,7 @@ Path aliases (see `tsconfig.json`): `@config`, `@core/*`, `@pages/*`,
 | a11y                        | `npm run test:a11y`                                               |
 | Lint / format               | `npm run lint` · `npm run format:check`                           |
 
-Node 22 (see `.nvmrc`). The local config runs `workers: 1` because lowdb is a
+Node 24 (see `.nvmrc`). The local config runs `workers: 1` because lowdb is a
 single shared JSON file; do not parallelize local tests.
 
 ## Conventions agents must follow

@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-06-04_
+_Last updated: 2026-06-11_
 
 ---
 
@@ -21,14 +21,14 @@ _Last updated: 2026-06-04_
 - **CI** (`.github/workflows/playwright.yml`): `lint` → `test-local`
   (required) + `test-external` (informational, `continue-on-error`), plus a
   weekly cron to detect external-target drift.
-- **Tooling**: ESLint + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 22),
+- **Tooling**: ESLint 10 (flat config) + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 24),
   `npm run doctor`, screenshot/PDF helper scripts.
 - **AI assist**: `.windsurf/workflows/*` (plan / generate / heal / coverage /
   repo-revival), plus `AGENTS.md` + `.github/copilot-instructions.md`.
 
 ## 2. Resume on a new machine (checklist)
 
-1. **Node version** — use Node 22 (see [.nvmrc](.nvmrc)). `nvm use` if available.
+1. **Node version** — use Node 24 (see [.nvmrc](.nvmrc)). `nvm use` if available.
 2. **Install deps** — `npm ci` (clean, lockfile-exact).
 3. **Install browsers** — `npx playwright install` (add `--with-deps` on Linux/CI).
 4. **Sanity check** — `npm run doctor` (prints node/npm/playwright versions and runs `tsc --noEmit`).
@@ -52,12 +52,12 @@ _Last updated: 2026-06-04_
 
 ## 4. TODO / backlog
 
-- [ ] Broaden `@smoke` / `@critical` tag coverage so grep-based CI selection is meaningful.
+- [x] Broaden `@smoke` / `@critical` tag coverage so grep-based CI selection is meaningful.
 - [x] Add `SAUCE_DEMO_BASE_URL` to [.env.example](.env.example) (read in `test-targets.config.ts`).
 - [ ] Decide on `BasePage` helpers — adopt across pages or trim the unused ones.
 - [x] Add a `patch()` verb to `BaseApiClient` and refactor `updateOrderStatus` to use it.
 - [ ] Expand a11y coverage beyond the current `pethub-local-a11y` project if desired.
-- [ ] Migrate ESLint 8 (EOL) → 9 flat config + bump `typescript-eslint` to v8.
+- [x] Migrate ESLint 8 (EOL) → flat config + bump `typescript-eslint` (done 2026-06-11; went straight to ESLint 10 + typescript-eslint v8).
 
 ## 5. Known issues / tech-debt
 
@@ -65,14 +65,23 @@ _Last updated: 2026-06-04_
 | ------------------------- | ---------------------------------------------------------------------------- | :--------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Regex-based SQL parser    | [src/helpers/sql/json-sql-database.ts](src/helpers/sql/json-sql-database.ts) | High (long-term) | Hand-rolled; narrow grammar (single join, `=` + `AND` only). New query shapes require extending the parser. Consider `sql.js`/`better-sqlite3` in-memory. |
 | `BasePage` helpers unused | [src/core/ui/base.page.ts](src/core/ui/base.page.ts)                         |       Low        | Helpers used in ~1 of 20 pages; pages call `expect`/`locator` directly.                                                                                   |
-| Uneven tag coverage       | `tests/targets/**`                                                           |      Medium      | Only a few tests carry `@smoke`/`@critical`.                                                                                                              |
 | Magic seed IDs in tests   | `tests/targets/**`                                                           |       Low        | Hardcoded IDs (e.g. `1010`) couple tests to `database.seed.ts`. Mitigated by comments.                                                                    |
-| ESLint 8 is end-of-life   | [package.json](package.json)                                                 |      Medium      | `eslint@^8.57` (EOL Oct 2024) + `typescript-eslint@^7`. Works today; newer plugins increasingly need ESLint 9 flat config. Migrate when convenient.       |
 
 ## 6. Decision log
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-11 (later)** — LTS/latest upgrade pass: Node pin 22 → 24 (`.nvmrc` + `engines`),
+  ESLint 8 → 10 with flat config (`.eslintrc.cjs` → `eslint.config.mjs`, typescript-eslint v8
+  meta-package), Express 4 → 5 (no breaking route patterns in the app), Playwright 1.60,
+  dotenv 17, marked/prettier/tsx latest. Also migrated `tsconfig.json` off deprecated `baseUrl` +
+  `moduleResolution: Node` (TS 6 deprecations) to relative `paths` + NodeNext. Verified: lint
+  clean, doctor OK, `test:local` 113 passed.
+- **2026-06-11** — Broadened `@smoke`/`@critical` tag coverage from 8 to ~20 tests across all
+  three targets (core journeys: checkout, cart, pet/order/user CRUD, DB validation, ops portal
+  overview) so `--grep @smoke` / `--grep @critical` CI selection is meaningful. Also fixed stale
+  README facts: Node engines `>=20` → `>=22` and screenshot count 10 → 9 (the script captures 9;
+  there is no `02-*` image). Verified: lint clean, `npm run test:local` 113 passed.
 - **2026-06-04** — Clarified the admin **Swagger-style Explorer** login for humans:
   added a caption noting the Petstore-style login is intentionally stateless (records
   a session but does not gate the dashboard) and an active-session badge
