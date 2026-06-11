@@ -210,53 +210,57 @@ test.describe('Local Petstore API', () => {
     expect(petCreatedEvent?.payload.petName).toBe(pet.name);
   });
 
-  test('updates read-model and downstream system databases automatically from events', async ({ localApiClient }) => {
-    const pet = RandomDataGenerator.createLocalPet({
-      category: 'Dogs',
-      status: 'available',
-    });
-    const user = RandomDataGenerator.createLocalUser({
-      role: 'customer',
-    });
+  test(
+    'updates read-model and downstream system databases automatically from events',
+    { tag: '@critical' },
+    async ({ localApiClient }) => {
+      const pet = RandomDataGenerator.createLocalPet({
+        category: 'Dogs',
+        status: 'available',
+      });
+      const user = RandomDataGenerator.createLocalUser({
+        role: 'customer',
+      });
 
-    await localApiClient.createPet(pet);
-    await localApiClient.createUser(user);
+      await localApiClient.createPet(pet);
+      await localApiClient.createUser(user);
 
-    const order = RandomDataGenerator.createLocalOrder({
-      petId: pet.id,
-      userId: user.id,
-      status: 'placed',
-      totalAmount: pet.price,
-    });
+      const order = RandomDataGenerator.createLocalOrder({
+        petId: pet.id,
+        userId: user.id,
+        status: 'placed',
+        totalAmount: pet.price,
+      });
 
-    await localApiClient.createOrder(order);
+      await localApiClient.createOrder(order);
 
-    const readModels = await localApiClient.getReadModels();
-    expect(readModels.petCatalog.some((entry) => entry.id === pet.id && entry.name === pet.name)).toBeTruthy();
-    expect(
-      readModels.userDirectory.some((entry) => entry.id === user.id && entry.username === user.username),
-    ).toBeTruthy();
-    expect(readModels.orderLedger.some((entry) => entry.id === order.id && entry.userId === user.id)).toBeTruthy();
-    expect(
-      readModels.eventFeed.some((entry) => entry.entityId === order.id && entry.type === 'order.created'),
-    ).toBeTruthy();
+      const readModels = await localApiClient.getReadModels();
+      expect(readModels.petCatalog.some((entry) => entry.id === pet.id && entry.name === pet.name)).toBeTruthy();
+      expect(
+        readModels.userDirectory.some((entry) => entry.id === user.id && entry.username === user.username),
+      ).toBeTruthy();
+      expect(readModels.orderLedger.some((entry) => entry.id === order.id && entry.userId === user.id)).toBeTruthy();
+      expect(
+        readModels.eventFeed.some((entry) => entry.entityId === order.id && entry.type === 'order.created'),
+      ).toBeTruthy();
 
-    const downstreamSystems = await localApiClient.getDownstreamSystems();
-    expect(
-      downstreamSystems.inventoryReplica.some((entry) => entry.petId === pet.id && entry.name === pet.name),
-    ).toBeTruthy();
-    expect(
-      downstreamSystems.crmCustomers.some((entry) => entry.userId === user.id && entry.username === user.username),
-    ).toBeTruthy();
-    expect(
-      downstreamSystems.billingOrders.some((entry) => entry.orderId === order.id && entry.amount === pet.price),
-    ).toBeTruthy();
-    expect(
-      downstreamSystems.analyticsEvents.some(
-        (entry) => entry.entityId === order.id && entry.eventType === 'order.created',
-      ),
-    ).toBeTruthy();
-  });
+      const downstreamSystems = await localApiClient.getDownstreamSystems();
+      expect(
+        downstreamSystems.inventoryReplica.some((entry) => entry.petId === pet.id && entry.name === pet.name),
+      ).toBeTruthy();
+      expect(
+        downstreamSystems.crmCustomers.some((entry) => entry.userId === user.id && entry.username === user.username),
+      ).toBeTruthy();
+      expect(
+        downstreamSystems.billingOrders.some((entry) => entry.orderId === order.id && entry.amount === pet.price),
+      ).toBeTruthy();
+      expect(
+        downstreamSystems.analyticsEvents.some(
+          (entry) => entry.entityId === order.id && entry.eventType === 'order.created',
+        ),
+      ).toBeTruthy();
+    },
+  );
 
   test('emits a user.updated event (not user.created) when an existing user is updated', async ({ localApiClient }) => {
     const user = RandomDataGenerator.createLocalUser({ role: 'customer' });
@@ -274,18 +278,22 @@ test.describe('Local Petstore API', () => {
     expect(updateAudit?.details).toContain('updated');
   });
 
-  test('admin reset endpoint clears arbitrary state and reseeds the seed data', async ({ localApiClient, request }) => {
-    const ephemeralPet = RandomDataGenerator.createLocalPet({ category: 'Dogs', status: 'available' });
-    await localApiClient.createPet(ephemeralPet);
-    expect((await localApiClient.getPets()).some((pet) => pet.id === ephemeralPet.id)).toBeTruthy();
+  test(
+    'admin reset endpoint clears arbitrary state and reseeds the seed data',
+    { tag: '@critical' },
+    async ({ localApiClient, request }) => {
+      const ephemeralPet = RandomDataGenerator.createLocalPet({ category: 'Dogs', status: 'available' });
+      await localApiClient.createPet(ephemeralPet);
+      expect((await localApiClient.getPets()).some((pet) => pet.id === ephemeralPet.id)).toBeTruthy();
 
-    const resetResponse = await request.post('admin/reset');
-    expect(resetResponse.status()).toBe(200);
-    const resetBody = await resetResponse.json();
-    expect(resetBody).toEqual({ status: 'ok', message: 'database reset and reseeded' });
+      const resetResponse = await request.post('admin/reset');
+      expect(resetResponse.status()).toBe(200);
+      const resetBody = await resetResponse.json();
+      expect(resetBody).toEqual({ status: 'ok', message: 'database reset and reseeded' });
 
-    const petsAfterReset = await localApiClient.getPets();
-    expect(petsAfterReset.some((pet) => pet.id === ephemeralPet.id)).toBeFalsy();
-    expect(petsAfterReset.some((pet) => pet.id === 1001 && pet.name === 'Golden Retriever')).toBeTruthy();
-  });
+      const petsAfterReset = await localApiClient.getPets();
+      expect(petsAfterReset.some((pet) => pet.id === ephemeralPet.id)).toBeFalsy();
+      expect(petsAfterReset.some((pet) => pet.id === 1001 && pet.name === 'Golden Retriever')).toBeTruthy();
+    },
+  );
 });

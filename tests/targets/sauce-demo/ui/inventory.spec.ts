@@ -40,15 +40,19 @@ test.describe('Sauce Demo - Inventory', () => {
     expect(prices).toEqual(expected);
   });
 
-  test('adds and removes products from the cart and updates the badge', async ({ sauceDemoInventoryPage }) => {
-    await sauceDemoInventoryPage.goto();
-    await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
-    await sauceDemoInventoryPage.assertCartBadgeCount(1);
-    await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.bikeLight);
-    await sauceDemoInventoryPage.assertCartBadgeCount(2);
-    await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.backpack);
-    await sauceDemoInventoryPage.assertCartBadgeCount(1);
-    await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.bikeLight);
-    await sauceDemoInventoryPage.assertCartBadgeHidden();
-  });
+  test(
+    'adds and removes products from the cart and updates the badge',
+    { tag: '@smoke' },
+    async ({ sauceDemoInventoryPage }) => {
+      await sauceDemoInventoryPage.goto();
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.backpack);
+      await sauceDemoInventoryPage.assertCartBadgeCount(1);
+      await sauceDemoInventoryPage.addItemToCart(sauceDemoProducts.bikeLight);
+      await sauceDemoInventoryPage.assertCartBadgeCount(2);
+      await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.backpack);
+      await sauceDemoInventoryPage.assertCartBadgeCount(1);
+      await sauceDemoInventoryPage.removeItemFromCart(sauceDemoProducts.bikeLight);
+      await sauceDemoInventoryPage.assertCartBadgeHidden();
+    },
+  );
 });

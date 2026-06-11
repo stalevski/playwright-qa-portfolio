@@ -1,7 +1,7 @@
 import { test, expect } from '@pethub-local-fixtures';
 
 test.describe('PetHub Ops Portal UI', () => {
-  test('overview shows the stats grid and navigation shortcuts', async ({ opsOverviewPage }) => {
+  test('overview shows the stats grid and navigation shortcuts', { tag: '@smoke' }, async ({ opsOverviewPage }) => {
     await opsOverviewPage.goto();
     await opsOverviewPage.assertLoaded();
     await opsOverviewPage.assertStatLabelsVisible([

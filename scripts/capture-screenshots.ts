@@ -171,7 +171,6 @@ const main = async (): Promise<void> => {
 };
 
 main().catch((error: Error) => {
-  // eslint-disable-next-line no-console -- intentional error output
   console.error(error);
   process.exit(1);
 });

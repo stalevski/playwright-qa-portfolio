@@ -3,7 +3,6 @@
  * loads to prevent a flash of incorrect colours; this script wires the toggle
  * button and reacts to OS preference changes.
  */
-/* eslint-env browser */
 (function () {
   var STORAGE_KEY = 'pethub-theme';
   var docEl = document.documentElement;

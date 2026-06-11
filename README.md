@@ -82,7 +82,7 @@ Screenshots are produced by Playwright against the running app:
 # Terminal A — start the app
 npm.cmd run app:start
 
-# Terminal B — capture all 10 images
+# Terminal B — capture all 9 images
 npm.cmd run screenshots
 ```
 
@@ -92,7 +92,7 @@ The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` firs
 
 If you have not touched this repo in months, run through this checklist before anything else. For a longer absence (a year or more), the `/repo-revival` workflow scripts the same flow with extra checks for accumulated rot.
 
-1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=20.0.0`). The pinned LTS major lives in `.nvmrc`. If Node 20 is past EOL, bump `.nvmrc` to the current LTS.
+1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=24.0.0`). The pinned LTS major lives in `.nvmrc`. If Node 24 is past EOL, bump `.nvmrc` to the current LTS.
 2. **Reinstall dependencies cleanly**: `npm.cmd ci` (uses `package-lock.json` exactly).
 3. **Run the environment doctor**: `npm.cmd run doctor` (prints versions and runs a TypeScript type check).
 4. **Smoke test the local app**: `npm.cmd run test:pethub-local` — fully self-contained, no external sites needed.
@@ -468,7 +468,7 @@ npm.cmd run format
 npm.cmd run format:check
 ```
 
-- ESLint config: `.eslintrc.cjs` (TypeScript + Playwright rules)
+- ESLint config: `eslint.config.mjs` (flat config; TypeScript + Playwright rules)
 - Prettier config: `.prettierrc.json`
 
 ## AI-assisted workflow

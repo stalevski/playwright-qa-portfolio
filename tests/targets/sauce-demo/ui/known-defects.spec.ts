@@ -279,7 +279,7 @@ test.describe('Sauce Demo - Known defects', () => {
 
     const allSrcs = await sauceDemoInventoryPage.getItemImageSrcs();
     const otherSrcs = allSrcs.filter((src) => !src.includes('sl-404'));
-    expect(otherSrcs.length).toBe(allSrcs.length - 1);
+    expect(otherSrcs).toHaveLength(allSrcs.length - 1);
   });
 
   // VU-2: visual_user inventory prices are randomised on every render.

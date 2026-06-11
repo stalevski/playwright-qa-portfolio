@@ -18,7 +18,7 @@ test.describe('Petstore API - Store endpoints', () => {
     expect(Object.keys(inventory).length).toBeGreaterThan(0);
   });
 
-  test('places an order for a pet', async ({ apiClient }) => {
+  test('places an order for a pet', { tag: ['@smoke', '@critical'] }, async ({ apiClient }) => {
     const pet = createPetDto();
     await apiClient.createPet(pet);
     const order = createOrderDto();
