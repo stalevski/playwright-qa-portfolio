@@ -96,7 +96,20 @@ single shared JSON file; do not parallelize local tests.
 1. `npm run lint` and `npm run format:check` pass.
 2. `npx tsc --noEmit` clean (covered by `npm run doctor`).
 3. Run the focused suite for the affected target (e.g. `npm run test:local`).
-4. Update [PROGRESS.md](PROGRESS.md) if status, backlog, or tech-debt changed.
+4. **Update the docs in the same change — do not wait to be asked.** Whenever
+   behavior, structure, commands, surfaces, or test coverage change, update every
+   affected Markdown file as part of the work:
+   - [PROGRESS.md](PROGRESS.md) — status, backlog, tech-debt, and the decision log.
+   - [README.md](README.md) — setup, commands, and the surface/feature overview.
+   - `docs/<system>/*.md` — e.g. [docs/pethub-local/app.md](docs/pethub-local/app.md)
+     and [docs/pethub-local/testing.md](docs/pethub-local/testing.md) for app
+     behavior, routes, endpoints, and the test inventory.
+   - This file (`AGENTS.md`) and
+     [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md) when conventions
+     or workflows change.
+
+   Treat docs as part of "done": a code change that leaves the Markdown stale is
+   incomplete. Run `npm run format:check` so doc formatting passes too.
 
 ## Guardrails
 

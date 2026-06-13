@@ -15,7 +15,10 @@ Quick context:
   (serial — lowdb is a single shared file), `npm run lint`, `npm run doctor`.
   Node 22 (`.nvmrc`).
 - Before "done": `npm run lint` + `npm run format:check` pass, `tsc --noEmit`
-  clean, run the affected target's suite, and update
-  [PROGRESS.md](../PROGRESS.md) if status/backlog/tech-debt changed.
+  clean, run the affected target's suite, and **update the affected docs in the
+  same change without being asked** — PROGRESS.md, README.md, and
+  `docs/<system>/*.md` (plus AGENTS.md / standards when conventions change).
+  Stale Markdown means the change isn't done. See AGENTS.md → "Validation before
+  declaring done".
 
 For anything not covered here, defer to `AGENTS.md` and the standards document.
