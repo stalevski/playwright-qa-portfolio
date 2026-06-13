@@ -1,4 +1,4 @@
-import { renderHead, renderPrimaryNavLinks, renderStatCard, renderThemeToggle } from '../http/render-helpers';
+import { renderAppBar, renderHead, renderStatCard } from '../http/render-helpers';
 
 /**
  * PetHub Clinic — a self-contained veterinary appointment-booking business.
@@ -198,13 +198,13 @@ const renderClinicLayout = (options: {
 ${renderHead(options.title)}
 <body>
   <div class="shell">
-    <header>
-      <div class="brand">
-        <strong>PetHub Clinic</strong>
-        <span>Book and manage veterinary appointments</span>
-      </div>
-      <nav aria-label="Clinic" data-test="clinic-nav">
-        ${renderPrimaryNavLinks('clinic')}
+    <header class="site-header">
+      ${renderAppBar({
+        current: 'clinic',
+        title: 'PetHub Clinic',
+        subtitle: 'Book and manage veterinary appointments',
+      })}
+      <nav class="section-nav" aria-label="Clinic sections" data-test="clinic-nav">
         <a href="/clinic" data-test="clinic-nav-home" class="${options.activeNav === 'home' ? 'active' : ''}"${
           options.activeNav === 'home' ? ' aria-current="page"' : ''
         }>Home</a>
@@ -214,7 +214,6 @@ ${renderHead(options.title)}
         <a href="/clinic/appointments" data-test="clinic-nav-appointments" class="${
           options.activeNav === 'appointments' ? 'active' : ''
         }"${options.activeNav === 'appointments' ? ' aria-current="page"' : ''}>Appointments</a>
-        ${renderThemeToggle()}
       </nav>
     </header>
     <main>

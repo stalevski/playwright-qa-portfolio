@@ -242,6 +242,12 @@ If you started it in the terminal, press:
 Ctrl + C
 ```
 
+Or, from any terminal, free the port (works cross-platform, no extra deps):
+
+```powershell
+npm.cmd run stop
+```
+
 If it is running in a background terminal in the IDE, stop that terminal/process from the IDE terminal panel.
 
 The app runs by default at:

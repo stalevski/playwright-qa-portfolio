@@ -179,6 +179,95 @@ nav a.active,
   border-color: var(--accent);
 }
 
+/* Two-tier site header: a global app bar over a section sub-nav.
+   The app bar answers "which app am I in / switch app"; the section nav
+   answers "which part of this app", so the two never blur together. */
+.site-header {
+  display: block;
+  padding: 0;
+}
+.app-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 28px;
+}
+.brand .brand-title {
+  margin: 0;
+  font-size: 20px;
+}
+.app-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.app-switcher {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+/* App-switcher links read as quiet, secondary "go elsewhere" actions so the
+   section tabs below stay the primary in-app navigation. */
+.app-switcher a {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--fg-muted);
+  padding: 8px 14px;
+}
+.app-switcher a:hover {
+  background: var(--accent-soft);
+  border-color: var(--border-strong);
+  color: var(--fg);
+}
+/* Section sub-nav: calm underline tabs, visually distinct from the app pills.
+   A always-present transparent bottom border keeps the active state from
+   shifting layout as you move between sections. */
+.section-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 28px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.section-nav a {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 12px 14px;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.section-nav a:hover {
+  background: var(--bg-elev);
+  color: var(--fg);
+}
+.section-nav a.active {
+  background: transparent;
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+.section-nav .section-nav-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 900px) {
+  .app-bar {
+    padding: 14px 18px;
+  }
+  .section-nav {
+    padding: 0 12px;
+  }
+}
+
 main {
   padding: 32px;
   display: grid;

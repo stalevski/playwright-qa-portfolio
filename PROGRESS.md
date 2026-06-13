@@ -71,6 +71,20 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-13** — Reworked the in-app navigation into a **two-tier header** and
+  added a cross-platform **`npm run stop`**. The old header crammed the cross-app
+  switcher, the section links, and the theme toggle into one flat row of
+  identical pills, so the only "you are here" cue was a moving highlight that
+  reshuffled between sections (worst on the 9-link Test Lab). New `renderAppBar`
+  helper renders a global **app bar** (brand + quiet ghost-pill app switcher +
+  theme toggle) above a surface-specific **section nav** of underline tabs;
+  applied to all five surfaces (Admin, Storefront, Operations, Clinic, Test Lab).
+  All `app-nav-*` / `lab-nav` / `clinic-nav` test hooks preserved, so specs are
+  unaffected. `npm run stop` (`scripts/stop-app.ts`, dependency-free; netstat/
+  taskkill on Windows, lsof/kill elsewhere) frees port 3000 from any terminal.
+  Also strengthened the AGENTS.md / copilot-instructions "done" checklist to
+  require updating affected Markdown in the same change. Verified: lint +
+  `format:check` clean, `tsc --noEmit` clean.
 - **2026-06-14** — Made every primary surface **mutually reachable**, added a
   **menus & dropdowns** Test Lab page, and added a whole new **PetHub Clinic**
   business — all additive and deterministic. (1) A shared

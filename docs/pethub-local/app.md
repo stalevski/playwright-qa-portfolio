@@ -176,12 +176,15 @@ is exactly what makes reconciliation tests meaningful:
 
 ## 6. The UI surfaces
 
-> All primary surfaces share a **cross-app navigation switcher** rendered by
-> `renderPrimaryNavLinks` in
+> Every surface shares a **two-tier header** rendered by `renderAppBar` in
 > [apps/pethub-local/http/render-helpers.ts](../../apps/pethub-local/http/render-helpers.ts):
-> Admin, Storefront, Clinic, Operations and the Test Lab each link to every other
-> surface (via stable `data-test="app-nav-<id>"` hooks), so any surface is
-> reachable from any other.
+> a global **app bar** (brand + a cross-app switcher to every _other_ surface +
+> the theme toggle) sits above a surface-specific **section nav** of underline
+> tabs for that surface's own pages. Keeping "switch app" and "navigate within
+> this app" on separate tiers makes the active page obvious and stops the nav
+> from reshuffling between sections. The app switcher still exposes stable
+> `data-test="app-nav-<id>"` hooks (Admin, Storefront, Clinic, Operations, Test
+> Lab), so any surface is reachable from any other.
 
 ### 6.1 Admin dashboard (`/`)
 

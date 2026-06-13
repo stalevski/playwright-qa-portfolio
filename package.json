@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "app:start": "tsx apps/pethub-local/server.ts",
+    "stop": "tsx scripts/stop-app.ts",
     "test": "npm run test:external && npm run test:local",
     "test:external": "playwright test",
     "test:local": "playwright test --config playwright.local.config.ts",
