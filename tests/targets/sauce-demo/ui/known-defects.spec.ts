@@ -2,7 +2,7 @@ import { test, expect } from '@sauce-demo-fixtures';
 import { sauceDemoPassword, sauceDemoProductIds, sauceDemoProducts, sauceDemoUsers } from '@helpers/test-data';
 
 /**
- * Each test below pins a defect documented in `docs/sauce-demo-bugs.md`.
+ * Each test below pins a defect documented in `docs/sauce-demo/bugs.md`.
  * They assert the **current buggy behaviour**, so they pass today and will
  * start failing if the live site is ever fixed - at which point the test
  * (and the catalogue) need updating.

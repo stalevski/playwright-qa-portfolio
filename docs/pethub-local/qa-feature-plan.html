@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PetHub Local — QA Feature Plan &amp; Roadmap</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --panel-2: #273449;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --done: #22c55e;
+        --candidate: #f59e0b;
+        --future: #64748b;
+        --border: #334155;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          'Segoe UI',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+      }
+      header {
+        padding: 2.5rem 1.5rem 1.5rem;
+        background: linear-gradient(135deg, #0c4a6e, #0f172a);
+        border-bottom: 1px solid var(--border);
+      }
+      header h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.9rem;
+      }
+      header p {
+        margin: 0.2rem 0;
+        color: var(--muted);
+        max-width: 70ch;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1rem 0 2rem;
+        font-size: 0.9rem;
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.12rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .badge.done {
+        background: rgba(34, 197, 94, 0.18);
+        color: var(--done);
+        border: 1px solid var(--done);
+      }
+      .badge.candidate {
+        background: rgba(245, 158, 11, 0.16);
+        color: var(--candidate);
+        border: 1px solid var(--candidate);
+      }
+      .badge.future {
+        background: rgba(100, 116, 139, 0.18);
+        color: #cbd5e1;
+        border: 1px solid var(--future);
+      }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem 1.4rem;
+        margin-bottom: 1.5rem;
+      }
+      section > h2 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .stat {
+        background: var(--panel-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+      }
+      .stat .num {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .stat .label {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      code {
+        background: var(--panel-2);
+        padding: 0.1rem 0.35rem;
+        border-radius: 5px;
+        font-size: 0.82rem;
+        color: #7dd3fc;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+      footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+        padding: 2rem 1rem 3rem;
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>PetHub Local — QA Feature Plan &amp; Roadmap</h1>
+      <p>
+        A catalogue of <strong>every testing capability</strong> the deterministic in-repo app could expose, each
+        evaluated for whether it earns a place in the portfolio. The goal: give QA engineers the widest possible spread
+        of <em>testing types</em> to practice against a system we fully control.
+      </p>
+      <p class="note">
+        Generated 2026-06-13 · updated 2026-06-14 · companion to docs/pethub-local/app.md and PROGRESS.md
+      </p>
+    </header>
+
+    <main>
+      <div class="legend">
+        <span><span class="badge done">✓ Implemented</span> shipped &amp; tested in this pass</span>
+        <span><span class="badge candidate">◐ Candidate</span> high value, sensible next</span>
+        <span><span class="badge future">○ Future</span> possible, lower priority / heavier</span>
+      </div>
+
+      <div class="summary">
+        <div class="stat">
+          <div class="num">9</div>
+          <div class="label">New testing types shipped</div>
+        </div>
+        <div class="stat">
+          <div class="num">14</div>
+          <div class="label">New endpoints</div>
+        </div>
+        <div class="stat">
+          <div class="num">28</div>
+          <div class="label">New API tests</div>
+        </div>
+        <div class="stat">
+          <div class="num">100%</div>
+          <div class="label">Deterministic</div>
+        </div>
+      </div>
+
+      <section>
+        <h2>✓ Implemented this pass</h2>
+        <p class="note">
+          All additive — the v1 API contract is unchanged. Code:
+          <code>apps/pethub-local/platform.ts</code> + <code>routes/qa.routes.ts</code>; tests:
+          <code>tests/targets/pethub-local/api/pethub-local-platform.api.spec.ts</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Testing type</th>
+              <th>Surface</th>
+              <th>What QA practices</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Observability / smoke</td>
+              <td><code>GET /api/version</code>, <code>/ready</code>, <code>/metrics</code></td>
+              <td>Liveness/readiness probes, Prometheus metric scraping, version pinning</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Contract</td>
+              <td><code>GET /api/openapi.json</code></td>
+              <td>Schema/contract assertions against an OpenAPI 3 document</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Authentication</td>
+              <td><code>POST /api/auth/login</code>, <code>GET /api/auth/me</code></td>
+              <td>Bearer-token issue/verify, <code>401</code>, tampered/expired tokens</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Authorization (RBAC)</td>
+              <td><code>DELETE /api/v2/pets/:id</code></td>
+              <td>Role-gated actions, <code>403</code> vs <code>204</code> by role</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Input validation (negative)</td>
+              <td><code>POST /api/v2/pets</code></td>
+              <td><code>422</code> with field-level error codes, enum + boundary checks</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Pagination / filter / sort / search</td>
+              <td><code>GET /api/v2/pets</code></td>
+              <td>Envelope metadata, page-overlap, multi-criteria filtering</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Idempotency</td>
+              <td><code>POST /api/v2/orders</code></td>
+              <td><code>Idempotency-Key</code> replay vs duplicate creation</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Rate limiting</td>
+              <td><code>GET /api/v2/rate-limited</code></td>
+              <td><code>429</code> + <code>Retry-After</code>, per-client bucket isolation</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Security (XSS)</td>
+              <td><code>GET /api/v2/echo</code></td>
+              <td>Reflected-input HTML escaping, <code>X-Content-Type-Options</code></td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Asynchronous jobs</td>
+              <td><code>POST /api/jobs</code>, <code>GET /api/jobs/:id</code></td>
+              <td>Poll loops, <code>202</code>, eventual completion, retry patterns</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>✓ QA Test Lab — added 2026-06-14</h2>
+        <p class="note">
+          A generic (non-petstore) automation playground that maximises the testable surface. UI code:
+          <code>apps/pethub-local/lab/lab.ts</code> + <code>http/static/lab.js</code>; HTTP utilities:
+          <code>apps/pethub-local/lab/http-lab.ts</code> + <code>routes/lab-api.routes.ts</code>; tests:
+          <code>lab-ui.spec.ts</code>, <code>lab.a11y.spec.ts</code>, <code>pethub-local-lab.api.spec.ts</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Testing type</th>
+              <th>Surface</th>
+              <th>What QA practices</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Forms &amp; client validation</td>
+              <td><code>/lab/forms</code></td>
+              <td>Every input type; success banner only when all required fields are valid</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Dynamic content &amp; waits</td>
+              <td><code>/lab/dynamic</code></td>
+              <td>Deferred loading spinner, add/remove elements, enable/disable controls</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>JavaScript dialogs</td>
+              <td><code>/lab/dialogs</code></td>
+              <td>
+                <code>alert</code> / <code>confirm</code> / <code>prompt</code> via <code>page.on('dialog')</code>
+              </td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Tables (search + sort)</td>
+              <td><code>/lab/tables</code></td>
+              <td>Filtering and column sorting; empty-state handling</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Interactive widgets</td>
+              <td><code>/lab/widgets</code></td>
+              <td>Tabs, accordion, modal, tooltip, progress bar, toast, clipboard, key press</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Frames &amp; Shadow DOM</td>
+              <td><code>/lab/frames</code>, <code>/lab/shadow-dom</code></td>
+              <td>Interacting inside an iframe; piercing an open shadow root</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>HTTP mechanics (httpbin-style)</td>
+              <td><code>/api/lab/*</code></td>
+              <td>Reflection, status codes, delay, redirects, basic/bearer auth, cookies</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Encoding / caching / compression</td>
+              <td><code>/api/lab/base64</code>, <code>/cache</code>, <code>/gzip</code></td>
+              <td>Base64 round-trips, <code>ETag</code> → <code>304</code>, gzip bodies</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+            <tr>
+              <td>Content negotiation</td>
+              <td><code>/api/lab/json|xml|html</code></td>
+              <td>Same payload served as JSON, XML and HTML</td>
+              <td><span class="badge done">✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>◐ Candidates — strong next additions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>Testing type</th>
+              <th>Evaluation</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Optimistic concurrency (ETag / <code>If-Match</code>)</td>
+              <td>Concurrency</td>
+              <td>
+                Add a <code>version</code> to pets; mismatched update → <code>409</code>. Natural fit; deterministic.
+              </td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+            <tr>
+              <td>Bulk operations</td>
+              <td>Batch / partial failure</td>
+              <td>
+                <code>POST /api/v2/pets/bulk</code> returning per-item success/failure. Good for partial-failure
+                assertions.
+              </td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+            <tr>
+              <td>Real multipart file upload</td>
+              <td>File handling</td>
+              <td>Replace the stubbed upload with byte-counting multipart; assert size/content-type.</td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+            <tr>
+              <td>Webhooks</td>
+              <td>Async / callback</td>
+              <td>
+                Register a callback URL; app posts events back. Needs a receiver; deterministic with a loopback sink.
+              </td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+            <tr>
+              <td>Feature flags</td>
+              <td>Config-driven behaviour</td>
+              <td><code>GET/PUT /api/v2/flags</code> toggling response shapes — exercises conditional test paths.</td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+            <tr>
+              <td>UI for platform surfaces</td>
+              <td>UI + visual</td>
+              <td>An admin “QA Sandbox” panel (token minting, job runner) for UI + a11y coverage.</td>
+              <td>
+                <span class="badge done">✓</span> — shipped as the <strong>QA Test Lab</strong> (<code>/lab</code>): a
+                dedicated UI automation playground with full UI + a11y coverage.
+              </td>
+            </tr>
+            <tr>
+              <td>Cursor-based pagination</td>
+              <td>Pagination variants</td>
+              <td>Opaque <code>nextCursor</code> alongside offset paging — contrast two paging models.</td>
+              <td><span class="badge candidate">◐</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>○ Future — possible, lower priority</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Idea</th>
+              <th>Testing type</th>
+              <th>Why deferred</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Controlled chaos / fault injection</td>
+              <td>Resilience / retry</td>
+              <td>Valuable, but must stay seeded to preserve determinism; design carefully before adding.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>Artificial latency endpoints</td>
+              <td>Timeout / performance</td>
+              <td>Useful for timeout tests, but slows the serial suite; gate behind an opt-in header.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>GraphQL endpoint</td>
+              <td>Query-language API</td>
+              <td>Whole new surface + client; large effort for one extra testing style.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>Server-Sent Events / streaming</td>
+              <td>Realtime</td>
+              <td>Streaming assertions are heavier; niche for this portfolio.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>i18n / localization</td>
+              <td>Localization</td>
+              <td>Adds translation plumbing; modest QA payoff here.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>Visual regression baselines</td>
+              <td>Visual</td>
+              <td>Already have screenshot tooling; full baseline harness is a separate initiative.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+            <tr>
+              <td>Contract testing with a real provider/consumer (Pact)</td>
+              <td>Contract</td>
+              <td>OpenAPI doc covers most of the need; Pact adds tooling weight.</td>
+              <td><span class="badge future">○</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Design principles applied</h2>
+        <ul>
+          <li>
+            <strong>Additive only.</strong> Existing v1 endpoints and their tests are untouched; new behaviour lives
+            under <code>/api/v2</code>, <code>/api/auth</code>, <code>/api/jobs</code> and observability paths.
+          </li>
+          <li>
+            <strong>Deterministic by construction.</strong> Signed tokens use a fixed secret; rate-limit buckets are
+            keyed by a client-supplied <code>X-Client-Id</code>; async jobs advance by poll count, not wall-clock;
+            idempotency keys persist for the process lifetime.
+          </li>
+          <li>
+            <strong>One layer per concern.</strong> Pure logic in <code>platform.ts</code>, HTTP wiring in
+            <code>qa.routes.ts</code>, typed transport in <code>platform.dto.ts</code>, a dedicated client returning raw
+            responses for status-code assertions.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      PetHub Local · part of the playwright-qa-portfolio · roadmap subject to change as new testing needs surface.
+    </footer>
+  </body>
+</html>

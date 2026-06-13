@@ -47,7 +47,7 @@ Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
 
 6. **Validate external suites separately.** Run `npm.cmd run test:external` and triage any failures into two buckets:
    - **framework rot** (selectors stale, Playwright API changed) — fix in the page objects or helpers
-   - **target rot** (the public site changed) — update `docs/sauce-demo-bugs.md` or `docs/swagger-petstore-bugs.md` and the matching `known-defects.spec.ts` / API specs
+   - **target rot** (the public site changed) — update `docs/sauce-demo/bugs.md` or `docs/swagger-petstore/bugs.md` and the matching `known-defects.spec.ts` / API specs
 
 7. **Triage Dependabot PRs.** If many have piled up:
    - prefer rebasing each one against the now-revived main rather than merging all at once

@@ -13,9 +13,9 @@ systems:
   Deterministic and self-owned; this is the **primary** target for full-stack QA
   (UI, API, accessibility, CQRS-style read models, downstream replicas).
 - **`swagger-petstore`** — public API + UI. Informational; may be flaky. Some
-  tests deliberately assert known-buggy behavior (see `docs/swagger-petstore-bugs.md`).
+  tests deliberately assert known-buggy behavior (see `docs/swagger-petstore/bugs.md`).
 - **`sauce-demo`** — public UI with `storageState` auth reuse. Informational;
-  includes documented known-defect tests (`docs/sauce-demo-bugs.md`).
+  includes documented known-defect tests (`docs/sauce-demo/bugs.md`).
 
 ## Source-of-truth documents (read these)
 
@@ -34,6 +34,11 @@ Organized **system-first, then test-type**.
 
 ```
 apps/pethub-local/        Express + lowdb app (server, routes, data, admin/ops/storefront)
+                          platform.ts = v2 QA surfaces (auth, validation, pagination,
+                          rate-limit, jobs, idempotency, security, observability)
+                          lab/ = QA Test Lab: /lab UI playground (forms, dynamic,
+                          dialogs, tables, widgets, frames, shadow DOM) + /api/lab
+                          httpbin-style stateless HTTP utilities
 src/
   core/                   base.page.ts, base-api.client.ts, global-setup.ts
   pages/<system>/         page objects (one per real screen); components/ for shared UI
@@ -83,7 +88,7 @@ single shared JSON file; do not parallelize local tests.
 - **Async hygiene**: use `waitForURL`, `Promise.all/race`, and `expect.poll` for
   eventual consistency — avoid arbitrary waits.
 - **Known-defect tests** assert _current buggy behavior_ on purpose; keep them
-  clearly labeled and cross-referenced to `docs/*-bugs.md`.
+  clearly labeled and cross-referenced to `docs/<system>/bugs.md`.
 
 ## Validation before declaring done
 
