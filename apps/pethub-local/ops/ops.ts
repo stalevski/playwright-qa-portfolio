@@ -5,7 +5,7 @@ import {
   getOrdersWithRelationsQuery,
   getReadModelsQuery,
 } from '../queries';
-import { renderHead, renderStatCard, renderThemeToggle } from '../http/render-helpers';
+import { renderHead, renderPrimaryNavLinks, renderStatCard, renderThemeToggle } from '../http/render-helpers';
 
 export type OpsCaseSeverity = 'low' | 'medium' | 'high';
 
@@ -93,8 +93,7 @@ ${renderHead(options.title)}
       <span>Workflow monitoring, projections, downstream replicas, and investigation practice</span>
     </div>
     <nav aria-label="Operations">
-      <a href="/">Admin</a>
-      <a href="/shop">Storefront</a>
+      ${renderPrimaryNavLinks('ops')}
       <a href="/ops" class="${options.activeNav === 'overview' ? 'active' : ''}">Overview</a>
       <a href="/ops/queue" class="${options.activeNav === 'queue' ? 'active' : ''}">Work Queue</a>
       <a href="/ops/comparisons" class="${options.activeNav === 'comparisons' ? 'active' : ''}">Comparisons</a>

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { getPetsQuery } from '../queries';
-import { renderHead, renderThemeToggle, renderToast } from '../http/render-helpers';
+import { renderHead, renderPrimaryNavLinks, renderThemeToggle, renderToast } from '../http/render-helpers';
 
 export type StorefrontUser = {
   username: string;
@@ -180,7 +180,7 @@ ${renderHead(options.title)}
         <span>Self-hosted QA storefront for inventory, cart, and checkout practice</span>
       </div>
       <nav class="nav" aria-label="Storefront">
-        <a href="/">Admin</a>
+        ${renderPrimaryNavLinks('shop')}
         <a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}">Inventory</a>
         <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}">Cart ${options.session ? `<span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span>` : ''}</a>
         <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}">Checkout</a>
