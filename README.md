@@ -6,7 +6,7 @@ The portfolio exercises three target systems:
 
 - **Swagger Petstore** — public REST API and UI demo (`https://petstore.swagger.io/`)
 - **Sauce Demo** — public e-commerce UI demo (`https://www.saucedemo.com/`)
-- **PetHub Local** — a self-contained Express + lowdb application included in this repo for deterministic local QA practice (see `apps/pethub-local`)
+- **PetHub Local** — a self-contained Express + lowdb application included in this repo for deterministic local QA practice (see `apps/pethub-local`). Its surfaces — Admin, Storefront, **PetHub Clinic**, Operations and a **QA Test Lab** — are all mutually reachable via a shared cross-app navigation switcher.
 
 ## Visual tour
 
@@ -130,7 +130,7 @@ If you have not touched this repo in months, run through this checklist before a
 - `tests/targets/pethub-local/api`
   - PetHub Local API specs
 - `tests/targets/pethub-local/ui`
-  - PetHub Local admin, storefront (`/shop`), and ops portal (`/ops`) UI specs
+  - PetHub Local admin, storefront (`/shop`), ops portal (`/ops`), and QA Test Lab (`/lab`) UI specs
 - `apps/pethub-local`
   - PetHub Local Express + embedded-database app
 - `.windsurf/workflows`
@@ -143,6 +143,8 @@ The PetHub Local app provides:
 - a web admin page at `/`
 - local persistent pet, user, order, and audit-log data
 - API endpoints under `/api`
+- a v2 “platform” API tier for auth, validation, pagination, rate limiting, async jobs, idempotency, security and observability testing
+- a **QA Test Lab**: a `/lab` UI automation playground (forms, dynamic content, dialogs, tables, widgets, frames, shadow DOM) plus stateless httpbin-style HTTP utilities under `/api/lab`
 - seeded demo data for stable automation
 
 ### PetHub Local endpoints
@@ -166,6 +168,59 @@ The PetHub Local app provides:
 - `GET /api/audit-log`
 - `GET /api/audit-log/relations`
 - `POST /api/admin/reset` — truncates and reseeds the local database (used by Playwright `globalSetup`)
+
+### PetHub Local platform surfaces (v2)
+
+A second, additive tier of endpoints gives QA more **types** of testing to
+practice against a deterministic backend (see
+[docs/pethub-local/app.md](docs/pethub-local/app.md#7-rest-api) for the full table
+and the [HTML roadmap](docs/pethub-local/qa-feature-plan.html)):
+
+- `GET /api/version`, `GET /api/ready`, `GET /api/metrics`, `GET /api/openapi.json` — observability & contract
+- `POST /api/auth/login`, `GET /api/auth/me` — bearer-token auth & RBAC (`401`/`403`)
+- `GET /api/v2/pets` — pagination / filtering / sorting / search envelope
+- `POST /api/v2/pets` — strict validation (`422` with field-level errors)
+- `DELETE /api/v2/pets/:id` — admin-only delete (RBAC)
+- `POST /api/v2/orders` — idempotent creation via `Idempotency-Key`
+- `GET /api/v2/rate-limited` — `429` + `Retry-After` rate limiting
+- `GET /api/v2/echo` — reflected-input HTML escaping (XSS sandbox)
+- `POST /api/jobs`, `GET /api/jobs/:id` — asynchronous job polling
+
+### PetHub Local QA Test Lab (`/lab` + `/api/lab`)
+
+A UI automation playground and a set of stateless HTTP utilities for practising
+core browser- and protocol-level techniques against a deterministic surface (see
+[docs/pethub-local/app.md §6.4](docs/pethub-local/app.md#64-qa-test-lab-lab) and
+[§7 `/api/lab`](docs/pethub-local/app.md#qa-test-lab--http-utilities-apilab)):
+
+- `/lab/forms` — every input type with client-side validation
+- `/lab/dynamic` — deferred loading, add/remove elements, enable/disable
+- `/lab/dialogs` — native `alert` / `confirm` / `prompt`
+- `/lab/tables` — searchable, column-sortable data table
+- `/lab/widgets` — tabs, accordion, modal, tooltip, progress bar, toast, clipboard, key press
+- `/lab/menus` — native/multiple/dependent selects, custom listbox, action, context, flyout, hamburger & split menus
+- `/lab/frames` — an iframe with scoped interactions; `/lab/shadow-dom` — an open shadow root
+- `GET|ALL /api/lab/anything` — request reflection; `/status/:code`, `/delay/:seconds`, `/redirect/:n`
+- `/api/lab/basic-auth/*`, `/bearer`, `/cookies*`, `/base64/*`, `/cache`, `/gzip`, `/json|/xml|/html`
+
+### PetHub Clinic (`/clinic` + `/api/clinic`)
+
+A veterinary appointment-booking business layered on top of the platform — a
+worked example of adding a whole new vertical. It keeps its own **deterministic,
+in-memory store** (reset on every server start, separate from the lowdb petstore)
+so the existing suites stay green (see
+[docs/pethub-local/app.md §6.5](docs/pethub-local/app.md#65-pethub-clinic-clinic)
+and [§7 `/api/clinic`](docs/pethub-local/app.md#pethub-clinic-api-apiclinic)):
+
+- `/clinic` — services, pricing and vets; `/clinic/appointments` — booked appointments
+- `/clinic/book` — a four-step booking wizard (progressive enhancement; works without JS)
+- `/clinic/confirmation/:ref` — confirmation with a unique `CLN-####` reference
+- `GET /api/clinic/services|vets|slots` — reference data (one slot is unavailable)
+- `POST /api/clinic/appointments` — booking with `422` field-level validation
+- `GET /api/clinic/appointments[/:ref]` — read all / one (`200` / `404`)
+
+Every primary surface (Admin, Storefront, Clinic, Operations, Test Lab) links to
+every other via a shared cross-app navigation switcher.
 
 ### Install dependencies
 

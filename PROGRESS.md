@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-06-11_
+_Last updated: 2026-06-14_
 
 ---
 
@@ -17,7 +17,7 @@ _Last updated: 2026-06-11_
   - `sauce-demo` — public UI with `storageState` auth reuse (informational).
   - `pethub-local` — in-repo **Express + lowdb** app (deterministic, the
     primary target). UI + API + a11y.
-- **~130–145 tests across ~20 spec files.**
+- **~320–335 tests across ~28 spec files.**
 - **CI** (`.github/workflows/playwright.yml`): `lint` → `test-local`
   (required) + `test-external` (informational, `continue-on-error`), plus a
   weekly cron to detect external-target drift.
@@ -48,7 +48,7 @@ _Last updated: 2026-06-11_
 | ------------------ | :-: | :-: | :--: | --------------------------------------------------------------------------------- |
 | `pethub-local`     | ✅  | ✅  |  ✅  | Serial (`workers: 1`), lowdb single-file DB. Reset via `globalSetup`.             |
 | `sauce-demo`       | ✅  |  —  |  —   | Auth via setup project + `storageState`. Includes documented known-defect tests.  |
-| `swagger-petstore` | ✅  | ✅  |  —   | Public API asserts some buggy status codes (see `docs/swagger-petstore-bugs.md`). |
+| `swagger-petstore` | ✅  | ✅  |  —   | Public API asserts some buggy status codes (see `docs/swagger-petstore/bugs.md`). |
 
 ## 4. TODO / backlog
 
@@ -71,6 +71,77 @@ _Last updated: 2026-06-11_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — Made every primary surface **mutually reachable**, added a
+  **menus & dropdowns** Test Lab page, and added a whole new **PetHub Clinic**
+  business — all additive and deterministic. (1) A shared
+  `renderPrimaryNavLinks(current)` helper in `http/render-helpers.ts` renders a
+  cross-app switcher (Admin ↔ Storefront ↔ Clinic ↔ Operations ↔ Test Lab) with
+  stable `app-nav-<id>` hooks, wired into all five layouts;
+  `cross-navigation.spec.ts` proves mutual reachability. (2) `/lab/menus`
+  (`renderLabMenus` + behaviours in `lab.js`) covers native/multiple/dependent
+  selects, a custom ARIA listbox, and action/context/flyout/hamburger/split
+  menus, with `lab-menus.page.ts`, the `labMenusPage` fixture, a `lab-ui.spec.ts`
+  describe block and a new `lab.a11y` path. (3) **PetHub Clinic** is a
+  vet-appointment vertical with its own **deterministic in-memory store**
+  (`apps/pethub-local/clinic/clinic.ts`, seeded at load, reset per server start —
+  deliberately **not** touching the lowdb schema so the 233 baseline stays
+  green): a four-step booking wizard (progressive-enhancement form +
+  `http/static/clinic.js`), confirmation with `CLN-####` references, an
+  appointments table, and `/api/clinic/*` JSON API. New code: `clinic/clinic.ts`,
+  `routes/{clinic.routes.ts,clinic-api.routes.ts}`, `http/static/clinic.js`,
+  `src/models/api/clinic.dto.ts`,
+  `src/helpers/api-clients/pethub-local-clinic.client.ts`, four page objects under
+  `src/pages/pethub-local/clinic/`, fixtures (`localClinicApiClient` +
+  `clinic*Page`), and specs `clinic.api.spec.ts`, `clinic-ui.spec.ts`,
+  `clinic.a11y.spec.ts`. Express 5 route params coerced via `String(...)`.
+  Verified: lint + `format:check` clean, `tsc --noEmit` clean, **full
+  `test:local` 300 passed**.
+- **2026-06-14** — Reorganized `docs/` to be **system-first** (mirroring
+  `src/pages/<system>/` and `tests/targets/<system>/`): `pethub-local/`
+  (`app.md`, `testing.md`, `qa-feature-plan.html`), `sauce-demo/bugs.md`, and
+  `swagger-petstore/bugs.md`, with the generated `bugs.pdf` files moved beside
+  their sources; `screenshots/` is unchanged. Added `docs/README.md` as a
+  documentation index. Updated every cross-reference (README, AGENTS, PROGRESS,
+  the `docs:pdf` scripts in `package.json`, known-defect spec comments, and the
+  repo-revival workflow) and rebased the moved guides' relative links
+  (`../` → `../../`). Root `README.md`, `AGENTS.md`,
+  `TEST_AUTOMATION_STANDARDS.md`, and tool-pinned files
+  (`.github/copilot-instructions.md`, `.windsurf/workflows/`) stay at their
+  required locations. Verified: `prettier --check` clean on all touched files.
+- **2026-06-14** — Added a **QA Test Lab** to `pethub-local` to maximise the
+  portfolio's testable surface with generic (non-petstore) automation
+  challenges. Two parts, both additive and deterministic: (A) a `/lab` **UI
+  playground** — forms + client validation, dynamic loading/add-remove/enable,
+  native dialogs, a searchable+sortable table, interactive widgets (tabs,
+  accordion, modal, tooltip, progress bar, toast, clipboard, key press), an
+  iframe, and an open-shadow-root custom element; and (B) `/api/lab`,
+  **httpbin-style stateless HTTP utilities** (request reflection, status codes,
+  delay, redirects, basic/bearer auth, cookies, base64, ETag caching, gzip,
+  JSON/XML/HTML negotiation). New code: `apps/pethub-local/lab/{lab.ts,http-lab.ts}`,
+  `routes/{lab.routes.ts,lab-api.routes.ts}`, `http/static/lab.js`,
+  `src/models/api/lab.dto.ts`, `src/helpers/api-clients/pethub-local-lab.client.ts`,
+  page objects under `src/pages/pethub-local/lab/`, fixtures `localLabApiClient`
+  plus `lab*Page`, and specs `pethub-local-lab.api.spec.ts` (27),
+  `lab-ui.spec.ts` (19 × 3 browsers), `lab.a11y.spec.ts` (8). Client behaviour
+  is wired via `data-test` hooks (no inline handlers) and pages are accessible
+  (labels/roles/ARIA) so they double as a11y targets. Verified: lint +
+  `format:check` clean, `tsc --noEmit` clean, **full `test:local` 233 passed**.
+- **2026-06-13** — Added a v2 **"platform" testing tier** to `pethub-local` so the
+  portfolio demonstrates more _types_ of API testing against a deterministic
+  backend: observability/contract (`/version`, `/ready`, `/metrics`,
+  `/openapi.json`), bearer-token auth + RBAC (`/auth/*`, admin-only delete),
+  strict input validation (`422` field errors), pagination/filter/sort/search
+  (`GET /api/v2/pets`), idempotent order creation (`Idempotency-Key`), rate
+  limiting (`429` + `Retry-After`), an XSS-escaping security sandbox
+  (`/v2/echo`), and poll-driven async jobs (`/jobs`). New code:
+  `apps/pethub-local/platform.ts` + `routes/qa.routes.ts`,
+  `src/models/api/platform.dto.ts`,
+  `src/helpers/api-clients/pethub-local-platform.client.ts`, fixture
+  `localPlatformApiClient`, and spec `pethub-local-platform.api.spec.ts`
+  (28 tests). Everything is additive (v1 contract unchanged) and deterministic
+  (signed tokens, per-`X-Client-Id` rate buckets, poll-count job progression).
+  Also added `docs/pethub-local/qa-feature-plan.html` (roadmap of explored functionality).
+  Verified: lint clean, `tsc --noEmit` clean, local API project 41 passed.
 - **2026-06-11 (later)** — LTS/latest upgrade pass: Node pin 22 → 24 (`.nvmrc` + `engines`),
   ESLint 8 → 10 with flat config (`.eslintrc.cjs` → `eslint.config.mjs`, typescript-eslint v8
   meta-package), Express 4 → 5 (no breaking route patterns in the app), Playwright 1.60,

@@ -10,7 +10,7 @@ import {
   getReadModelsQuery,
   getUsersQuery,
 } from '../queries';
-import { renderHead, renderStatCard, renderThemeToggle } from '../http/render-helpers';
+import { renderHead, renderPrimaryNavLinks, renderStatCard, renderThemeToggle } from '../http/render-helpers';
 
 const renderApiQuickLink = (method: string, path: string): string =>
   `<li><span class="pill">${method}</span> <code>${path}</code></li>`;
@@ -51,8 +51,7 @@ ${renderHead('PetHub Local')}
       <span>Local QA sandbox for Playwright UI, API, event-driven CQRS flows, read models, downstream databases, and Swagger-style Petstore practice.</span>
     </div>
     <nav aria-label="Main">
-      <a href="/shop">Storefront</a>
-      <a href="/ops">Operations</a>
+      ${renderPrimaryNavLinks('admin')}
       ${renderThemeToggle()}
     </nav>
   </header>
