@@ -83,7 +83,7 @@ test.describe('Petstore API - User endpoints', () => {
   });
 
   /**
-   * Each test below pins a defect documented in `docs/swagger-petstore-bugs.md`.
+   * Each test below pins a defect documented in `docs/swagger-petstore/bugs.md`.
    * They assert the **current buggy behaviour**, so they pass today and will
    * start failing if the API is ever fixed.
    */

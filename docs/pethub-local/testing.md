@@ -2,11 +2,11 @@
 
 > How to write and run automated tests against the **PetHub Local** app. For
 > what the app _is_ and how it's built, read the
-> [PetHub Local — Application Guide](pethub-local-app.md) first.
+> [PetHub Local — Application Guide](app.md) first.
 >
 > The authoritative engineering rules live in
-> [TEST_AUTOMATION_STANDARDS.md](../TEST_AUTOMATION_STANDARDS.md) and
-> [AGENTS.md](../AGENTS.md). This guide is the practical, app-specific companion.
+> [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) and
+> [AGENTS.md](../../AGENTS.md). This guide is the practical, app-specific companion.
 
 ---
 
@@ -14,23 +14,96 @@
 
 PetHub Local is the **primary** target in the suite because it is deterministic
 and self-owned. Four flavours of test run against it, all under
-[tests/targets/pethub-local](../tests/targets/pethub-local):
+[tests/targets/pethub-local](../../tests/targets/pethub-local):
 
-| Type              | Folder  | What it covers                                                       |
-| ----------------- | ------- | -------------------------------------------------------------------- |
-| **UI**            | `ui/`   | Admin dashboard, storefront buy flow, ops portal — across 3 browsers |
-| **API**           | `api/`  | REST endpoints + cross-database reconciliation via SQL-style queries |
-| **Accessibility** | `a11y/` | WCAG 2.0/2.1 A+AA on every primary surface                           |
+| Type              | Folder  | What it covers                                                                              |
+| ----------------- | ------- | ------------------------------------------------------------------------------------------- |
+| **UI**            | `ui/`   | Admin, storefront buy flow, ops portal, Test Lab, Clinic, cross-app nav — across 3 browsers |
+| **API**           | `api/`  | REST endpoints + cross-database reconciliation via SQL-style queries                        |
+| **Accessibility** | `a11y/` | WCAG 2.0/2.1 A+AA on every primary surface                                                  |
 
 The cross-database tests are what make this target special: they assert that the
 operational store, the CQRS read models, and the downstream replicas **agree** —
 and catch the deliberate drift scenarios when they don't.
 
+### Platform testing surfaces (v2)
+
+[pethub-local-platform.api.spec.ts](../../tests/targets/pethub-local/api/pethub-local-platform.api.spec.ts)
+exercises a dedicated tier of endpoints (see the
+[app guide §7](app.md#7-rest-api)) so the suite demonstrates more
+**types** of API testing against a deterministic backend:
+
+| Testing type                     | What the spec asserts                                             |
+| -------------------------------- | ----------------------------------------------------------------- |
+| Observability / smoke            | `/version`, `/ready`, `/metrics` (Prometheus), `/openapi.json`    |
+| Authentication & RBAC            | bearer token issue/verify, `401`/`403`, role-gated delete         |
+| Input validation (negative)      | `422` with field-level error codes, enum + boundary checks        |
+| Pagination / filtering / sorting | envelope metadata, no page overlap, sort + filter + search        |
+| Idempotency                      | repeated `Idempotency-Key` replays one order                      |
+| Rate limiting                    | `429` + `Retry-After` after the window, per-client isolation      |
+| Security (XSS)                   | reflected input is HTML-escaped; `X-Content-Type-Options` header  |
+| Asynchronous jobs                | `queued → running → completed` poll progression; `404` unknown id |
+
+### QA Test Lab surfaces
+
+The **QA Test Lab** adds two more practice surfaces (see the
+[app guide §6.4](app.md#64-qa-test-lab-lab) and
+[§7 `/api/lab`](app.md#qa-test-lab--http-utilities-apilab)):
+
+- [pethub-local-lab.api.spec.ts](../../tests/targets/pethub-local/api/pethub-local-lab.api.spec.ts)
+  exercises the stateless httpbin-style HTTP utilities at `/api/lab`.
+- [lab-ui.spec.ts](../../tests/targets/pethub-local/ui/lab-ui.spec.ts) and
+  [lab.a11y.spec.ts](../../tests/targets/pethub-local/a11y/lab.a11y.spec.ts) cover the
+  `/lab` UI playground across browsers and against the a11y baseline.
+
+| Testing type              | What the spec asserts                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------- |
+| Request reflection        | `/anything` echoes method, body, query and headers; `/uuid` uniqueness                              |
+| Status-code handling      | `/status/:code` returns 2xx–5xx on demand (incl. `418`)                                             |
+| Latency / timeouts        | `/delay/:seconds` waits before responding                                                           |
+| Redirects                 | `/redirect/:n` chains `302`s (assert `Location` with `maxRedirects:0`)                              |
+| Auth schemes              | Basic (`401` → success) and Bearer token echo                                                       |
+| Cookies                   | reflect, `Set-Cookie`, delete                                                                       |
+| Encoding                  | base64 encode/decode (+ `400` on invalid)                                                           |
+| Caching                   | `ETag` then `304` on `If-None-Match`                                                                |
+| Compression               | gzip-encoded JSON body                                                                              |
+| Content negotiation       | JSON / XML / HTML variants of one payload                                                           |
+| Forms & client validation | every input type; success banner only when valid                                                    |
+| Dynamic content           | deferred loading spinner, add/remove elements, enable/disable                                       |
+| JavaScript dialogs        | `alert` / `confirm` / `prompt` via `page.on('dialog')`                                              |
+| Tables                    | search filtering + column sorting                                                                   |
+| Interactive widgets       | tabs, accordion, modal, tooltip, progress bar, toast, clipboard, keys                               |
+| Menus & dropdowns         | native/multiple/dependent selects, custom listbox, action, context, flyout, hamburger & split menus |
+| Frames                    | interacting with content inside an iframe (`frameLocator`)                                          |
+| Shadow DOM                | piercing an open shadow root                                                                        |
+
+### PetHub Clinic business
+
+The **PetHub Clinic** vertical (see the
+[app guide §6.5](app.md#65-pethub-clinic-clinic) and
+[§7 `/api/clinic`](app.md#pethub-clinic-api-apiclinic)) is covered end-to-end:
+
+- [clinic.api.spec.ts](../../tests/targets/pethub-local/api/clinic.api.spec.ts) —
+  reference data, the booking happy path with read-back, `422` validation and
+  `404` not-found paths via [LocalClinicApiClient](../../src/helpers/api-clients/pethub-local-clinic.client.ts).
+- [clinic-ui.spec.ts](../../tests/targets/pethub-local/ui/clinic-ui.spec.ts) —
+  the four-step booking wizard happy path, per-step validation, the review
+  summary, back navigation and the appointment surfacing on the appointments
+  page.
+- [clinic.a11y.spec.ts](../../tests/targets/pethub-local/a11y/clinic.a11y.spec.ts)
+  — the a11y baseline on the home, booking, appointments and confirmation pages.
+
+### Cross-app navigation
+
+[cross-navigation.spec.ts](../../tests/targets/pethub-local/ui/cross-navigation.spec.ts)
+asserts the shared app switcher makes every primary surface (Admin, Storefront,
+Clinic, Operations, Test Lab) mutually reachable and never links to itself.
+
 ---
 
 ## 2. Prerequisites
 
-- **Node 22** (see [.nvmrc](../.nvmrc)). Check with `node --version`.
+- **Node 22** (see [.nvmrc](../../.nvmrc)). Check with `node --version`.
 - Dependencies installed: `npm ci` (or `npm install`).
 - Playwright browser binaries installed: `npx playwright install`.
 - A quick environment sanity check: `npm run doctor`
@@ -75,7 +148,7 @@ npm run report:local           # opens the PetHub Local HTML report
 
 The operational store is a **single shared JSON file** (lowdb). Two test files
 writing concurrently can corrupt it. So
-[playwright.local.config.ts](../playwright.local.config.ts) sets:
+[playwright.local.config.ts](../../playwright.local.config.ts) sets:
 
 - `workers: 1` and `fullyParallel: false` — one Express process, one DB file.
 - `webServer` — auto-starts/reuses the app on `127.0.0.1:3000`.
@@ -87,7 +160,7 @@ their cases run in a defined order against the shared state.
 
 ### Reset / deterministic state
 
-`globalSetup` ([src/core/global-setup.ts](../src/core/global-setup.ts)) calls
+`globalSetup` ([src/core/global-setup.ts](../../src/core/global-setup.ts)) calls
 `POST /api/admin/reset`, which truncates and reseeds all three stores and
 re-projects the derived ones. That is what makes every run start from the same
 canonical seed data described in the app guide.
@@ -111,19 +184,20 @@ flowchart TD
   Builders --> DTO[DTOs]
 ```
 
-| Layer            | Location                                                                                                    | Responsibility                                                |
-| ---------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Fixtures**     | [src/fixtures/pethub-local/index.ts](../src/fixtures/pethub-local/index.ts)                                 | `test.extend` that injects every page object + the API client |
-| **Page objects** | [src/pages/pethub-local](../src/pages/pethub-local)                                                         | One class per real screen; `readonly` locators                |
-| **Base page**    | [src/core/ui/base.page.ts](../src/core/ui/base.page.ts)                                                     | Shared `visit`/`expectVisible`/`click` helpers                |
-| **API client**   | [src/helpers/api-clients/pethub-local-api.client.ts](../src/helpers/api-clients/pethub-local-api.client.ts) | Typed wrapper over `/api`                                     |
-| **Base client**  | [src/core/api/base-api.client.ts](../src/core/api/base-api.client.ts)                                       | `get/post/put/patch/delete` with auto `expectOk`              |
-| **DTOs**         | [src/models/api/local.dto.ts](../src/models/api/local.dto.ts)                                               | Typed transport contracts                                     |
-| **Builders**     | [src/builders](../src/builders) + [RandomDataGenerator](../src/helpers/random-data-generator.ts)            | Fluent / factory test data                                    |
-| **SQL helper**   | [src/helpers/sql/json-sql-database.ts](../src/helpers/sql/json-sql-database.ts)                             | Runs SELECT/JOIN/COUNT against the JSON files directly        |
+| Layer               | Location                                                                                                                 | Responsibility                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| **Fixtures**        | [src/fixtures/pethub-local/index.ts](../../src/fixtures/pethub-local/index.ts)                                           | `test.extend` that injects every page object + the API client                             |
+| **Page objects**    | [src/pages/pethub-local](../../src/pages/pethub-local)                                                                   | One class per real screen; `readonly` locators                                            |
+| **Base page**       | [src/core/ui/base.page.ts](../../src/core/ui/base.page.ts)                                                               | Shared `visit`/`expectVisible`/`click` helpers                                            |
+| **API client**      | [src/helpers/api-clients/pethub-local-api.client.ts](../../src/helpers/api-clients/pethub-local-api.client.ts)           | Typed wrapper over `/api`                                                                 |
+| **Platform client** | [src/helpers/api-clients/pethub-local-platform.client.ts](../../src/helpers/api-clients/pethub-local-platform.client.ts) | Typed wrapper over the v2 platform surfaces (returns raw responses for status assertions) |
+| **Base client**     | [src/core/api/base-api.client.ts](../../src/core/api/base-api.client.ts)                                                 | `get/post/put/patch/delete` with auto `expectOk`                                          |
+| **DTOs**            | [src/models/api/local.dto.ts](../../src/models/api/local.dto.ts)                                                         | Typed transport contracts                                                                 |
+| **Builders**        | [src/builders](../../src/builders) + [RandomDataGenerator](../../src/helpers/random-data-generator.ts)                   | Fluent / factory test data                                                                |
+| **SQL helper**      | [src/helpers/sql/json-sql-database.ts](../../src/helpers/sql/json-sql-database.ts)                                       | Runs SELECT/JOIN/COUNT against the JSON files directly                                    |
 
 Path aliases (`@pethub-local-fixtures`, `@pages/*`, `@helpers/*`, `@models/*`,
-`@config`, …) are defined in [tsconfig.json](../tsconfig.json).
+`@config`, …) are defined in [tsconfig.json](../../tsconfig.json).
 
 ---
 
@@ -258,7 +332,7 @@ test('persists a created pet in the operational store', async ({ localApiClient 
 });
 ```
 
-`JsonSqlDatabase` ([source](../src/helpers/sql/json-sql-database.ts)) reads a JSON
+`JsonSqlDatabase` ([source](../../src/helpers/sql/json-sql-database.ts)) reads a JSON
 store file and supports `SELECT`, `INNER JOIN`, `COUNT(*)`, `WHERE`, and `?`
 parameter binding. Point one instance at each store to compare them:
 
@@ -317,10 +391,10 @@ or excluded elsewhere with `--grep-invert @a11y`.
 
 Two complementary approaches:
 
-- **`RandomDataGenerator`** ([source](../src/helpers/random-data-generator.ts)) —
+- **`RandomDataGenerator`** ([source](../../src/helpers/random-data-generator.ts)) —
   factory methods like `createLocalPet`, `createLocalUser`, `createLocalOrder`,
   `createLocalEmployee`, `createLocalCustomer`. Use these for API/data tests.
-- **Fluent builders** ([src/builders](../src/builders)) — `PetBuilder`,
+- **Fluent builders** ([src/builders](../../src/builders)) — `PetBuilder`,
   `OrderBuilder`, `UserBuilder` with `withX(...).build()` for readable, explicit
   construction when a test needs specific field values.
 
@@ -329,7 +403,7 @@ For unique ids in data tests, prefer the helpers' id strategy (and the
 avoid millisecond collisions on rapid sequential inserts.
 
 The seeded storefront credentials live in
-[src/helpers/test-data.ts](../src/helpers/test-data.ts) as `pethubLocalUsers`
+[src/helpers/test-data.ts](../../src/helpers/test-data.ts) as `pethubLocalUsers`
 (`standard`, `problem`, `performance`, `lockedOut`) and `pethubLocalPassword`,
 mirroring what the app renders on its login page.
 
@@ -373,7 +447,7 @@ The shared store is projected asynchronously, so timing discipline matters:
 ## 13. Adding a new test — checklist
 
 1. **Pick the right folder**: `ui/`, `api/`, or `a11y/` under
-   [tests/targets/pethub-local](../tests/targets/pethub-local).
+   [tests/targets/pethub-local](../../tests/targets/pethub-local).
 2. **Reuse fixtures**: import `{ test, expect } from '@pethub-local-fixtures'` and
    pull the page objects / `localApiClient` you need.
 3. **No raw selectors in specs**: if a screen lacks a page object or a needed
@@ -388,7 +462,7 @@ The shared store is projected asynchronously, so timing discipline matters:
 
 ## 14. Validation before "done"
 
-From [AGENTS.md](../AGENTS.md):
+From [AGENTS.md](../../AGENTS.md):
 
 ```powershell
 npm run lint                   # ESLint (TS + Playwright rules)
@@ -397,7 +471,7 @@ npx tsc --noEmit               # type check (also via npm run doctor)
 npm run test:local             # run the affected local suite
 ```
 
-Then update [PROGRESS.md](../PROGRESS.md) if status, backlog, or tech-debt
+Then update [PROGRESS.md](../../PROGRESS.md) if status, backlog, or tech-debt
 changed.
 
 ---
@@ -417,8 +491,8 @@ changed.
 
 ## See also
 
-- [PetHub Local — Application Guide](pethub-local-app.md) — the app's design,
+- [PetHub Local — Application Guide](app.md) — the app's design,
   data model, three-store CQRS concept, and intentional bugs.
-- [TEST_AUTOMATION_STANDARDS.md](../TEST_AUTOMATION_STANDARDS.md) — authoritative
+- [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md) — authoritative
   engineering rules.
-- [README.md](../README.md) — portfolio overview, visual tour, and full command list.
+- [README.md](../../README.md) — portfolio overview, visual tour, and full command list.
