@@ -1,4 +1,4 @@
-import { renderHead, renderPrimaryNavLinks, renderThemeToggle } from '../http/render-helpers';
+import { renderAppBar, renderHead } from '../http/render-helpers';
 
 /** Minimal HTML-escape for values interpolated into the lab templates. */
 const escapeHtml = (value: string): string =>
@@ -49,20 +49,19 @@ export const renderLabLayout = (options: { title: string; body: string; activeNa
 ${renderHead(options.title)}
 <body>
   <div class="shell">
-    <header>
-      <div class="brand">
-        <strong>QA Test Lab</strong>
-        <span>A deterministic UI playground for automation practice</span>
-      </div>
-      <nav aria-label="Test lab" data-test="lab-nav">
-        ${renderPrimaryNavLinks('lab')}
+    <header class="site-header">
+      ${renderAppBar({
+        current: 'lab',
+        title: 'QA Test Lab',
+        subtitle: 'A deterministic UI playground for automation practice',
+      })}
+      <nav class="section-nav" aria-label="Test lab sections" data-test="lab-nav">
         ${LAB_PAGES.map(
           (page) =>
             `<a href="${page.href}" data-test="lab-nav-${page.slug}" class="${
               page.slug === options.activeNav ? 'active' : ''
             }"${page.slug === options.activeNav ? ' aria-current="page"' : ''}>${page.label}</a>`,
         ).join('\n        ')}
-        ${renderThemeToggle()}
       </nav>
     </header>
     <main>

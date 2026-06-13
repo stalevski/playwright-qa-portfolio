@@ -42,6 +42,30 @@ export const renderPrimaryNavLinks = (current: PrimaryApp): string =>
     .map((app) => `<a href="${app.href}" data-test="app-nav-${app.id}">${app.label}</a>`)
     .join('\n      ');
 
+/**
+ * Renders the global app bar (tier 1 of the two-tier header): the surface brand
+ * on the left, and the cross-app switcher plus theme toggle on the right. Each
+ * surface pairs this with its own `<nav class="section-nav">` sub-bar so that
+ * "switch app" and "navigate within this app" read as two distinct levels.
+ */
+export const renderAppBar = (options: {
+  current: PrimaryApp;
+  title: string;
+  subtitle: string;
+  titleIsHeading?: boolean;
+}): string => `<div class="app-bar">
+      <div class="brand">
+        ${options.titleIsHeading ? `<h1 class="brand-title">${options.title}</h1>` : `<strong>${options.title}</strong>`}
+        <span>${options.subtitle}</span>
+      </div>
+      <div class="app-tools">
+        <nav class="app-switcher" aria-label="Switch app">
+          ${renderPrimaryNavLinks(options.current)}
+        </nav>
+        ${renderThemeToggle()}
+      </div>
+    </div>`;
+
 export const renderToast = (message: string | undefined, variant: 'success' | 'error' = 'success'): string => {
   if (!message) {
     return '';

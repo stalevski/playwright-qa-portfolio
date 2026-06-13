@@ -5,7 +5,7 @@ import {
   getOrdersWithRelationsQuery,
   getReadModelsQuery,
 } from '../queries';
-import { renderHead, renderPrimaryNavLinks, renderStatCard, renderThemeToggle } from '../http/render-helpers';
+import { renderAppBar, renderHead, renderStatCard } from '../http/render-helpers';
 
 export type OpsCaseSeverity = 'low' | 'medium' | 'high';
 
@@ -87,18 +87,17 @@ export const renderOpsLayout = (options: {
 <html lang="en">
 ${renderHead(options.title)}
 <body>
-  <header>
-    <div class="brand">
-      <strong>PetHub Operations Portal</strong>
-      <span>Workflow monitoring, projections, downstream replicas, and investigation practice</span>
-    </div>
-    <nav aria-label="Operations">
-      ${renderPrimaryNavLinks('ops')}
-      <a href="/ops" class="${options.activeNav === 'overview' ? 'active' : ''}">Overview</a>
-      <a href="/ops/queue" class="${options.activeNav === 'queue' ? 'active' : ''}">Work Queue</a>
-      <a href="/ops/comparisons" class="${options.activeNav === 'comparisons' ? 'active' : ''}">Comparisons</a>
-      <a href="/ops/incidents" class="${options.activeNav === 'incidents' ? 'active' : ''}">Incidents</a>
-      ${renderThemeToggle()}
+  <header class="site-header">
+    ${renderAppBar({
+      current: 'ops',
+      title: 'PetHub Operations Portal',
+      subtitle: 'Workflow monitoring, projections, downstream replicas, and investigation practice',
+    })}
+    <nav class="section-nav" aria-label="Operations sections">
+      <a href="/ops" class="${options.activeNav === 'overview' ? 'active' : ''}"${options.activeNav === 'overview' ? ' aria-current="page"' : ''}>Overview</a>
+      <a href="/ops/queue" class="${options.activeNav === 'queue' ? 'active' : ''}"${options.activeNav === 'queue' ? ' aria-current="page"' : ''}>Work Queue</a>
+      <a href="/ops/comparisons" class="${options.activeNav === 'comparisons' ? 'active' : ''}"${options.activeNav === 'comparisons' ? ' aria-current="page"' : ''}>Comparisons</a>
+      <a href="/ops/incidents" class="${options.activeNav === 'incidents' ? 'active' : ''}"${options.activeNav === 'incidents' ? ' aria-current="page"' : ''}>Incidents</a>
     </nav>
   </header>
   <main>

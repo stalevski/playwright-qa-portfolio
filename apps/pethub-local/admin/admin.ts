@@ -10,7 +10,7 @@ import {
   getReadModelsQuery,
   getUsersQuery,
 } from '../queries';
-import { renderHead, renderPrimaryNavLinks, renderStatCard, renderThemeToggle } from '../http/render-helpers';
+import { renderAppBar, renderHead, renderStatCard } from '../http/render-helpers';
 
 const renderApiQuickLink = (method: string, path: string): string =>
   `<li><span class="pill">${method}</span> <code>${path}</code></li>`;
@@ -45,15 +45,14 @@ export const renderAdminHomePage = async (): Promise<string> => {
 <html lang="en">
 ${renderHead('PetHub Local')}
 <body>
-  <header>
-    <div class="brand">
-      <h1 style="margin: 0; font-size: 20px;">PetHub Local</h1>
-      <span>Local QA sandbox for Playwright UI, API, event-driven CQRS flows, read models, downstream databases, and Swagger-style Petstore practice.</span>
-    </div>
-    <nav aria-label="Main">
-      ${renderPrimaryNavLinks('admin')}
-      ${renderThemeToggle()}
-    </nav>
+  <header class="site-header">
+    ${renderAppBar({
+      current: 'admin',
+      title: 'PetHub Local',
+      subtitle:
+        'Local QA sandbox for Playwright UI, API, event-driven CQRS flows, read models, downstream databases, and Swagger-style Petstore practice.',
+      titleIsHeading: true,
+    })}
   </header>
   <main>
     <section aria-label="Summary statistics">

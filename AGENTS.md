@@ -61,6 +61,7 @@ Path aliases (see `tsconfig.json`): `@config`, `@core/*`, `@pages/*`,
 | Goal                        | Command                                                           |
 | --------------------------- | ----------------------------------------------------------------- |
 | Start local app             | `npm run app:start` (UI on `127.0.0.1:3000`)                      |
+| Stop local app              | `npm run stop` (frees port 3000, cross-platform)                  |
 | Sanity check                | `npm run doctor`                                                  |
 | All tests                   | `npm test` (external then local)                                  |
 | Local suite (deterministic) | `npm run test:local`                                              |

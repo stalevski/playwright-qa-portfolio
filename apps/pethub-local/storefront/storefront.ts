@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { getPetsQuery } from '../queries';
-import { renderHead, renderPrimaryNavLinks, renderThemeToggle, renderToast } from '../http/render-helpers';
+import { renderAppBar, renderHead, renderToast } from '../http/render-helpers';
 
 export type StorefrontUser = {
   username: string;
@@ -174,18 +174,19 @@ export const renderStorefrontLayout = (options: {
 ${renderHead(options.title)}
 <body>
   <div class="shell">
-    <header class="topbar">
-      <div class="brand">
-        <strong>PetHub Outfitters</strong>
-        <span>Self-hosted QA storefront for inventory, cart, and checkout practice</span>
-      </div>
-      <nav class="nav" aria-label="Storefront">
-        ${renderPrimaryNavLinks('shop')}
-        <a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}">Inventory</a>
-        <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}">Cart ${options.session ? `<span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span>` : ''}</a>
-        <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}">Checkout</a>
-        ${options.session ? `<form method="post" action="/shop/logout"><button type="submit">Logout</button></form>` : `<a href="/shop" class="button secondary">Sign in</a>`}
-        ${renderThemeToggle()}
+    <header class="site-header">
+      ${renderAppBar({
+        current: 'shop',
+        title: 'PetHub Outfitters',
+        subtitle: 'Self-hosted QA storefront for inventory, cart, and checkout practice',
+      })}
+      <nav class="section-nav" aria-label="Storefront sections">
+        <a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}"${options.activeNav === 'inventory' ? ' aria-current="page"' : ''}>Inventory</a>
+        <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}"${options.activeNav === 'cart' ? ' aria-current="page"' : ''}>Cart ${options.session ? `<span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span>` : ''}</a>
+        <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}"${options.activeNav === 'checkout' ? ' aria-current="page"' : ''}>Checkout</a>
+        <span class="section-nav-actions">
+          ${options.session ? `<form method="post" action="/shop/logout"><button type="submit" class="button secondary">Logout</button></form>` : `<a href="/shop" class="button secondary">Sign in</a>`}
+        </span>
       </nav>
     </header>
     <main>
