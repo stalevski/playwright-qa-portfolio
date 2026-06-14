@@ -7,6 +7,7 @@ import {
   renderLabFrames,
   renderLabHome,
   renderLabMenus,
+  renderLabOverlays,
   renderLabShadowDom,
   renderLabTables,
   renderLabWidgets,
@@ -40,6 +41,10 @@ labRouter.get('/widgets', (_request: Request, response: Response) => {
 
 labRouter.get('/menus', (_request: Request, response: Response) => {
   response.send(renderLabMenus());
+});
+
+labRouter.get('/overlays', (_request: Request, response: Response) => {
+  response.send(renderLabOverlays());
 });
 
 labRouter.get('/frames', (_request: Request, response: Response) => {

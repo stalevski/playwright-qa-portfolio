@@ -14,6 +14,7 @@ import { LabFormsPage } from '@pages/pethub-local/lab/lab-forms.page';
 import { LabFramesPage } from '@pages/pethub-local/lab/lab-frames.page';
 import { LabHomePage } from '@pages/pethub-local/lab/lab-home.page';
 import { LabMenusPage } from '@pages/pethub-local/lab/lab-menus.page';
+import { LabOverlaysPage } from '@pages/pethub-local/lab/lab-overlays.page';
 import { LabShadowDomPage } from '@pages/pethub-local/lab/lab-shadow-dom.page';
 import { LabTablesPage } from '@pages/pethub-local/lab/lab-tables.page';
 import { LabWidgetsPage } from '@pages/pethub-local/lab/lab-widgets.page';
@@ -53,6 +54,7 @@ type LocalFixtures = {
   labTablesPage: LabTablesPage;
   labWidgetsPage: LabWidgetsPage;
   labMenusPage: LabMenusPage;
+  labOverlaysPage: LabOverlaysPage;
   labFramesPage: LabFramesPage;
   labShadowDomPage: LabShadowDomPage;
   clinicHomePage: ClinicHomePage;
@@ -130,6 +132,9 @@ export const test = base.extend<LocalFixtures>({
   },
   labMenusPage: async ({ page }, use) => {
     await use(new LabMenusPage(page));
+  },
+  labOverlaysPage: async ({ page }, use) => {
+    await use(new LabOverlaysPage(page));
   },
   labFramesPage: async ({ page }, use) => {
     await use(new LabFramesPage(page));

@@ -442,13 +442,30 @@
     popup.hidden = false;
     trigger.setAttribute('aria-expanded', 'true');
   };
-  var wireMenu = function (trigger, popup, onSelect) {
+  // In a menubar only one top-level menu may be open at a time; close any open
+  // sibling so two popups can never overlap (and paint on top of each other).
+  var closeSiblingMenus = function (menubar, currentTrigger) {
+    Array.prototype.forEach.call(menubar.querySelectorAll('.lab-menu-trigger'), function (sibling) {
+      if (sibling === currentTrigger) {
+        return;
+      }
+      var siblingPopup = document.getElementById(sibling.getAttribute('aria-controls'));
+      if (siblingPopup && !siblingPopup.hidden) {
+        closeMenu(sibling, siblingPopup);
+      }
+    });
+  };
+  var wireMenu = function (trigger, popup, onSelect, options) {
     if (!trigger || !popup) {
       return;
     }
+    var menubar = options && options.menubar;
     trigger.addEventListener('click', function (event) {
       event.stopPropagation();
       if (popup.hidden) {
+        if (menubar) {
+          closeSiblingMenus(menubar, trigger);
+        }
         openMenu(trigger, popup);
       } else {
         closeMenu(trigger, popup);
@@ -504,23 +521,34 @@
     });
   }
 
+  var flyoutMenubar = byTest('menubar');
   var flyoutResult = byTest('flyout-result');
   ['products', 'services'].forEach(function (id) {
-    wireMenu(byTest('menu-top-' + id), byTest('submenu-' + id), function (item) {
-      if (flyoutResult) {
-        flyoutResult.textContent = item.getAttribute('data-action');
-      }
-    });
+    wireMenu(
+      byTest('menu-top-' + id),
+      byTest('submenu-' + id),
+      function (item) {
+        if (flyoutResult) {
+          flyoutResult.textContent = item.getAttribute('data-action');
+        }
+      },
+      { menubar: flyoutMenubar },
+    );
   });
 
   var splitPrimary = byTest('split-primary');
   if (splitPrimary) {
     var splitResult = byTest('split-result');
+    // Selectable-default split button: the primary runs whatever action it
+    // currently shows, and choosing an alternative from the caret menu makes
+    // that the new default — the primary label updates so the two stay in sync.
     splitPrimary.addEventListener('click', function () {
-      splitResult.textContent = 'Save';
+      splitResult.textContent = splitPrimary.textContent.trim();
     });
     wireMenu(byTest('split-toggle'), byTest('split-menu'), function (item) {
-      splitResult.textContent = item.getAttribute('data-action');
+      var action = item.getAttribute('data-action');
+      splitPrimary.textContent = action;
+      splitResult.textContent = action;
     });
   }
 
@@ -559,6 +587,189 @@
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && !contextMenu.hidden) {
         contextMenu.hidden = true;
+      }
+    });
+  }
+
+  /* ---- Popups & layers --------------------------------------------- */
+  var popoverTrigger = byTest('popover-trigger');
+  if (popoverTrigger) {
+    var popover = byTest('popover');
+    var setPopover = function (open) {
+      popover.hidden = !open;
+      popoverTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    popoverTrigger.addEventListener('click', function (event) {
+      event.stopPropagation();
+      setPopover(popover.hidden);
+    });
+    byTest('popover-close').addEventListener('click', function () {
+      setPopover(false);
+      popoverTrigger.focus();
+    });
+    document.addEventListener('click', function (event) {
+      if (!popover.hidden && !popover.contains(event.target) && !popoverTrigger.contains(event.target)) {
+        setPopover(false);
+      }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !popover.hidden) {
+        setPopover(false);
+        popoverTrigger.focus();
+      }
+    });
+  }
+
+  var notifyButton = byTest('notify-button');
+  if (notifyButton) {
+    var toastStack = byTest('toast-stack');
+    var notifyCount = byTest('notify-count');
+    var notifySeq = 0;
+    var AUTO_DISMISS_MS = 3000;
+    var refreshNotifyCount = function () {
+      notifyCount.textContent = String(toastStack.querySelectorAll('[data-test="toast"]').length);
+    };
+    var removeToast = function (toast) {
+      if (toast && toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+        refreshNotifyCount();
+      }
+    };
+    notifyButton.addEventListener('click', function () {
+      notifySeq += 1;
+      var toast = document.createElement('div');
+      toast.className = 'lab-toast-item';
+      toast.setAttribute('data-test', 'toast');
+      var label = document.createElement('span');
+      label.textContent = 'Notification ' + notifySeq;
+      var dismiss = document.createElement('button');
+      dismiss.type = 'button';
+      dismiss.className = 'lab-toast-dismiss';
+      dismiss.setAttribute('data-test', 'toast-dismiss');
+      dismiss.setAttribute('aria-label', 'Dismiss notification');
+      dismiss.textContent = '\u00d7';
+      dismiss.addEventListener('click', function () {
+        removeToast(toast);
+      });
+      toast.appendChild(label);
+      toast.appendChild(dismiss);
+      // Newest notification on top of the stack.
+      toastStack.insertBefore(toast, toastStack.firstChild);
+      refreshNotifyCount();
+      window.setTimeout(function () {
+        removeToast(toast);
+      }, AUTO_DISMISS_MS);
+    });
+    byTest('notify-clear').addEventListener('click', function () {
+      while (toastStack.firstChild) {
+        toastStack.removeChild(toastStack.firstChild);
+      }
+      refreshNotifyCount();
+    });
+  }
+
+  var cookieShow = byTest('cookie-show');
+  if (cookieShow) {
+    var cookieBanner = byTest('cookie-banner');
+    var cookieChoice = byTest('cookie-choice');
+    var resolveCookie = function (choice) {
+      cookieChoice.textContent = choice;
+      cookieBanner.hidden = true;
+    };
+    cookieShow.addEventListener('click', function () {
+      cookieBanner.hidden = false;
+    });
+    byTest('cookie-accept').addEventListener('click', function () {
+      resolveCookie('accepted');
+    });
+    byTest('cookie-decline').addEventListener('click', function () {
+      resolveCookie('declined');
+    });
+  }
+
+  var drawerOpen = byTest('drawer-open');
+  if (drawerOpen) {
+    var drawer = byTest('drawer');
+    var drawerBackdrop = byTest('drawer-backdrop');
+    var setDrawer = function (open) {
+      drawer.hidden = !open;
+      drawerBackdrop.hidden = !open;
+    };
+    drawerOpen.addEventListener('click', function () {
+      setDrawer(true);
+    });
+    byTest('drawer-close').addEventListener('click', function () {
+      setDrawer(false);
+      drawerOpen.focus();
+    });
+    drawerBackdrop.addEventListener('click', function () {
+      setDrawer(false);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !drawer.hidden) {
+        setDrawer(false);
+        drawerOpen.focus();
+      }
+    });
+  }
+
+  var layerOpen1 = byTest('layer-open-1');
+  if (layerOpen1) {
+    var layerDepth = byTest('layer-depth');
+    var modal1 = byTest('layer-modal-1');
+    var backdrop1 = byTest('layer-backdrop-1');
+    var modal2 = byTest('layer-modal-2');
+    var backdrop2 = byTest('layer-backdrop-2');
+    var refreshDepth = function () {
+      var depth = 0;
+      if (!modal1.hidden) {
+        depth += 1;
+      }
+      if (!modal2.hidden) {
+        depth += 1;
+      }
+      layerDepth.textContent = String(depth);
+    };
+    var setLayer = function (modal, backdrop, open) {
+      modal.hidden = !open;
+      backdrop.hidden = !open;
+      refreshDepth();
+    };
+    layerOpen1.addEventListener('click', function () {
+      setLayer(modal1, backdrop1, true);
+    });
+    byTest('layer-open-2').addEventListener('click', function () {
+      setLayer(modal2, backdrop2, true);
+    });
+    byTest('layer-close-1').addEventListener('click', function () {
+      // The second modal sits on top of the first, so closing the first
+      // dismisses both layers.
+      setLayer(modal2, backdrop2, false);
+      setLayer(modal1, backdrop1, false);
+    });
+    byTest('layer-close-2').addEventListener('click', function () {
+      setLayer(modal2, backdrop2, false);
+    });
+  }
+
+  var zstack = byTest('zstack');
+  if (zstack) {
+    var zstackFront = byTest('zstack-front');
+    var bringToFront = function (letter) {
+      ['a', 'b', 'c'].forEach(function (id) {
+        var card = byTest('zcard-' + id);
+        if (card) {
+          card.classList.toggle('is-front', id === letter);
+        }
+      });
+      zstackFront.textContent = letter.toUpperCase();
+    };
+    ['a', 'b', 'c'].forEach(function (letter) {
+      var frontButton = byTest('zfront-' + letter);
+      if (frontButton) {
+        frontButton.addEventListener('click', function () {
+          bringToFront(letter);
+        });
       }
     });
   }

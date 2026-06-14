@@ -188,10 +188,18 @@ nav a.active,
 }
 .app-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px 24px;
   padding: 16px 28px;
+}
+/* min-width: 0 lets the brand shrink and wrap instead of overrunning the tools,
+   and flex-grow keeps it filling the row so the tools stay pinned to the right.
+   When space runs out the whole .app-tools block wraps below as one unit. */
+.app-bar .brand {
+  min-width: 0;
+  flex: 1 1 16rem;
 }
 .brand .brand-title {
   margin: 0;
@@ -570,6 +578,14 @@ button:hover,
 }
 .theme-toggle:hover {
   background: var(--bg-elev);
+}
+/* Reserve room for the wider "Light mode" label so toggling the theme never
+   resizes the button, which previously nudged the whole toolbar on each switch.
+   Using em keeps the reserve and the text scaling together across font stacks. */
+.theme-toggle [data-test='theme-toggle-label'] {
+  display: inline-block;
+  min-width: 6em;
+  text-align: left;
 }
 .theme-toggle .icon {
   font-size: 16px;
@@ -982,4 +998,156 @@ th[aria-sort='descending'] .lab-sort-icon::after {
 }
 .clinic-wizard-controls {
   gap: 10px;
+}
+
+/* Popups & layers */
+.lab-popover-anchor {
+  position: relative;
+  display: inline-block;
+}
+.lab-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  min-width: 240px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+.lab-toast-stack {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: grid;
+  gap: 8px;
+  width: min(320px, calc(100vw - 48px));
+  pointer-events: none;
+}
+.lab-toast-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  pointer-events: auto;
+}
+.lab-toast-dismiss {
+  border: 0;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.lab-cookie-banner {
+  position: fixed;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+.lab-drawer-backdrop,
+.lab-layer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  background: rgba(0, 0, 0, 0.45);
+}
+.lab-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 991;
+  width: min(360px, 90vw);
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  padding: 24px;
+  background: var(--bg-elev);
+  border-left: 1px solid var(--border-strong);
+  box-shadow: -16px 0 40px rgba(0, 0, 0, 0.3);
+}
+.lab-layer-backdrop {
+  z-index: 1100;
+}
+.lab-layer-backdrop-2 {
+  z-index: 1102;
+}
+.lab-layer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1101;
+  width: min(420px, 90vw);
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+.lab-layer-modal-2 {
+  z-index: 1103;
+  transform: translate(calc(-50% + 28px), calc(-50% + 28px));
+}
+.lab-zstack {
+  position: relative;
+  height: 200px;
+  margin-bottom: 8px;
+}
+.lab-zcard {
+  position: absolute;
+  width: 180px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elev);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.lab-zcard-a {
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: var(--bg-elev-2);
+}
+.lab-zcard-b {
+  top: 28px;
+  left: 56px;
+  z-index: 2;
+}
+.lab-zcard-c {
+  top: 56px;
+  left: 112px;
+  z-index: 3;
+}
+.lab-zcard.is-front {
+  z-index: 10;
+  border-color: var(--accent);
 }
