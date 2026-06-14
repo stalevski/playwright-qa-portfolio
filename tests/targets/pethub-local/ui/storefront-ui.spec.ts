@@ -37,6 +37,30 @@ test.describe('PetHub Storefront UI', () => {
     },
   );
 
+  test('hides the inventory, cart and checkout links until signed in', async ({
+    storefrontLoginPage,
+    storefrontInventoryPage,
+    page,
+  }) => {
+    await storefrontLoginPage.goto();
+    await storefrontLoginPage.assertLoaded();
+
+    // Logged out: the section nav only offers a way to sign in.
+    const sectionNav = page.getByRole('navigation', { name: 'Storefront sections' });
+    await expect(sectionNav.getByRole('link', { name: 'Inventory' })).toBeHidden();
+    await expect(sectionNav.getByRole('link', { name: /^Cart/ })).toBeHidden();
+    await expect(sectionNav.getByRole('link', { name: 'Checkout' })).toBeHidden();
+    await expect(sectionNav.getByRole('link', { name: 'Sign in' })).toBeVisible();
+
+    // Signed in: the protected destinations appear and sign-in becomes logout.
+    await storefrontLoginPage.login(standardUser, password);
+    await storefrontInventoryPage.assertLoaded();
+    await expect(sectionNav.getByRole('link', { name: 'Inventory' })).toBeVisible();
+    await expect(sectionNav.getByRole('link', { name: /^Cart/ })).toBeVisible();
+    await expect(sectionNav.getByRole('link', { name: 'Checkout' })).toBeVisible();
+    await expect(sectionNav.getByRole('button', { name: 'Logout' })).toBeVisible();
+  });
+
   test('sorts inventory by name A to Z', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
     await storefrontLoginPage.goto();
     await storefrontLoginPage.login(standardUser, password);

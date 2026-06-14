@@ -214,7 +214,11 @@ A deliberately **Sauce-Demo-shaped** buy flow so Playwright patterns transfer:
 Key behaviours:
 
 - **Auth**: cookie-based session (`storefront_session`) held in an in-memory
-  `Map`. Four demo personas (see below), all with password `pethub123`.
+  `Map`. Four demo personas (see below), all with password `pethub123`. The
+  Inventory, Cart and Checkout links are **hidden until sign-in** — those routes
+  redirect to `/shop` without a session, so the section nav only shows a "Sign
+  in" action when logged out and reveals the protected links (plus Logout) after
+  login.
 - **Cart**: lives on the session only. The cart badge counts **lines**, the
   subtotal sums line totals.
 - **Inventory filtering**: `sold` pets are filtered out of the grid by design, so
