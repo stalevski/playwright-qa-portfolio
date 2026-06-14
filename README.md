@@ -1,16 +1,71 @@
 # Playwright QA Portfolio
 
-End-to-end and API test automation portfolio in TypeScript and Playwright. Demonstrates page-object architecture, builder-based test data, multi-target test design, event-driven CQRS-style read models, and CI hardening.
+[![CI](https://github.com/stalevski/playwright-qa-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/stalevski/playwright-qa-portfolio/actions/workflows/playwright.yml)
+[![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node](https://img.shields.io/badge/Node-%E2%89%A524-339933?logo=node.js&logoColor=white)](.nvmrc)
 
-The portfolio exercises three target systems:
+A TypeScript + Playwright test-automation portfolio. It pairs real-world testing techniques — page objects, typed API clients, builder-based data, accessibility checks and tiered CI — with **PetHub Local**, a small Express + lowdb app built into the repo so every example runs deterministically on your machine, no flaky public sites required.
 
-- **Swagger Petstore** — public REST API and UI demo (`https://petstore.swagger.io/`)
-- **Sauce Demo** — public e-commerce UI demo (`https://www.saucedemo.com/`)
-- **PetHub Local** — a self-contained Express + lowdb application included in this repo for deterministic local QA practice (see `apps/pethub-local`). Its surfaces — Admin, Storefront, **PetHub Clinic**, Operations and a **QA Test Lab** — are all mutually reachable via a shared cross-app navigation switcher.
+It exercises three target systems:
+
+- **PetHub Local** — a self-contained Express + lowdb app in this repo (`apps/pethub-local`). The **primary** target: deterministic, fully owned, and needs no internet. Its surfaces — Admin, Storefront, **Clinic**, Operations and a **QA Test Lab** — share a cross-app navigation switcher.
+- **Swagger Petstore** — public REST API + UI demo (`https://petstore.swagger.io/`). Informational; some specs deliberately assert known bugs.
+- **Sauce Demo** — public e-commerce UI demo (`https://www.saucedemo.com/`). Informational; demonstrates `storageState` auth reuse.
+
+## Contents
+
+- [Quickstart](#quickstart)
+- [What's inside](#whats-inside)
+- [Visual tour](#visual-tour)
+- [Architecture](#architecture)
+- [PetHub Local app](#pethub-local-app)
+- [Running tests](#running-tests)
+- [Accessibility](#accessibility-a11y)
+- [Authentication state reuse](#authentication-state-reuse-sauce-demo)
+- [Test tiers](#test-tiers-smoke-critical)
+- [AI-assisted workflow](#ai-assisted-workflow)
+- [Maintenance](#maintenance)
+- [License](#license)
+
+## Quickstart
+
+Requires **Node 24** (see [`.nvmrc`](.nvmrc)). The commands below work as written in PowerShell on Windows, and in bash/zsh on macOS and Linux.
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Install Playwright browsers
+npx playwright install
+
+# 3. Run the deterministic local suite
+#    Playwright starts PetHub Local for you and resets its database first.
+npm run test:local
+```
+
+Want to click around the app yourself?
+
+```bash
+npm run app:start   # serves the UI + API at http://127.0.0.1:3000
+npm run stop        # frees port 3000 when you are done
+```
+
+> Returning after a long break? See [Maintenance](#maintenance) for a revival checklist.
+
+## What's inside
+
+- **End-to-end UI tests** built on the Page Object Model, scoped components, and app-owned `data-test` locators.
+- **Typed API tests** with clients that extend a shared `BaseApiClient`, DTOs for transport, and fluent builders for data.
+- **A real app to test against** — PetHub Local models an operational database, event-driven **CQRS-style read models**, and **downstream replicas**, so specs can practise the cross-system data investigation common in backend QA.
+- **Accessibility checks** (`@axe-core/playwright`) across every PetHub surface.
+- **Tiered CI** via `@smoke` / `@critical` tags, `storageState` auth reuse, and a `/lab` playground of deterministic UI-automation challenges.
+
+Engineering conventions live in [AGENTS.md](AGENTS.md) and [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md).
 
 ## Visual tour
 
-A guided walkthrough of the PetHub Local app. All images below are produced deterministically by `npm.cmd run screenshots`, which resets the database and walks Playwright through the canonical flows.
+A guided walkthrough of PetHub Local. Every image below is produced deterministically by `npm run screenshots`, which resets the database and walks Playwright through the canonical flows.
 
 ### Admin dashboard
 
@@ -96,96 +151,54 @@ The `/lab/overlays` page focuses on transient surfaces and z-index stacking: an 
 
 Screenshots are produced by Playwright against the running app:
 
-```powershell
+```bash
 # Terminal A — start the app
-npm.cmd run app:start
+npm run app:start
 
 # Terminal B — capture all 12 images
-npm.cmd run screenshots
+npm run screenshots
 ```
 
 The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` first so each run produces images against the canonical seed data, then walks the storefront flow end-to-end (login → inventory → details → cart → checkout → confirmation) before capturing the ops portal, clinic and QA Test Lab views.
 
-## Returning to this project after a while?
+## Architecture
 
-If you have not touched this repo in months, run through this checklist before anything else. For a longer absence (a year or more), the `/repo-revival` workflow scripts the same flow with extra checks for accumulated rot.
+Organized **system-first, then test-type**, which scales cleanly across multiple applications and teams.
 
-1. **Check Node version**: `node --version` must satisfy `engines` in `package.json` (currently `>=24.0.0`). The pinned LTS major lives in `.nvmrc`. If Node 24 is past EOL, bump `.nvmrc` to the current LTS.
-2. **Reinstall dependencies cleanly**: `npm.cmd ci` (uses `package-lock.json` exactly).
-3. **Run the environment doctor**: `npm.cmd run doctor` (prints versions and runs a TypeScript type check).
-4. **Smoke test the local app**: `npm.cmd run test:pethub-local` — fully self-contained, no external sites needed.
-5. **If `npx playwright install` fails with download errors**, the browser binaries for the pinned Playwright version may have rotated out of Microsoft's CDN. Bump Playwright with `npm.cmd install -D @playwright/test@latest`, then `npx playwright install`. Page objects, fixtures, and configs are version-tolerant so this is usually a one-line fix.
-6. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Check the most recent scheduled CI run on GitHub for context. External target jobs are configured as **informational** in CI so they do not block PRs.
+```text
+apps/pethub-local/      Express + lowdb app (admin, storefront, clinic, ops, QA Test Lab)
+src/
+  core/                 BasePage, BaseApiClient, global setup
+  pages/<system>/       page objects (one per screen); components/ for shared UI
+  helpers/api-clients/  typed API clients (extend BaseApiClient)
+  fixtures/<system>/    Playwright fixtures (re-export test/expect)
+  builders/             fluent DTO builders (pet, order, user)
+  models/api/           DTOs / typed transport
+tests/targets/<system>/{ui,api,a11y}/   specs
+test-targets.config.ts  URL registry with env overrides
+playwright.config.ts        external targets (parallel)
+playwright.local.config.ts  PetHub Local (serial, owns webServer + globalSetup)
+```
 
-## Stack
+**Built with** Playwright Test, TypeScript, the Page Object Model, typed DTOs and builder-based test data. Path aliases (`@core/*`, `@pages/*`, `@helpers/*`, `@fixtures/*`, `@models/*`, `@builders/*`, `@config`) are defined in `tsconfig.json`.
 
-- Playwright Test
-- TypeScript
-- Page Object Model
-- Typed DTOs
-- Builder-based test data
-
-## Project structure
-
-- `src/pages`
-  - UI page objects
-- `src/helpers`
-  - API clients and test data helpers
-- `src/core`
-  - shared base page/client abstractions
-- `src/fixtures`
-  - system-specific Playwright fixture entry points
-- `src/models/api`
-  - DTO contracts
-- `src/builders`
-  - DTO builders
-- `tests/targets/swagger-petstore/api`
-  - Swagger Petstore API specs
-- `tests/targets/swagger-petstore/ui`
-  - Swagger Petstore UI specs
-- `tests/targets/sauce-demo/ui`
-  - Sauce Demo UI specs
-- `tests/targets/pethub-local/api`
-  - PetHub Local API specs
-- `tests/targets/pethub-local/ui`
-  - PetHub Local admin, storefront (`/shop`), ops portal (`/ops`), and QA Test Lab (`/lab`) UI specs
-- `apps/pethub-local`
-  - PetHub Local Express + embedded-database app
-- `.windsurf/workflows`
-  - AI-assisted planning/generation/healing workflows
+**Key concept — three databases, one app.** PetHub Local keeps three independent JSON stores under `apps/pethub-local/data/`: an operational database, eventually-consistent **read models** (CQRS-style projections fed by domain events), and **downstream replicas** (a billing/analytics simulation). Tests compare them with SQL-style joins via `JsonSqlDatabase` — which is what makes the cross-system investigation in the Operations portal possible.
 
 ## PetHub Local app
 
-The PetHub Local app provides:
+The PetHub Local app is the portfolio's primary target: a self-contained Express + lowdb backend with a server-rendered UI and a REST API, plus seeded demo data for stable automation. Five surfaces share one cross-app navigation switcher:
 
-- a web admin page at `/`
-- local persistent pet, user, order, and audit-log data
-- API endpoints under `/api`
-- a v2 “platform” API tier for auth, validation, pagination, rate limiting, async jobs, idempotency, security and observability testing
-- a **QA Test Lab**: a `/lab` UI automation playground (forms, dynamic content, dialogs, tables, widgets, frames, shadow DOM) plus stateless httpbin-style HTTP utilities under `/api/lab`
-- seeded demo data for stable automation
+| Surface         | URL       | What it is                                                              |
+| --------------- | --------- | ----------------------------------------------------------------------- |
+| **Admin**       | `/`       | Dashboard over pets, users, orders, audit log, read models & replicas   |
+| **Storefront**  | `/shop`   | Sauce-Demo-shaped e-commerce flow (login → inventory → cart → checkout) |
+| **Clinic**      | `/clinic` | Four-step veterinary appointment-booking wizard                         |
+| **Operations**  | `/ops`    | QA investigation portal with cross-system data comparisons              |
+| **QA Test Lab** | `/lab`    | Deterministic UI-automation challenges + httpbin-style HTTP utilities   |
 
-### PetHub Local endpoints
+### REST API
 
-- `GET /api/health`
-- `GET /api/pets`
-- `GET /api/pets/:id`
-- `GET /api/pets/:id/relations`
-- `POST /api/pets`
-- `PUT /api/pets/:id`
-- `DELETE /api/pets/:id`
-- `GET /api/users`
-- `GET /api/users/:id`
-- `GET /api/users/:id/relations`
-- `POST /api/users`
-- `GET /api/orders`
-- `GET /api/orders/:id`
-- `GET /api/orders/:id/relations`
-- `POST /api/orders`
-- `PATCH /api/orders/:id/status`
-- `GET /api/audit-log`
-- `GET /api/audit-log/relations`
-- `POST /api/admin/reset` — truncates and reseeds the local database (used by Playwright `globalSetup`)
+The core API under `/api` exposes CRUD + relationship views for pets, users, orders and the audit log, plus `GET /api/health` and `POST /api/admin/reset` (truncate + reseed, used by Playwright `globalSetup`). See [docs/pethub-local/app.md §7](docs/pethub-local/app.md#7-rest-api) for the full endpoint table.
 
 ### PetHub Local platform surfaces (v2)
 
@@ -237,51 +250,9 @@ and [§7 `/api/clinic`](docs/pethub-local/app.md#pethub-clinic-api-apiclinic)):
 - `POST /api/clinic/appointments` — booking with `422` field-level validation
 - `GET /api/clinic/appointments[/:ref]` — read all / one (`200` / `404`)
 
-Every primary surface (Admin, Storefront, Clinic, Operations, Test Lab) links to
-every other via a shared cross-app navigation switcher.
+### Environment variables
 
-### Install dependencies
-
-```powershell
-npm.cmd install
-```
-
-### Run PetHub Local app
-
-```powershell
-npm.cmd run app:start
-```
-
-### Stop local app
-
-If you started it in the terminal, press:
-
-```powershell
-Ctrl + C
-```
-
-Or, from any terminal, free the port (works cross-platform, no extra deps):
-
-```powershell
-npm.cmd run stop
-```
-
-If it is running in a background terminal in the IDE, stop that terminal/process from the IDE terminal panel.
-
-The app runs by default at:
-
-- UI: `http://127.0.0.1:3000`
-- API: `http://127.0.0.1:3000/api`
-
-The PetHub Local app now also exposes relationship views so you can verify connected data between pets, users, orders, and audit entries.
-
-### Target environment variables
-
-Default target URLs are centralized in:
-
-- `test-targets.config.ts`
-
-Create a `.env` file from `.env.example` or use these values:
+Default target URLs live in `test-targets.config.ts`. To override them, create a `.env` from `.env.example` (or set these directly):
 
 ```dotenv
 PUBLIC_BASE_URL=https://petstore.swagger.io
@@ -290,121 +261,29 @@ LOCAL_BASE_URL=http://127.0.0.1:3000
 LOCAL_API_BASE_URL=http://127.0.0.1:3000/api
 ```
 
-## Test targets
+## Running tests
 
-The framework keeps **multiple systems under test**:
+`npm test` runs the **external** suite first (Swagger Petstore + Sauce Demo, fully parallel) and then the **local** PetHub suite (serial). Two dedicated configs keep them apart:
 
-- Swagger Petstore
-- Sauce Demo
-- PetHub Local
+- `playwright.config.ts` — external targets, full parallelism, no local web server.
+- `playwright.local.config.ts` — PetHub Local UI + API, single worker, owns the `webServer` + `globalSetup` that resets the lowdb database.
 
-The repo is organized by **system first** and then by **test type**, which is easier to scale in larger teams and multi-application automation portfolios.
+The local suite runs `workers: 1` because PetHub Local stores state in a single shared JSON file (lowdb), and concurrent writers would corrupt it. Playwright's `webServer` auto-starts the app (and reuses a running instance), so you never have to start it manually before a test run.
 
-They already use separate classes:
+| Command                                        | Runs                                                 |
+| ---------------------------------------------- | ---------------------------------------------------- |
+| `npm test`                                     | Everything: external (parallel) then local (serial)  |
+| `npm run test:external`                        | External targets only (parallel)                     |
+| `npm run test:local`                           | PetHub Local only (serial)                           |
+| `npm run test:ui` / `npm run test:api`         | UI / API across all targets                          |
+| `npm run test:pethub-local`                    | PetHub Local UI + API (add `:ui` / `:api` to narrow) |
+| `npm run test:swagger-petstore`                | Swagger Petstore (add `:ui` / `:api` to narrow)      |
+| `npm run test:sauce-demo`                      | Sauce Demo (add `:ui` to narrow)                     |
+| `npm run test:a11y`                            | Accessibility checks (see below)                     |
+| `npm run test:smoke` / `npm run test:critical` | Tiered subsets (see below)                           |
+| `npm run report` / `npm run report:local`      | Open the external / local HTML report                |
 
-- Swagger Petstore UI page object: `src/pages/swagger-petstore/home.page.ts`
-- Swagger Petstore API client: `src/helpers/api-clients/swagger-petstore-api.client.ts`
-- Swagger Petstore fixtures: `src/fixtures/swagger-petstore/index.ts`
-- Sauce Demo page objects: `src/pages/sauce-demo/*.page.ts`
-- Sauce Demo fixtures: `src/fixtures/sauce-demo/index.ts`
-- PetHub Local UI page object: `src/pages/pethub-local/home.page.ts`
-- PetHub Local API client: `src/helpers/api-clients/pethub-local-api.client.ts`
-- PetHub Local fixtures: `src/fixtures/pethub-local/index.ts`
-
-Swagger Petstore specs live under `tests/targets/swagger-petstore`.
-
-Sauce Demo specs live under `tests/targets/sauce-demo`.
-
-PetHub Local specs live under `tests/targets/pethub-local`.
-
-## Run tests
-
-```powershell
-npm.cmd test
-```
-
-`npm test` runs the external suite first (Swagger Petstore + Sauce Demo, fully parallel) and then the PetHub Local suite (sequential, `workers: 1`). The two suites use dedicated Playwright configs:
-
-- `playwright.config.ts` - external targets, full parallelism, no local web server
-- `playwright.local.config.ts` - PetHub Local UI + API, single worker, owns the `webServer` and `globalSetup` that resets the lowdb-backed database
-
-The split exists because the locally-hosted PetHub app stores state in a single shared JSON file (lowdb). Multiple test files writing concurrently can corrupt that state, so all PetHub Local specs are serialized through one Express process and one shared database file.
-
-For PetHub Local projects, Playwright uses `webServer` to automatically start the app and reuse an already running instance when possible.
-
-That means `test:pethub-local`, `test:pethub-local:ui`, and `test:pethub-local:api` no longer require you to manually start the app first.
-
-Run only the Swagger Petstore suite:
-
-```powershell
-npm.cmd run test:swagger-petstore
-```
-
-Run only the Sauce Demo suite:
-
-```powershell
-npm.cmd run test:sauce-demo
-```
-
-Run only the PetHub Local suite:
-
-```powershell
-npm.cmd run test:pethub-local
-```
-
-Run only the Swagger Petstore API suite:
-
-```powershell
-npm.cmd run test:swagger-petstore:api
-```
-
-Run only the Sauce Demo UI suite:
-
-```powershell
-npm.cmd run test:sauce-demo:ui
-```
-
-Run only the PetHub Local API suite:
-
-```powershell
-npm.cmd run test:pethub-local:api
-```
-
-Run only the Swagger Petstore UI suite:
-
-```powershell
-npm.cmd run test:swagger-petstore:ui
-```
-
-Run only the PetHub Local UI suite:
-
-```powershell
-npm.cmd run test:pethub-local:ui
-```
-
-Run only the external (parallel) targets:
-
-```powershell
-npm.cmd run test:external
-```
-
-Run only the local (serial) target:
-
-```powershell
-npm.cmd run test:local
-```
-
-UI across all targets:
-
-```powershell
-npm.cmd run test:ui
-```
-
-API across all targets:
-
-```powershell
-npm.cmd run test:api
-```
+Add `--headed` or `--debug` via the `test:headed` / `test:debug` scripts to watch or step through a run.
 
 ### Accessibility (`@a11y`)
 
@@ -412,17 +291,11 @@ A dedicated `pethub-local-a11y` Playwright project runs WCAG 2.0 / 2.1 A and AA 
 
 - **Admin** — `/` dashboard
 - **Storefront** — `/shop` login, `/shop/inventory`, `/shop/item/:id`, `/shop/cart`, `/shop/checkout`
+- **Clinic** — `/clinic`, the booking wizard, appointments and confirmation
 - **Ops portal** — `/ops`, `/ops/queue`, `/ops/comparisons`, `/ops/incidents`
+- **QA Test Lab** — `/lab` and its challenge pages
 
-The shared helper `src/helpers/a11y.ts` filters Axe violations to `critical` or `serious` impact and fails the test if any are found. Lower-impact issues are still surfaced in the report but not enforced.
-
-Run only the a11y suite:
-
-```powershell
-npm.cmd run test:a11y
-```
-
-Tests are tagged `@a11y` so they can also be excluded from the default suite via `--grep-invert @a11y` if needed.
+The shared helper `src/helpers/a11y.ts` filters Axe violations to `critical` or `serious` impact and fails the test if any are found. Lower-impact issues are still surfaced in the report but not enforced. Tests are tagged `@a11y`, so `npm run test:a11y` runs just this suite and `--grep-invert @a11y` excludes it from any run.
 
 ### Authentication state reuse (Sauce Demo)
 
@@ -436,69 +309,13 @@ The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the
 | Project wiring (`dependencies` + `storageState`) | `playwright.config.ts`                                                                             |
 | Opt-out for tests that need a logged-out browser | `tests/targets/sauce-demo/ui/login.spec.ts`, `session-protection.spec.ts`, `known-defects.spec.ts` |
 
-#### How to add `storageState` to another target — 3 steps
+#### Adding `storageState` to another target
 
-**Step 1 — Create a setup spec that logs in and saves browser state.** Place it next to the target's tests, not inside the `ui/` folder. Use the same page objects as the rest of the suite so the login flow stays DRY.
+1. **Create a setup spec** next to the target's tests (e.g. `tests/targets/<target>/<target>.setup.ts`) that logs in via the existing page objects and saves state with `page.context().storageState({ path })`.
+2. **Register a `<target>-setup` project** in `playwright.config.ts`, then give each UI project `dependencies: ['<target>-setup']` plus `storageState: 'playwright/.auth/<target>-standard.json'` so they inherit the saved session.
+3. **Opt out where needed** — tests that verify login, session protection, or alternative users override it per `describe` with `test.use({ storageState: { cookies: [], origins: [] } })` to start logged out.
 
-```typescript
-// tests/targets/<target>/<target>.setup.ts
-import { test as setup } from '@playwright/test';
-import { MyLoginPage } from '@pages/<target>/login.page';
-
-const STORAGE_STATE_FILE = 'playwright/.auth/<target>-standard.json';
-
-setup('authenticate as standard_user', async ({ page }) => {
-  const loginPage = new MyLoginPage(page);
-  await loginPage.goto();
-  await loginPage.login('standard_user', 'secret_sauce');
-  // assert post-login state, e.g. inventory page is loaded
-
-  await page.context().storageState({ path: STORAGE_STATE_FILE });
-});
-```
-
-**Step 2 — Register a setup project and wire each UI project to depend on it.** The setup project runs first; UI projects inherit the saved state.
-
-```typescript
-// playwright.config.ts
-projects: [
-  {
-    name: '<target>-setup',
-    testMatch: /tests\/targets\/<target>\/<target>\.setup\.ts/,
-    use: { baseURL: targetUiBaseUrl },
-  },
-  {
-    name: '<target>-ui-chromium',
-    testMatch: /tests\/targets\/<target>\/ui\/.*\.spec\.ts/,
-    dependencies: ['<target>-setup'],
-    use: {
-      ...devices['Desktop Chrome'],
-      baseURL: targetUiBaseUrl,
-      storageState: 'playwright/.auth/<target>-standard.json',
-    },
-  },
-  // repeat for firefox, webkit, etc.
-];
-```
-
-**Step 3 — Opt out per `describe` for tests that need a logged-out browser.** Tests that verify the login flow itself, session protection, or alternative users must override the project-level `storageState` at the top of the describe so they start with a clean session.
-
-```typescript
-test.describe('Login', () => {
-  test.use({ storageState: { cookies: [], origins: [] } });
-
-  // every test in this block starts logged out
-  test('shows an error for invalid credentials', async ({ page }) => {
-    /* ... */
-  });
-});
-```
-
-**Don't forget:** add the auth directory to `.gitignore` so the generated state file is never committed. The setup project regenerates it on every run.
-
-```gitignore
-playwright/.auth/
-```
+Add `playwright/.auth/` to `.gitignore`; the setup project regenerates the state on every run. See `tests/targets/sauce-demo/sauce-demo.setup.ts` for the working example.
 
 ### Test tiers (`@smoke`, `@critical`)
 
@@ -512,12 +329,12 @@ Tests are tagged inline with Playwright's `tag` annotation so subsets can be run
 
 Run subsets:
 
-```powershell
-npm.cmd run test:smoke      # ~15 tests across all targets
-npm.cmd run test:critical   # ~6 tests; must-pass before deploy
+```bash
+npm run test:smoke      # ~15 tests across all targets
+npm run test:critical   # ~6 tests; must-pass before deploy
 ```
 
-Tagged test count today: **8 distinct tests** are `@smoke` (some run on multiple browsers, expanding the count). **5 of those 8** are also `@critical`. The full suite remains the default `npm.cmd test`.
+Tagged test count today: **8 distinct tests** are `@smoke` (some run on multiple browsers, expanding the count), and **5 of those 8** are also `@critical`. The full suite remains the default `npm test`.
 
 Tags are applied inline:
 
@@ -529,26 +346,16 @@ test('returns service health', { tag: ['@smoke', '@critical'] }, async ({ localA
 
 To extend the smoke tier, add `{ tag: '@smoke' }` to the new test - no other config changes are needed.
 
-### Reports
-
-The two configs write to separate HTML reports so they don't overwrite each other:
-
-```powershell
-npm.cmd run report         # external suite
-npm.cmd run report:local   # PetHub Local suite
-```
-
 ## Lint and format
 
-```powershell
-npm.cmd run lint
-npm.cmd run lint:fix
-npm.cmd run format
-npm.cmd run format:check
+```bash
+npm run lint          # ESLint (flat config; TypeScript + Playwright rules)
+npm run lint:fix      # ESLint with --fix
+npm run format        # Prettier write
+npm run format:check  # Prettier check (CI-safe)
 ```
 
-- ESLint config: `eslint.config.mjs` (flat config; TypeScript + Playwright rules)
-- Prettier config: `.prettierrc.json`
+Configs: `eslint.config.mjs` and `.prettierrc.json`. `npm run doctor` runs a quick sanity check (versions + `tsc --noEmit`).
 
 ## AI-assisted workflow
 
@@ -577,6 +384,17 @@ This repository keeps **explicit Playwright code** as the source of truth. AI is
 ### Important principle
 
 Do **not** treat AI-generated steps as the runtime test layer. Keep committed tests as readable Playwright code with page objects, API clients, DTOs, and builders.
+
+## Maintenance
+
+Returning after a while? Run through this before anything else. For a long absence (a year or more), the `/repo-revival` workflow scripts the same flow with extra checks for accumulated rot.
+
+1. **Check Node** — `node --version` must satisfy `engines` in `package.json` (currently `>=24.0.0`); the pinned major lives in `.nvmrc`. If Node 24 is past EOL, bump `.nvmrc` to the current LTS.
+2. **Reinstall cleanly** — `npm ci` (uses `package-lock.json` exactly).
+3. **Run the doctor** — `npm run doctor` (prints versions and type-checks).
+4. **Smoke the local app** — `npm run test:pethub-local` (self-contained, no external sites).
+5. **If `npx playwright install` fails to download**, the pinned browser binaries may have rotated off Microsoft's CDN. Run `npm install -D @playwright/test@latest`, then `npx playwright install`. Page objects, fixtures and configs are version-tolerant, so this is usually a one-line fix.
+6. **If external suites fail**, the public Swagger Petstore or Sauce Demo sites may have changed. Those jobs are **informational** in CI and do not block PRs — check the latest scheduled CI run for context.
 
 ## License
 
