@@ -181,9 +181,13 @@ ${renderHead(options.title)}
         subtitle: 'Self-hosted QA storefront for inventory, cart, and checkout practice',
       })}
       <nav class="section-nav" aria-label="Storefront sections">
-        <a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}"${options.activeNav === 'inventory' ? ' aria-current="page"' : ''}>Inventory</a>
-        <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}"${options.activeNav === 'cart' ? ' aria-current="page"' : ''}>Cart ${options.session ? `<span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span>` : ''}</a>
-        <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}"${options.activeNav === 'checkout' ? ' aria-current="page"' : ''}>Checkout</a>
+        ${
+          options.session
+            ? `<a href="/shop/inventory" class="${options.activeNav === 'inventory' ? 'active' : ''}"${options.activeNav === 'inventory' ? ' aria-current="page"' : ''}>Inventory</a>
+        <a href="/shop/cart" class="${options.activeNav === 'cart' ? 'active' : ''}"${options.activeNav === 'cart' ? ' aria-current="page"' : ''}>Cart <span class="badge" data-test="shopping-cart-badge">${getCartBadgeCount(options.session)}</span></a>
+        <a href="/shop/checkout" class="${options.activeNav === 'checkout' ? 'active' : ''}"${options.activeNav === 'checkout' ? ' aria-current="page"' : ''}>Checkout</a>`
+            : ''
+        }
         <span class="section-nav-actions">
           ${options.session ? `<form method="post" action="/shop/logout"><button type="submit" class="button secondary">Logout</button></form>` : `<a href="/shop" class="button secondary">Sign in</a>`}
         </span>

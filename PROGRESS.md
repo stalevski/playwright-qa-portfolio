@@ -71,6 +71,13 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — **Auth-gated the storefront section nav.** The Inventory, Cart
+  and Checkout links were rendered for everyone, including the logged-out login
+  page, even though all three routes redirect back to `/shop` without a session.
+  `renderStorefrontLayout` now only emits those links when a session is present;
+  logged out, the section nav shows just the "Sign in" action. Added a
+  `storefront-ui.spec.ts` regression test asserting the links are hidden before
+  login and visible after.
 - **2026-06-14** — Improved the **clinic booking email UX**: the email was only
   validated server-side on final submit, so "A valid email is required" appeared
   at the very end of the four-step wizard. Added **inline, field-level
