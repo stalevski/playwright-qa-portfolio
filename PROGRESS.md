@@ -71,6 +71,16 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — **Rewrote the README for readability.** It had grown to ~680
+  lines with the revival checklist near the top, ~15 near-identical
+  `npm run test:*` blocks, and full endpoint dumps inline. Restructured
+  shallow→deep: badges + a one-paragraph pitch, a table of contents, a
+  **Quickstart** first, "What's inside", the visual tour, then
+  architecture/reference, a single **command table** for the test scripts, and
+  the maintenance/revival checklist moved to the end. Exhaustive endpoint lists
+  now link to `docs/pethub-local/app.md`; switched `npm.cmd` → `npm` to match
+  AGENTS.md; and corrected the a11y coverage list to include Clinic and the QA
+  Test Lab. Down to ~403 lines; `format:check` passes.
 - **2026-06-14** — **Auth-gated the storefront section nav.** The Inventory, Cart
   and Checkout links were rendered for everyone, including the logged-out login
   page, even though all three routes redirect back to `/shop` without a session.
