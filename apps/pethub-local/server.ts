@@ -16,7 +16,19 @@ const port = Number(process.env.APP_PORT ?? 3000);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static(join(__dirname, 'http', 'static'), { maxAge: '1h' }));
+app.use(
+  '/static',
+  express.static(join(__dirname, 'http', 'static'), {
+    etag: true,
+    lastModified: true,
+    // Assets are served from fixed, un-hashed URLs (e.g. /static/lab.js), so tell
+    // the browser to revalidate via ETag on every request instead of serving a
+    // stale copy for an hour. Unchanged files still return a fast 304.
+    setHeaders: (response) => {
+      response.setHeader('Cache-Control', 'no-cache');
+    },
+  }),
+);
 app.use('/api/lab', labApiRouter);
 app.use('/api/clinic', clinicApiRouter);
 app.use('/api', qaRouter);

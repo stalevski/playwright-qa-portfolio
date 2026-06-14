@@ -71,6 +71,17 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — Fixed a **stale static-asset cache** bug. The `/static`
+  middleware served JS/CSS with `Cache-Control: public, max-age=3600`, but the
+  asset URLs are fixed and un-hashed (e.g. `/static/lab.js`), so after any change
+  the browser kept running the cached copy for up to an hour without
+  revalidating — making new behaviour (e.g. the Popups & layers handlers) appear
+  completely dead even though the server was serving the new file. Switched
+  `express.static` to ETag/Last-Modified revalidation (`Cache-Control: no-cache`
+  via `setHeaders`), so the browser always revalidates and gets a fast `304` when
+  unchanged or fresh content the instant a file changes. Verified in-browser
+  (popover/toasts/z-index now respond) and via lint + `format:check` +
+  `tsc --noEmit` clean.
 - **2026-06-14** — Fixed three reported header/menu bugs (each with a regression
   test) and added a **Popups & layers** Test Lab page. (1) **Toolbar shift /
   overlap**: the theme-toggle label ("Dark mode" ↔ "Light mode") changed width
