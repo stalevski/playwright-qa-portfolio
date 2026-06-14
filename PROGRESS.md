@@ -71,6 +71,16 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — Improved the **clinic booking email UX**: the email was only
+  validated server-side on final submit, so "A valid email is required" appeared
+  at the very end of the four-step wizard. Added **inline, field-level
+  validation** on the details step (`clinic.js`): a malformed address now shows
+  the message on the field itself (with `aria-invalid` + `role="alert"`) on blur
+  and when clicking Next, clears live once corrected, and blocks advancing to
+  review. The JS regex mirrors `validateAppointment` in `clinic.ts` so the wizard
+  and the server agree; the server check stays as the no-JS safety net. Added a
+  `clinic-email-error` hook, an `emailError` page-object locator, a `.field-error`
+  style, and a `clinic-ui.spec.ts` test.
 - **2026-06-14** — Fixed a **stale static-asset cache** bug. The `/static`
   middleware served JS/CSS with `Cache-Control: public, max-age=3600`, but the
   asset URLs are fixed and un-hashed (e.g. `/static/lab.js`), so after any change

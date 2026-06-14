@@ -76,6 +76,37 @@ test.describe('PetHub Clinic UI', () => {
     await expect(clinicBookingPage.confirmButton).toBeVisible();
   });
 
+  test('validates the email inline on the details step, not at submit', async ({ clinicBookingPage }) => {
+    await clinicBookingPage.goto();
+    await clinicBookingPage.selectService(details.serviceId);
+    await clinicBookingPage.selectVet(details.vetId);
+    await clinicBookingPage.next();
+    await clinicBookingPage.fillDate(details.date);
+    await clinicBookingPage.chooseSlot(details.time);
+    await clinicBookingPage.next();
+    await clinicBookingPage.ownerInput.fill(details.ownerName);
+    await clinicBookingPage.petInput.fill(details.petName);
+
+    // Leaving the field with a malformed value surfaces the error inline.
+    await clinicBookingPage.emailInput.fill('not-an-email');
+    await clinicBookingPage.emailInput.blur();
+    await expect(clinicBookingPage.emailError).toBeVisible();
+    await expect(clinicBookingPage.emailError).toHaveText('A valid email is required');
+    await expect(clinicBookingPage.emailInput).toHaveAttribute('aria-invalid', 'true');
+
+    // It also blocks advancing to the review step.
+    await clinicBookingPage.next();
+    await expect(clinicBookingPage.step(3)).toBeVisible();
+    await expect(clinicBookingPage.step(4)).toBeHidden();
+
+    // Correcting the email clears the message and lets the wizard continue.
+    await clinicBookingPage.emailInput.fill(details.email);
+    await expect(clinicBookingPage.emailError).toBeHidden();
+    await expect(clinicBookingPage.emailInput).not.toHaveAttribute('aria-invalid', 'true');
+    await clinicBookingPage.next();
+    await expect(clinicBookingPage.step(4)).toBeVisible();
+  });
+
   test('steps back to a previous step', async ({ clinicBookingPage }) => {
     await clinicBookingPage.goto();
     await clinicBookingPage.selectService(details.serviceId);

@@ -373,9 +373,10 @@ export const renderClinicBooking = (options?: {
           </div>
           <div class="field" style="max-width:340px">
             <label for="clinic-email">Email</label>
-            <input id="clinic-email" name="email" type="email" data-test="clinic-email" autocomplete="email" value="${escapeHtml(
+            <input id="clinic-email" name="email" type="email" data-test="clinic-email" autocomplete="email" aria-describedby="clinic-email-error" value="${escapeHtml(
               values.email ?? '',
             )}" />
+            <p class="field-error" id="clinic-email-error" data-test="clinic-email-error" role="alert" hidden></p>
           </div>
           <div class="field" style="max-width:340px">
             <label for="clinic-phone">Phone (optional)</label>

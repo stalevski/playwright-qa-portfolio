@@ -88,9 +88,9 @@ The **PetHub Clinic** vertical (see the
   reference data, the booking happy path with read-back, `422` validation and
   `404` not-found paths via [LocalClinicApiClient](../../src/helpers/api-clients/pethub-local-clinic.client.ts).
 - [clinic-ui.spec.ts](../../tests/targets/pethub-local/ui/clinic-ui.spec.ts) —
-  the four-step booking wizard happy path, per-step validation, the review
-  summary, back navigation and the appointment surfacing on the appointments
-  page.
+  the four-step booking wizard happy path, per-step validation, inline email
+  validation on the details step, the review summary, back navigation and the
+  appointment surfacing on the appointments page.
 - [clinic.a11y.spec.ts](../../tests/targets/pethub-local/a11y/clinic.a11y.spec.ts)
   — the a11y baseline on the home, booking, appointments and confirmation pages.
 

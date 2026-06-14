@@ -28,6 +28,7 @@ export class ClinicBookingPage extends BasePage {
   readonly ownerInput: Locator;
   readonly petInput: Locator;
   readonly emailInput: Locator;
+  readonly emailError: Locator;
   readonly phoneInput: Locator;
   readonly notesInput: Locator;
   readonly reviewService: Locator;
@@ -51,6 +52,7 @@ export class ClinicBookingPage extends BasePage {
     this.ownerInput = page.getByTestId('clinic-owner');
     this.petInput = page.getByTestId('clinic-pet');
     this.emailInput = page.getByTestId('clinic-email');
+    this.emailError = page.getByTestId('clinic-email-error');
     this.phoneInput = page.getByTestId('clinic-phone');
     this.notesInput = page.getByTestId('clinic-notes');
     this.reviewService = page.getByTestId('clinic-review-service');
