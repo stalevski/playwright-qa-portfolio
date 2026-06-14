@@ -306,7 +306,10 @@ Key behaviours:
 - **References**: each appointment gets a sequential `CLN-####` reference; tests
   assert on the reference they create rather than absolute counts.
 - **Validation**: server- and client-side checks for service, vet, date, an
-  available slot, owner, pet and a well-formed email.
+  available slot, owner, pet and a well-formed email. The email is validated
+  **inline on the details step** — a malformed address shows "A valid email is
+  required" on the field itself (on blur and when advancing) instead of only at
+  final submit, and blocks moving on until corrected.
 
 ---
 

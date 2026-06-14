@@ -674,6 +674,16 @@ fieldset.field legend {
   color: var(--fg-muted);
   font-size: 14px;
 }
+.field-error {
+  margin: 0;
+  color: var(--danger-fg);
+  font-size: 13px;
+}
+input[aria-invalid='true'],
+select[aria-invalid='true'],
+textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+}
 
 .lab-result {
   padding: 14px 16px;

@@ -19,6 +19,8 @@
   var backButton = byTest('clinic-back');
   var nextButton = byTest('clinic-next');
   var confirmButton = byTest('clinic-confirm');
+  var emailField = byTest('clinic-email');
+  var emailError = byTest('clinic-email-error');
   var totalSteps = steps.length;
   var current = 1;
 
@@ -62,6 +64,42 @@
     }
   }
 
+  // Mirrors the server-side check in clinic.ts so the message matches exactly.
+  function isValidEmail(value) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+  }
+
+  function setEmailError(message) {
+    if (emailError) {
+      if (message) {
+        emailError.textContent = message;
+        emailError.hidden = false;
+      } else {
+        emailError.textContent = '';
+        emailError.hidden = true;
+      }
+    }
+    if (emailField) {
+      if (message) {
+        emailField.setAttribute('aria-invalid', 'true');
+      } else {
+        emailField.removeAttribute('aria-invalid');
+      }
+    }
+  }
+
+  function validateEmailField() {
+    if (!emailField) {
+      return true;
+    }
+    if (!isValidEmail(emailField.value.trim())) {
+      setEmailError('A valid email is required');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  }
+
   function validateStep(step) {
     if (step === 1) {
       if (!selectedRadioValue('serviceId')) {
@@ -85,9 +123,6 @@
       }
       if (!fieldValue('clinic-pet')) {
         return 'Pet name is required';
-      }
-      if (!fieldValue('clinic-email')) {
-        return 'Email is required';
       }
     }
     return '';
@@ -139,6 +174,14 @@
         setWizardError(message);
         return;
       }
+      // Email is validated inline on the field itself, not in the wizard banner.
+      if (current === 3 && !validateEmailField()) {
+        setWizardError('');
+        if (emailField) {
+          emailField.focus();
+        }
+        return;
+      }
       setWizardError('');
       if (current < totalSteps) {
         showStep(current + 1);
@@ -151,6 +194,21 @@
       setWizardError('');
       if (current > 1) {
         showStep(current - 1);
+      }
+    });
+  }
+
+  if (emailField) {
+    // Surface a malformed email as soon as the user leaves the field, and clear
+    // it live once the value becomes valid again.
+    emailField.addEventListener('blur', function () {
+      if (emailField.value.trim()) {
+        validateEmailField();
+      }
+    });
+    emailField.addEventListener('input', function () {
+      if (emailError && !emailError.hidden && isValidEmail(emailField.value.trim())) {
+        setEmailError('');
       }
     });
   }
