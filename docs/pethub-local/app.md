@@ -271,6 +271,7 @@ hooks in [apps/pethub-local/http/static/lab.js](../../apps/pethub-local/http/sta
 /lab/tables        searchable + column-sortable data table
 /lab/widgets       tabs, accordion, modal, tooltip, progress bar, toast, clipboard, key press
 /lab/menus         native/multiple/dependent selects, custom listbox, action, context, flyout, hamburger & split menus
+/lab/overlays      anchored popover, notification stack, cookie banner, slide-in drawer, stacked modals, reorderable z-index layers
 /lab/frames        an iframe that updates content scoped to its own document
 /lab/frames/inner  the embedded frame page
 /lab/shadow-dom    an open shadow-root custom element (`<qa-shadow-card>`)

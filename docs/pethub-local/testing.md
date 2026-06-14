@@ -56,26 +56,27 @@ The **QA Test Lab** adds two more practice surfaces (see the
   [lab.a11y.spec.ts](../../tests/targets/pethub-local/a11y/lab.a11y.spec.ts) cover the
   `/lab` UI playground across browsers and against the a11y baseline.
 
-| Testing type              | What the spec asserts                                                                               |
-| ------------------------- | --------------------------------------------------------------------------------------------------- |
-| Request reflection        | `/anything` echoes method, body, query and headers; `/uuid` uniqueness                              |
-| Status-code handling      | `/status/:code` returns 2xx–5xx on demand (incl. `418`)                                             |
-| Latency / timeouts        | `/delay/:seconds` waits before responding                                                           |
-| Redirects                 | `/redirect/:n` chains `302`s (assert `Location` with `maxRedirects:0`)                              |
-| Auth schemes              | Basic (`401` → success) and Bearer token echo                                                       |
-| Cookies                   | reflect, `Set-Cookie`, delete                                                                       |
-| Encoding                  | base64 encode/decode (+ `400` on invalid)                                                           |
-| Caching                   | `ETag` then `304` on `If-None-Match`                                                                |
-| Compression               | gzip-encoded JSON body                                                                              |
-| Content negotiation       | JSON / XML / HTML variants of one payload                                                           |
-| Forms & client validation | every input type; success banner only when valid                                                    |
-| Dynamic content           | deferred loading spinner, add/remove elements, enable/disable                                       |
-| JavaScript dialogs        | `alert` / `confirm` / `prompt` via `page.on('dialog')`                                              |
-| Tables                    | search filtering + column sorting                                                                   |
-| Interactive widgets       | tabs, accordion, modal, tooltip, progress bar, toast, clipboard, keys                               |
-| Menus & dropdowns         | native/multiple/dependent selects, custom listbox, action, context, flyout, hamburger & split menus |
-| Frames                    | interacting with content inside an iframe (`frameLocator`)                                          |
-| Shadow DOM                | piercing an open shadow root                                                                        |
+| Testing type              | What the spec asserts                                                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Request reflection        | `/anything` echoes method, body, query and headers; `/uuid` uniqueness                                                           |
+| Status-code handling      | `/status/:code` returns 2xx–5xx on demand (incl. `418`)                                                                          |
+| Latency / timeouts        | `/delay/:seconds` waits before responding                                                                                        |
+| Redirects                 | `/redirect/:n` chains `302`s (assert `Location` with `maxRedirects:0`)                                                           |
+| Auth schemes              | Basic (`401` → success) and Bearer token echo                                                                                    |
+| Cookies                   | reflect, `Set-Cookie`, delete                                                                                                    |
+| Encoding                  | base64 encode/decode (+ `400` on invalid)                                                                                        |
+| Caching                   | `ETag` then `304` on `If-None-Match`                                                                                             |
+| Compression               | gzip-encoded JSON body                                                                                                           |
+| Content negotiation       | JSON / XML / HTML variants of one payload                                                                                        |
+| Forms & client validation | every input type; success banner only when valid                                                                                 |
+| Dynamic content           | deferred loading spinner, add/remove elements, enable/disable                                                                    |
+| JavaScript dialogs        | `alert` / `confirm` / `prompt` via `page.on('dialog')`                                                                           |
+| Tables                    | search filtering + column sorting                                                                                                |
+| Interactive widgets       | tabs, accordion, modal, tooltip, progress bar, toast, clipboard, keys                                                            |
+| Menus & dropdowns         | native/multiple/dependent selects, custom listbox, action, context, flyout, hamburger & split menus                              |
+| Popups & layers           | anchored popover, auto-dismissing notification stack, cookie banner, slide-in drawer, stacked modals, reorderable z-index layers |
+| Frames                    | interacting with content inside an iframe (`frameLocator`)                                                                       |
+| Shadow DOM                | piercing an open shadow root                                                                                                     |
 
 ### PetHub Clinic business
 
