@@ -15,6 +15,7 @@ test.describe('QA Test Lab accessibility', () => {
     { name: 'tables', path: '/lab/tables' },
     { name: 'widgets', path: '/lab/widgets' },
     { name: 'menus', path: '/lab/menus' },
+    { name: 'popups and layers', path: '/lab/overlays' },
     { name: 'frames', path: '/lab/frames' },
     { name: 'shadow DOM', path: '/lab/shadow-dom' },
   ];

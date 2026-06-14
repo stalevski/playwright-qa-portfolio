@@ -27,6 +27,7 @@ export type LabNav =
   | 'tables'
   | 'widgets'
   | 'menus'
+  | 'overlays'
   | 'frames'
   | 'shadow-dom';
 
@@ -40,6 +41,7 @@ export const LAB_PAGES: LabPage[] = [
   { slug: 'tables', href: '/lab/tables', label: 'Tables' },
   { slug: 'widgets', href: '/lab/widgets', label: 'Widgets' },
   { slug: 'menus', href: '/lab/menus', label: 'Menus & dropdowns' },
+  { slug: 'overlays', href: '/lab/overlays', label: 'Popups & layers' },
   { slug: 'frames', href: '/lab/frames', label: 'Frames' },
   { slug: 'shadow-dom', href: '/lab/shadow-dom', label: 'Shadow DOM' },
 ];
@@ -90,7 +92,7 @@ export const renderLabHome = (): string => {
     body: `
       <section class="hero">
         <h1 data-test="lab-title">QA Test Lab</h1>
-        <p>A self-contained set of UI automation challenges — forms, dynamic loading, dialogs, sortable tables, interactive widgets, iframes and shadow DOM. Everything here is deterministic and owned by this repo, so it is safe to assert against precisely.</p>
+        <p>A self-contained set of UI automation challenges — forms, dynamic loading, dialogs, sortable tables, interactive widgets, menus and dropdowns, popups and layered overlays, iframes and shadow DOM. Everything here is deterministic and owned by this repo, so it is safe to assert against precisely.</p>
       </section>
       <section aria-label="Challenges">
         <div class="grid three-column" data-test="lab-cards">
@@ -107,6 +109,7 @@ const LAB_CARD_BLURB: Record<Exclude<LabNav, 'home'>, string> = {
   tables: 'A searchable, column-sortable data table.',
   widgets: 'Tabs, accordion, modal, tooltip, progress bar, toast and clipboard.',
   menus: 'Native, custom, cascading and multi-select dropdowns plus action, context, flyout and hamburger menus.',
+  overlays: 'Popovers, a notification stack, a cookie banner, a drawer, stacked modals and reorderable z-index layers.',
   frames: 'A nested iframe that talks back to the host page.',
   'shadow-dom': 'A custom element with an encapsulated shadow root.',
 };
@@ -375,6 +378,107 @@ export const renderLabWidgets = (): string =>
       </section>`,
   });
 
+export const renderLabOverlays = (): string =>
+  renderLabLayout({
+    title: 'QA Test Lab — Popups & layers',
+    activeNav: 'overlays',
+    body: `
+      <section class="hero">
+        <h1>Popups &amp; layers</h1>
+        <p>Transient surfaces that appear over the page and stack on top of each other: an anchored popover, a notification stack, a cookie banner, a slide-in drawer, nested modals and a reorderable z-index stack. Everything is deterministic, so you can assert visibility, stacking order and which layer is on top.</p>
+      </section>
+      <section class="stack">
+        <div class="panel stack">
+          <h2>Anchored popover</h2>
+          <p class="muted">A popover pinned to its trigger that closes on outside click or Escape.</p>
+          <div class="lab-popover-anchor">
+            <button type="button" data-test="popover-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="lab-popover">Toggle popover</button>
+            <div class="lab-popover" id="lab-popover" role="dialog" aria-label="Example popover" data-test="popover" hidden>
+              <p>I am anchored to the button above.</p>
+              <button type="button" class="button secondary" data-test="popover-close">Dismiss</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <h2>Notification stack</h2>
+          <p class="muted">Each click pushes a toast onto the stack; toasts auto-dismiss after a short, fixed delay, newest first.</p>
+          <div class="row">
+            <button type="button" data-test="notify-button">Notify</button>
+            <button type="button" class="button secondary" data-test="notify-clear">Dismiss all</button>
+          </div>
+          <p class="muted">Active notifications: <span data-test="notify-count">0</span></p>
+          <div class="lab-toast-stack" data-test="toast-stack" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="panel stack">
+          <h2>Cookie consent</h2>
+          <p class="muted">A banner that pops up over the page; the choice is reflected and the banner dismissed.</p>
+          <div class="row">
+            <button type="button" data-test="cookie-show">Show cookie banner</button>
+          </div>
+          <p class="muted">Consent: <span data-test="cookie-choice">none</span></p>
+          <div class="lab-cookie-banner" role="region" aria-label="Cookie consent" data-test="cookie-banner" hidden>
+            <p>We use cookies for deterministic testing.</p>
+            <div class="row">
+              <button type="button" data-test="cookie-accept">Accept</button>
+              <button type="button" class="button secondary" data-test="cookie-decline">Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <h2>Slide-in drawer</h2>
+          <p class="muted">An off-canvas panel with a backdrop that slides in from the edge.</p>
+          <button type="button" data-test="drawer-open">Open drawer</button>
+          <div class="lab-drawer-backdrop" data-test="drawer-backdrop" hidden></div>
+          <aside class="lab-drawer" role="dialog" aria-modal="true" aria-label="Slide-in drawer" data-test="drawer" hidden>
+            <h2>Drawer panel</h2>
+            <p>Slide-in content lives here.</p>
+            <button type="button" class="button secondary" data-test="drawer-close">Close drawer</button>
+          </aside>
+        </div>
+
+        <div class="panel stack">
+          <h2>Stacked modals</h2>
+          <p class="muted">A modal that opens a second modal on top; closing the top one returns to the first.</p>
+          <button type="button" data-test="layer-open-1">Open first modal</button>
+          <p class="muted">Open modals: <span data-test="layer-depth">0</span></p>
+          <div class="lab-layer-backdrop" data-test="layer-backdrop-1" hidden></div>
+          <div class="lab-layer-modal" role="dialog" aria-modal="true" aria-label="First modal" data-test="layer-modal-1" hidden>
+            <h2>First modal</h2>
+            <p>This is the first layer.</p>
+            <div class="row">
+              <button type="button" data-test="layer-open-2">Open second modal</button>
+              <button type="button" class="button secondary" data-test="layer-close-1">Close</button>
+            </div>
+          </div>
+          <div class="lab-layer-backdrop lab-layer-backdrop-2" data-test="layer-backdrop-2" hidden></div>
+          <div class="lab-layer-modal lab-layer-modal-2" role="dialog" aria-modal="true" aria-label="Second modal" data-test="layer-modal-2" hidden>
+            <h2>Second modal</h2>
+            <p>This layer sits on top of the first.</p>
+            <button type="button" class="button secondary" data-test="layer-close-2">Close</button>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <h2>Z-index layers</h2>
+          <p class="muted">Three overlapping cards. Bring one to the front to change the stacking order and which card is hit at the centre.</p>
+          <div class="lab-zstack" data-test="zstack">
+            <div class="lab-zcard lab-zcard-a" data-test="zcard-a"><strong>Card A</strong></div>
+            <div class="lab-zcard lab-zcard-b" data-test="zcard-b"><strong>Card B</strong></div>
+            <div class="lab-zcard lab-zcard-c is-front" data-test="zcard-c"><strong>Card C</strong></div>
+          </div>
+          <div class="row">
+            <button type="button" class="button secondary" data-test="zfront-a">Bring A to front</button>
+            <button type="button" class="button secondary" data-test="zfront-b">Bring B to front</button>
+            <button type="button" class="button secondary" data-test="zfront-c">Bring C to front</button>
+          </div>
+          <p class="muted">Front layer: <span data-test="zstack-front">C</span></p>
+        </div>
+      </section>`,
+  });
+
 export const renderLabFrames = (): string =>
   renderLabLayout({
     title: 'QA Test Lab — Frames',
@@ -567,7 +671,7 @@ export const renderLabMenus = (): string =>
 
         <div class="panel stack">
           <h2>Split button</h2>
-          <p class="muted">A default action plus a caret that opens alternatives.</p>
+          <p class="muted">A default action plus a caret that opens alternatives; choosing one becomes the new default.</p>
           <div class="lab-split">
             <button type="button" class="lab-split-primary" data-test="split-primary">Save</button>
             <div class="lab-menu-anchor">

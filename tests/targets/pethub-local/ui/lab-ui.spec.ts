@@ -201,6 +201,18 @@ test.describe('QA Test Lab UI', () => {
       await expect(labMenusPage.submenu('products')).toBeHidden();
     });
 
+    test('keeps only one flyout submenu open at a time', async ({ labMenusPage }) => {
+      await labMenusPage.goto();
+      await labMenusPage.menuTop('products').click();
+      await expect(labMenusPage.submenu('products')).toBeVisible();
+      // Opening a sibling top-level menu must close the first one, so the two
+      // popups can never overlap (regression: Products rendered behind Services).
+      await labMenusPage.menuTop('services').click();
+      await expect(labMenusPage.submenu('services')).toBeVisible();
+      await expect(labMenusPage.submenu('products')).toBeHidden();
+      await expect(labMenusPage.menuTop('products')).toHaveAttribute('aria-expanded', 'false');
+    });
+
     test('toggles the hamburger menu', async ({ labMenusPage }) => {
       await labMenusPage.goto();
       await expect(labMenusPage.hamburgerMenu).toBeHidden();
@@ -218,6 +230,94 @@ test.describe('QA Test Lab UI', () => {
       await labMenusPage.chooseSplitOption('draft');
       await expect(labMenusPage.splitResult).toHaveText('Save as draft');
       await expect(labMenusPage.splitMenu).toBeHidden();
+      // Choosing an option becomes the new default: the primary button label
+      // updates, and clicking it again repeats the chosen action rather than
+      // reverting to "Save" (regression: the label used to stay "Save").
+      await expect(labMenusPage.splitPrimary).toHaveText('Save as draft');
+      await labMenusPage.splitPrimary.click();
+      await expect(labMenusPage.splitResult).toHaveText('Save as draft');
+    });
+  });
+
+  test.describe('Popups and layers', () => {
+    test('toggles an anchored popover and closes it on Escape', async ({ labOverlaysPage, page }) => {
+      await labOverlaysPage.goto();
+      await labOverlaysPage.assertLoaded();
+      await expect(labOverlaysPage.popover).toBeHidden();
+      await labOverlaysPage.togglePopover();
+      await expect(labOverlaysPage.popover).toBeVisible();
+      await expect(labOverlaysPage.popoverTrigger).toHaveAttribute('aria-expanded', 'true');
+      await page.keyboard.press('Escape');
+      await expect(labOverlaysPage.popover).toBeHidden();
+      await expect(labOverlaysPage.popoverTrigger).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('stacks notifications and dismisses them all', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await labOverlaysPage.notify();
+      await labOverlaysPage.notify();
+      await expect(labOverlaysPage.toasts).toHaveCount(2);
+      await expect(labOverlaysPage.notifyCount).toHaveText('2');
+      await labOverlaysPage.dismissAllToasts();
+      await expect(labOverlaysPage.toasts).toHaveCount(0);
+      await expect(labOverlaysPage.notifyCount).toHaveText('0');
+    });
+
+    test('auto-dismisses a notification after its delay', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await labOverlaysPage.notify();
+      await expect(labOverlaysPage.notifyCount).toHaveText('1');
+      // The toast clears itself after a fixed delay without any interaction.
+      await expect(labOverlaysPage.toasts).toHaveCount(0);
+      await expect(labOverlaysPage.notifyCount).toHaveText('0');
+    });
+
+    test('shows a cookie banner and records the choice', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await expect(labOverlaysPage.cookieBanner).toBeHidden();
+      await labOverlaysPage.cookieShow.click();
+      await expect(labOverlaysPage.cookieBanner).toBeVisible();
+      await labOverlaysPage.cookieAccept.click();
+      await expect(labOverlaysPage.cookieBanner).toBeHidden();
+      await expect(labOverlaysPage.cookieChoice).toHaveText('accepted');
+    });
+
+    test('opens a slide-in drawer and closes it via the backdrop', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await expect(labOverlaysPage.drawer).toBeHidden();
+      await labOverlaysPage.openDrawer();
+      await expect(labOverlaysPage.drawer).toBeVisible();
+      await expect(labOverlaysPage.drawerBackdrop).toBeVisible();
+      await labOverlaysPage.drawerBackdrop.click();
+      await expect(labOverlaysPage.drawer).toBeHidden();
+    });
+
+    test('stacks modals and unwinds them in order', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await expect(labOverlaysPage.layerDepth).toHaveText('0');
+      await labOverlaysPage.openFirstModal();
+      await expect(labOverlaysPage.layerModal1).toBeVisible();
+      await expect(labOverlaysPage.layerDepth).toHaveText('1');
+      await labOverlaysPage.openSecondModal();
+      await expect(labOverlaysPage.layerModal2).toBeVisible();
+      await expect(labOverlaysPage.layerDepth).toHaveText('2');
+      // Closing the top modal returns to the first.
+      await labOverlaysPage.layerClose2.click();
+      await expect(labOverlaysPage.layerModal2).toBeHidden();
+      await expect(labOverlaysPage.layerModal1).toBeVisible();
+      await expect(labOverlaysPage.layerDepth).toHaveText('1');
+      await labOverlaysPage.layerClose1.click();
+      await expect(labOverlaysPage.layerModal1).toBeHidden();
+      await expect(labOverlaysPage.layerDepth).toHaveText('0');
+    });
+
+    test('reorders z-index layers and updates the topmost card', async ({ labOverlaysPage }) => {
+      await labOverlaysPage.goto();
+      await expect(labOverlaysPage.zstackFront).toHaveText('C');
+      expect(await labOverlaysPage.topmostCardAtCentre()).toBe('zcard-c');
+      await labOverlaysPage.bringToFront('a');
+      await expect(labOverlaysPage.zstackFront).toHaveText('A');
+      expect(await labOverlaysPage.topmostCardAtCentre()).toBe('zcard-a');
     });
   });
 
