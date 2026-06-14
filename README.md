@@ -74,6 +74,24 @@ A dedicated `/ops` portal designed for QA investigation rather than end-customer
 
 The most distinctive view of the app: side-by-side dump of source orders, read-model projections, and downstream replicas. This is where mismatches between the three databases become visible. Used to practice the kind of multi-database investigation common in real backend QA work.
 
+### PetHub Clinic — appointment booking
+
+![Clinic booking wizard](docs/screenshots/11-clinic-booking.png)
+
+The `/clinic` surface is a four-step booking wizard (service & vet → date & slot → owner details → review & confirm). Each step gates the next, so it is ideal for practising multi-step form validation, conditional enablement, and confirmation-reference assertions.
+
+### QA Test Lab — challenge overview
+
+![QA Test Lab overview](docs/screenshots/12-lab-home.png)
+
+The `/lab` surface is a self-contained set of deterministic UI automation challenges — forms, dynamic content, dialogs, sortable tables, widgets, menus & dropdowns, popups & layers, frames and shadow DOM. Everything is owned by this repo, so the patterns are safe to assert against precisely.
+
+### QA Test Lab — popups & layers
+
+![QA Test Lab popups and layers](docs/screenshots/13-lab-overlays.png)
+
+The `/lab/overlays` page focuses on transient surfaces and z-index stacking: an anchored popover, an auto-dismissing notification stack, a cookie-consent banner, a slide-in drawer, nested modals and a reorderable z-index stack. It mirrors real layering bugs (overlapping menus, modal-on-modal, hit-testing the topmost layer).
+
 ### Regenerating screenshots
 
 Screenshots are produced by Playwright against the running app:
@@ -82,11 +100,11 @@ Screenshots are produced by Playwright against the running app:
 # Terminal A — start the app
 npm.cmd run app:start
 
-# Terminal B — capture all 9 images
+# Terminal B — capture all 12 images
 npm.cmd run screenshots
 ```
 
-The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` first so each run produces images against the canonical seed data, then walks the storefront flow end-to-end (login → inventory → details → cart → checkout → confirmation) before capturing the ops portal views.
+The script (`scripts/capture-screenshots.ts`) calls `POST /api/admin/reset` first so each run produces images against the canonical seed data, then walks the storefront flow end-to-end (login → inventory → details → cart → checkout → confirmation) before capturing the ops portal, clinic and QA Test Lab views.
 
 ## Returning to this project after a while?
 

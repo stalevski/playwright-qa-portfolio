@@ -151,6 +151,40 @@ const captureOps = async (browser: Browser): Promise<void> => {
   await context.close();
 };
 
+const captureClinic = async (browser: Browser): Promise<void> => {
+  log('Capturing clinic surface...');
+
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+  await setTheme('dark')(page);
+
+  await page.goto(`${BASE_URL}/clinic/book`);
+  await page.getByRole('heading', { name: 'Book an appointment' }).waitFor();
+  await takeShot(page, '11-clinic-booking', true);
+
+  await context.close();
+};
+
+const captureLab = async (browser: Browser): Promise<void> => {
+  log('Capturing QA Test Lab...');
+
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+  await setTheme('dark')(page);
+
+  // 12 — lab overview (the challenge grid)
+  await page.goto(`${BASE_URL}/lab`);
+  await page.locator('[data-test="lab-title"]').waitFor();
+  await takeShot(page, '12-lab-home', true);
+
+  // 13 — popups & layers challenge page
+  await page.goto(`${BASE_URL}/lab/overlays`);
+  await page.locator('[data-test="popover-trigger"]').waitFor();
+  await takeShot(page, '13-lab-overlays', true);
+
+  await context.close();
+};
+
 const main = async (): Promise<void> => {
   await ensureAppReachable();
   await mkdir(OUTPUT_DIR, { recursive: true });
@@ -163,6 +197,8 @@ const main = async (): Promise<void> => {
     await captureAdmin(browser);
     await captureStorefront(browser);
     await captureOps(browser);
+    await captureClinic(browser);
+    await captureLab(browser);
   } finally {
     await browser.close();
   }

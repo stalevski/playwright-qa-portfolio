@@ -71,6 +71,31 @@ _Last updated: 2026-06-14_
 
 > Append notable decisions here (date — decision — why) so context survives across machines and contributors.
 
+- **2026-06-14** — Fixed three reported header/menu bugs (each with a regression
+  test) and added a **Popups & layers** Test Lab page. (1) **Toolbar shift /
+  overlap**: the theme-toggle label ("Dark mode" ↔ "Light mode") changed width
+  and reflowed the flex-end app-bar cluster, and the non-wrapping `.app-bar`
+  collided with the tools at tight widths. Fixed in `theme.css` (`.app-bar`
+  flex-wrap, `.brand { min-width: 0; flex: 1 1 16rem }`, toggle-label
+  `min-width: 6em`) and locked in by a geometric guard
+  [header-layout.spec.ts](tests/targets/pethub-local/ui/header-layout.spec.ts)
+  (bounding-box overlap = 0 and zero header/toggle shift on theme toggle, across
+  five surfaces × four widths). (2) **Flyout overlap**: both top-level submenus
+  could open at once with equal `z-index`, so Services painted over Products'
+  items; `lab.js` now enforces WAI-ARIA single-open behaviour
+  (`closeSiblingMenus`). (3) **Split button**: choosing a dropdown option now
+  becomes the new default (the primary label updates), matching GitHub/VS Code
+  behaviour. (4) New **`/lab/overlays`** page (`renderLabOverlays` + behaviours in
+  `lab.js` + component CSS): anchored popover (outside-click/Esc), an
+  auto-dismissing notification stack, a cookie-consent banner, a slide-in drawer,
+  stacked modals, and a reorderable z-index stack with `elementFromPoint`
+  hit-testing — deliberately mirroring the stacking bugs above. New code:
+  `lab-overlays.page.ts`, the `labOverlaysPage` fixture, a `lab-ui.spec.ts`
+  "Popups and layers" describe block (7 tests) and a new `lab.a11y` path.
+  Regenerated README screenshots (now 12) and added Clinic + Test Lab +
+  Popups-&-layers to the visual tour. Verified: lint + `format:check` clean,
+  `tsc --noEmit` clean, affected local suite green (header 15, lab UI + a11y incl.
+  overlays across 3 browsers).
 - **2026-06-13** — Reworked the in-app navigation into a **two-tier header** and
   added a cross-platform **`npm run stop`**. The old header crammed the cross-app
   switcher, the section links, and the theme toggle into one flat row of
