@@ -7,6 +7,9 @@
 
 A TypeScript + Playwright test-automation portfolio. It pairs real-world testing techniques — page objects, typed API clients, builder-based data, accessibility checks and tiered CI — with **PetHub Local**, a small Express + lowdb app built into the repo so every example runs deterministically on your machine, no flaky public sites required.
 
+> **Built AI-assisted, human-directed.** Planned, generated, and tested with AI tooling under my
+> direction — see [AI-assisted workflow](#ai-assisted-workflow). The architecture, review, and final decisions are mine.
+
 It exercises three target systems:
 
 - **PetHub Local** — a self-contained Express + lowdb app in this repo (`apps/pethub-local`). The **primary** target: deterministic, fully owned, and needs no internet. Its surfaces — Admin, Storefront, **Clinic**, Operations and a **QA Test Lab** — share a cross-app navigation switcher.
