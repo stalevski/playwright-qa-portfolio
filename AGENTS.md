@@ -9,23 +9,23 @@ source of truth** for agents. Tool-specific files (e.g.
 A TypeScript + Playwright **QA automation portfolio** exercising three target
 systems:
 
-- **`pethub-local`** — an in-repo **Express + lowdb** app (`apps/pethub-local/`).
+- **`pethub-local`** - an in-repo **Express + lowdb** app (`apps/pethub-local/`).
   Deterministic and self-owned; this is the **primary** target for full-stack QA
   (UI, API, accessibility, CQRS-style read models, downstream replicas).
-- **`swagger-petstore`** — public API + UI. Informational; may be flaky. Some
+- **`swagger-petstore`** - public API + UI. Informational; may be flaky. Some
   tests deliberately assert known-buggy behavior (see `docs/swagger-petstore/bugs.md`).
-- **`sauce-demo`** — public UI with `storageState` auth reuse. Informational;
+- **`sauce-demo`** - public UI with `storageState` auth reuse. Informational;
   includes documented known-defect tests (`docs/sauce-demo/bugs.md`).
 
 ## Source-of-truth documents (read these)
 
-- **Engineering standards** — [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md).
+- **Engineering standards** - [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md).
   Authoritative for structure, page objects, components, locators, fixtures, test
   data, and refactor-vs-patch decisions. Follow it.
-- **Overview & setup** — [README.md](README.md).
-- **Status, backlog, tech-debt** — [PROGRESS.md](PROGRESS.md). Update it when you
+- **Overview & setup** - [README.md](README.md).
+- **Status, backlog, tech-debt** - [PROGRESS.md](PROGRESS.md). Update it when you
   finish meaningful work or discover/resolve tech-debt.
-- **AI task playbooks** — `.windsurf/workflows/` (planner, generator, healer,
+- **AI task playbooks** - `.windsurf/workflows/` (planner, generator, healer,
   coverage assistant, repo-revival). Reuse these flows; don't duplicate them.
 
 ## Architecture map
@@ -44,10 +44,12 @@ src/
   pages/<system>/         page objects (one per real screen); components/ for shared UI
   helpers/api-clients/    typed API clients (extend BaseApiClient)
   fixtures/<system>/      Playwright test.extend fixtures (re-export expect)
-  builders/               fluent DTO builders (pet, order, user)
+  builders/               fluent test-data builders: objects/ (pet, order, user),
+                          requests/ + expected/ for API payloads & assertions
   models/api/             DTOs / typed transport
   helpers/                a11y, test-data, unique-id, random-data-generator, sql/
-tests/targets/<system>/{ui,api,a11y}/   specs
+tests/dev/pethub-local/{ui,api,a11y}/   specs for our own in-repo app
+tests/qa/<external>/{ui,api}/            specs for external third-party targets
 test-targets.config.ts    URL registry with env overrides + defaults
 playwright.config.ts          external targets (parallel)
 playwright.local.config.ts    pethub-local (serial, workers:1, webServer, globalSetup)
@@ -87,7 +89,7 @@ single shared JSON file; do not parallelize local tests.
 - **API**: use typed clients extending `BaseApiClient`; DTOs for transport;
   builders/factories for data. Follow AAA and assert business outcomes.
 - **Async hygiene**: use `waitForURL`, `Promise.all/race`, and `expect.poll` for
-  eventual consistency — avoid arbitrary waits.
+  eventual consistency - avoid arbitrary waits.
 - **Known-defect tests** assert _current buggy behavior_ on purpose; keep them
   clearly labeled and cross-referenced to `docs/<system>/bugs.md`.
 
@@ -96,12 +98,12 @@ single shared JSON file; do not parallelize local tests.
 1. `npm run lint` and `npm run format:check` pass.
 2. `npx tsc --noEmit` clean (covered by `npm run doctor`).
 3. Run the focused suite for the affected target (e.g. `npm run test:local`).
-4. **Update the docs in the same change — do not wait to be asked.** Whenever
+4. **Update the docs in the same change - do not wait to be asked.** Whenever
    behavior, structure, commands, surfaces, or test coverage change, update every
    affected Markdown file as part of the work:
-   - [PROGRESS.md](PROGRESS.md) — status, backlog, tech-debt, and the decision log.
-   - [README.md](README.md) — setup, commands, and the surface/feature overview.
-   - `docs/<system>/*.md` — e.g. [docs/pethub-local/app.md](docs/pethub-local/app.md)
+   - [PROGRESS.md](PROGRESS.md) - status, backlog, tech-debt, and the decision log.
+   - [README.md](README.md) - setup, commands, and the surface/feature overview.
+   - `docs/<system>/*.md` - e.g. [docs/pethub-local/app.md](docs/pethub-local/app.md)
      and [docs/pethub-local/testing.md](docs/pethub-local/testing.md) for app
      behavior, routes, endpoints, and the test inventory.
    - This file (`AGENTS.md`) and
@@ -116,4 +118,4 @@ single shared JSON file; do not parallelize local tests.
 - Don't add features, refactors, or abstractions beyond what's requested.
 - Don't commit secrets; real `.env` is gitignored (defaults live in
   `test-targets.config.ts`).
-- Keep external-target flakiness informational — never make it block CI.
+- Keep external-target flakiness informational - never make it block CI.

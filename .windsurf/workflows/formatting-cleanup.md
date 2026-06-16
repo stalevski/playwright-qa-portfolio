@@ -44,11 +44,11 @@ Apply the repository standards in `TEST_AUTOMATION_STANDARDS.md`.
 - baseline check:
   - `npm run format:check`
 - targeted formatting example:
-  - `npx prettier --write src/pages/sauce-demo/**/*.ts tests/targets/sauce-demo/**/*.ts`
+  - `npx prettier --write src/pages/sauce-demo/**/*.ts tests/external/sauce-demo/**/*.ts`
 - validation examples:
   - `npm run lint`
   - `npx playwright test --project=sauce-demo-ui-chromium`
-  - `npx playwright test tests/targets/swagger-petstore/ui/petstore-ui.spec.ts --project=swagger-petstore-ui-chromium`
+  - `npx playwright test tests/external/swagger-petstore/ui/petstore-ui.spec.ts --project=swagger-petstore-ui-chromium`
 
 ## Decision rules
 

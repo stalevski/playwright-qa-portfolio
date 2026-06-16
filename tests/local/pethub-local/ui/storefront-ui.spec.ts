@@ -1,6 +1,7 @@
 import { test, expect } from '@pethub-local-fixtures';
 import { testTargets } from '@config';
 import { pethubLocalPassword, pethubLocalUsers } from '@helpers/test-data';
+import type { StorefrontInventoryPage } from '@pages/pethub-local/storefront/inventory.page';
 
 test.describe('PetHub Storefront UI', () => {
   const standardUser = pethubLocalUsers.standard;
@@ -61,23 +62,55 @@ test.describe('PetHub Storefront UI', () => {
     await expect(sectionNav.getByRole('button', { name: 'Logout' })).toBeVisible();
   });
 
-  test('sorts inventory by name A to Z', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    await storefrontInventoryPage.sortBy('az');
-    const names = await storefrontInventoryPage.getItemNames();
-    const expected = [...names].sort((left, right) => left.localeCompare(right));
-    expect(names).toEqual(expected);
-  });
+  // The storefront offers four sort orders driven by the same control; one scenario
+  // table keeps a single source of truth while still reporting each order as its own test.
+  const sortScenarios: {
+    label: string;
+    key: 'az' | 'za' | 'lohi' | 'hilo';
+    verify: (inventory: StorefrontInventoryPage) => Promise<void>;
+  }[] = [
+    {
+      label: 'by name A to Z',
+      key: 'az',
+      verify: async (inventory) => {
+        const names = await inventory.getItemNames();
+        expect(names).toEqual([...names].sort((left, right) => left.localeCompare(right)));
+      },
+    },
+    {
+      label: 'by name Z to A',
+      key: 'za',
+      verify: async (inventory) => {
+        const names = await inventory.getItemNames();
+        expect(names).toEqual([...names].sort((left, right) => right.localeCompare(left)));
+      },
+    },
+    {
+      label: 'by price low to high',
+      key: 'lohi',
+      verify: async (inventory) => {
+        const prices = await inventory.getPrices();
+        expect(prices).toEqual([...prices].sort((left, right) => left - right));
+      },
+    },
+    {
+      label: 'by price high to low',
+      key: 'hilo',
+      verify: async (inventory) => {
+        const prices = await inventory.getPrices();
+        expect(prices).toEqual([...prices].sort((left, right) => right - left));
+      },
+    },
+  ];
 
-  test('sorts inventory by price low to high', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    await storefrontInventoryPage.sortBy('lohi');
-    const prices = await storefrontInventoryPage.getPrices();
-    const sorted = [...prices].sort((left, right) => left - right);
-    expect(prices).toEqual(sorted);
-  });
+  for (const { label, key, verify } of sortScenarios) {
+    test(`sorts inventory ${label}`, async ({ storefrontLoginPage, storefrontInventoryPage }) => {
+      await storefrontLoginPage.goto();
+      await storefrontLoginPage.login(standardUser, password);
+      await storefrontInventoryPage.sortBy(key);
+      await verify(storefrontInventoryPage);
+    });
+  }
 
   test(
     'adds an item to the cart and shows the cart badge',
@@ -211,24 +244,6 @@ test.describe('PetHub Storefront UI', () => {
     const order = (await response.json()) as { userId: number; user?: { username: string } };
     expect(order.userId).toBe(2002);
     expect(order.user?.username).toBe('buyer01');
-  });
-
-  test('sorts inventory by name Z to A', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    await storefrontInventoryPage.sortBy('za');
-    const names = await storefrontInventoryPage.getItemNames();
-    const expected = [...names].sort((left, right) => right.localeCompare(left));
-    expect(names).toEqual(expected);
-  });
-
-  test('sorts inventory by price high to low', async ({ storefrontLoginPage, storefrontInventoryPage }) => {
-    await storefrontLoginPage.goto();
-    await storefrontLoginPage.login(standardUser, password);
-    await storefrontInventoryPage.sortBy('hilo');
-    const prices = await storefrontInventoryPage.getPrices();
-    const expected = [...prices].sort((left, right) => right - left);
-    expect(prices).toEqual(expected);
   });
 
   test('shows a confirmation toast after adding an item to the cart', async ({

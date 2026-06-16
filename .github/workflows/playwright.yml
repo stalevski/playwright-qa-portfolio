@@ -37,7 +37,7 @@ jobs:
       - run: npm run format:check
 
   test-local:
-    name: PetHub Local tests (required)
+    name: Local app tests — PetHub Local (required)
     runs-on: ubuntu-latest
     needs: lint
     timeout-minutes: 20

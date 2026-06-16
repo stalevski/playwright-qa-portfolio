@@ -1,6 +1,6 @@
-import { OrderBuilder } from '@builders/order.builder';
-import { PetBuilder } from '@builders/pet.builder';
-import { UserBuilder } from '@builders/user.builder';
+import { OrderBuilder } from '@builders/objects/order.builder';
+import { PetBuilder } from '@builders/objects/pet.builder';
+import { UserBuilder } from '@builders/objects/user.builder';
 import type { OrderDto } from '@models/api/order.dto';
 import type { PetDto } from '@models/api/pet.dto';
 import type { UserDto } from '@models/api/user.dto';

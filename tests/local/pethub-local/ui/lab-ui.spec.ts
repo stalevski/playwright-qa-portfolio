@@ -146,6 +146,38 @@ test.describe('QA Test Lab UI', () => {
       await labWidgetsPage.keyInput.press('a');
       await expect(labWidgetsPage.keyDisplay).toHaveText('a');
     });
+
+    test('expands and collapses an accordion section', async ({ labWidgetsPage }) => {
+      await labWidgetsPage.goto();
+      await expect(labWidgetsPage.accordionPanel(1)).toBeHidden();
+      await expect(labWidgetsPage.accordionTrigger(1)).toHaveAttribute('aria-expanded', 'false');
+
+      await labWidgetsPage.accordionTrigger(1).click();
+      await expect(labWidgetsPage.accordionPanel(1)).toBeVisible();
+      await expect(labWidgetsPage.accordionTrigger(1)).toHaveAttribute('aria-expanded', 'true');
+
+      await labWidgetsPage.accordionTrigger(1).click();
+      await expect(labWidgetsPage.accordionPanel(1)).toBeHidden();
+      await expect(labWidgetsPage.accordionTrigger(1)).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('shows a toast that auto-dismisses', async ({ labWidgetsPage, page }) => {
+      await labWidgetsPage.goto();
+      const toast = page.getByTestId('toast');
+      await expect(toast).toBeHidden();
+      await labWidgetsPage.showToast.click();
+      await expect(toast).toBeVisible();
+      await expect(toast).toHaveText('Action completed');
+      // The widget removes the toast 3000ms after it appears.
+      await expect(toast).toBeHidden({ timeout: 5000 });
+    });
+
+    test('copies the source text and reports it in the status', async ({ labWidgetsPage }) => {
+      await labWidgetsPage.goto();
+      await expect(labWidgetsPage.copyStatus).toBeEmpty();
+      await labWidgetsPage.copyButton.click();
+      await expect(labWidgetsPage.copyStatus).toHaveText('Copied: QA Lab clipboard');
+    });
   });
 
   test.describe('Menus and dropdowns', () => {

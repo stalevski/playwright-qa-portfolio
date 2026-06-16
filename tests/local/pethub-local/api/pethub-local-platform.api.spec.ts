@@ -1,5 +1,7 @@
 import { test, expect } from '@pethub-local-fixtures';
 import { RandomDataGenerator } from '@helpers/random-data-generator';
+import { LocalPetRequestBuilder } from '@builders/requests/local-pet.request';
+import { ValidationErrorExpectationBuilder } from '@builders/expected/validation-error.expected';
 import type {
   AuthTokenDto,
   JobAcceptedDto,
@@ -125,48 +127,40 @@ test.describe('Local Petstore platform surfaces', () => {
 
   test.describe('Input validation (negative testing)', () => {
     test('rejects an empty payload with 422 and field errors', async ({ localPlatformApiClient }) => {
-      const response = await localPlatformApiClient.createPetV2({});
+      const response = await localPlatformApiClient.createPetV2(LocalPetRequestBuilder.blank().build());
 
       expect(response.status()).toBe(422);
       const body = (await response.json()) as ValidationFailureDto;
+      const expected = new ValidationErrorExpectationBuilder().requiring('name', 'category', 'status', 'price');
       const fields = body.errors.map((error) => error.field);
-      expect(fields).toEqual(expect.arrayContaining(['name', 'category', 'status', 'price']));
+      expect(fields).toEqual(expect.arrayContaining(expected.fieldNames()));
       expect(body.errors.every((error) => error.code === 'required')).toBeTruthy();
     });
 
     test('rejects an invalid status enum value', async ({ localPlatformApiClient }) => {
-      const response = await localPlatformApiClient.createPetV2({
-        name: 'Rex',
-        category: 'Dogs',
-        status: 'flying',
-        price: 10,
-      });
+      const response = await localPlatformApiClient.createPetV2(
+        new LocalPetRequestBuilder().withStatus('flying').build(),
+      );
 
       expect(response.status()).toBe(422);
       const body = (await response.json()) as ValidationFailureDto;
-      expect(body.errors).toContainEqual(expect.objectContaining({ field: 'status', code: 'enum' }));
+      const [expected] = new ValidationErrorExpectationBuilder().withFieldError('status', 'enum').entries();
+      expect(body.errors).toContainEqual(expect.objectContaining(expected));
     });
 
     test('rejects a negative price (boundary)', async ({ localPlatformApiClient }) => {
-      const response = await localPlatformApiClient.createPetV2({
-        name: 'Rex',
-        category: 'Dogs',
-        status: 'available',
-        price: -1,
-      });
+      const response = await localPlatformApiClient.createPetV2(new LocalPetRequestBuilder().withPrice(-1).build());
 
       expect(response.status()).toBe(422);
       const body = (await response.json()) as ValidationFailureDto;
-      expect(body.errors).toContainEqual(expect.objectContaining({ field: 'price', code: 'min' }));
+      const [expected] = new ValidationErrorExpectationBuilder().withFieldError('price', 'min').entries();
+      expect(body.errors).toContainEqual(expect.objectContaining(expected));
     });
 
     test('accepts a valid payload with 201', async ({ localPlatformApiClient }) => {
-      const response = await localPlatformApiClient.createPetV2({
-        name: `Valid-${Date.now()}`,
-        category: 'Dogs',
-        status: 'available',
-        price: 199,
-      });
+      const response = await localPlatformApiClient.createPetV2(
+        new LocalPetRequestBuilder().withName(`Valid-${Date.now()}`).withPrice(199).build(),
+      );
 
       expect(response.status()).toBe(201);
       expect((await response.json()).id).toBeGreaterThan(0);

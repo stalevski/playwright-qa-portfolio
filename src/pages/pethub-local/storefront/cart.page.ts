@@ -33,6 +33,34 @@ export class StorefrontCartPage extends BasePage {
     await expect(this.emptyMessage).toBeVisible();
   }
 
+  async assertLineCount(count: number): Promise<void> {
+    await expect(this.cartItems).toHaveCount(count);
+  }
+
+  cartLine(itemName: string): Locator {
+    return this.cartItems.filter({ hasText: itemName });
+  }
+
+  async getQuantity(itemName: string): Promise<number> {
+    const text = await this.cartLine(itemName).getByTestId('cart-item-quantity').textContent();
+    return Number(String(text ?? '').replace(/[^0-9]/g, ''));
+  }
+
+  async getLineTotal(itemName: string): Promise<number> {
+    const text = await this.cartLine(itemName).getByTestId('cart-line-total').textContent();
+    return Number(String(text ?? '').replace(/[^0-9.]/g, ''));
+  }
+
+  async getUnitPrice(itemName: string): Promise<number> {
+    const text = await this.cartLine(itemName).getByTestId('inventory-item-price').textContent();
+    return Number(String(text ?? '').replace(/[^0-9.]/g, ''));
+  }
+
+  async getSubtotal(): Promise<number> {
+    const text = await this.page.getByTestId('cart-subtotal').textContent();
+    return Number(String(text ?? '').replace(/[^0-9.]/g, ''));
+  }
+
   async removeItem(itemName: string): Promise<void> {
     const row = this.cartItems.filter({ hasText: itemName });
     await Promise.all([

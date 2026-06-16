@@ -53,22 +53,22 @@ export default defineConfig({
   projects: [
     {
       name: 'pethub-local-ui-chromium',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/local\/pethub-local\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: pethubLocalUiBaseUrl },
     },
     {
       name: 'pethub-local-ui-firefox',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/local\/pethub-local\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Firefox'], baseURL: pethubLocalUiBaseUrl },
     },
     {
       name: 'pethub-local-ui-webkit',
-      testMatch: /tests\/targets\/pethub-local\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/local\/pethub-local\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Safari'], baseURL: pethubLocalUiBaseUrl },
     },
     {
       name: 'pethub-local-api',
-      testMatch: /tests\/targets\/pethub-local\/api\/.*\.api\.spec\.ts/,
+      testMatch: /tests\/local\/pethub-local\/api\/.*\.api\.spec\.ts/,
       use: {
         baseURL: pethubLocalApiBaseUrl,
       },
@@ -81,7 +81,7 @@ export default defineConfig({
      */
     {
       name: 'pethub-local-a11y',
-      testMatch: /tests\/targets\/pethub-local\/a11y\/.*\.a11y\.spec\.ts/,
+      testMatch: /tests\/local\/pethub-local\/a11y\/.*\.a11y\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: pethubLocalUiBaseUrl },
     },
   ],

@@ -385,7 +385,7 @@ export const renderStorefrontCart = async (session: StorefrontSession): Promise<
                 <div class="meta">${item.category}</div>
               </div>
               <div class="row">
-                <span class="muted">Qty ${item.quantity}</span>
+                <span class="muted" data-test="cart-item-quantity">Qty ${item.quantity}</span>
                 <form method="post" action="/shop/cart/remove">
                   <input type="hidden" name="petId" value="${item.id}" />
                   <button class="button ghost" type="submit">Remove</button>
@@ -394,14 +394,14 @@ export const renderStorefrontCart = async (session: StorefrontSession): Promise<
             </div>
             <div class="row-between">
               <span data-test="inventory-item-price">$${item.price.toFixed(2)}</span>
-              <strong>$${item.lineTotal.toFixed(2)}</strong>
+              <strong data-test="cart-line-total">$${item.lineTotal.toFixed(2)}</strong>
             </div>
           </div>`,
                   )
                   .join('')
           }
         <div class="summary">
-          <div><span class="muted">Subtotal</span><strong>$${subtotal.toFixed(2)}</strong></div>
+          <div><span class="muted">Subtotal</span><strong data-test="cart-subtotal">$${subtotal.toFixed(2)}</strong></div>
         </div>
         <div class="row">
           <a data-test="continue-shopping" class="button secondary" href="/shop/inventory">Continue shopping</a>

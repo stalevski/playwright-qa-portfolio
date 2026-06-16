@@ -6,21 +6,21 @@ The OpenAPI spec at <https://petstore.swagger.io/v2/swagger.json> (referred to b
 
 ## How findings were collected
 
-A single Playwright spec ran four `test()` blocks in parallel — one per tag plus a cross-cutting block — issuing **78 probes** total against the live public sandbox. For each probe the diagnostic captured: HTTP status, status text, `Content-Type`, response body (text + parsed JSON when applicable), elapsed ms, and any client-side error. Output was written to `test-results/swagger-petstore-diagnostic/<area>.json` (gitignored).
+A single Playwright spec ran four `test()` blocks in parallel - one per tag plus a cross-cutting block - issuing **78 probes** total against the live public sandbox. For each probe the diagnostic captured: HTTP status, status text, `Content-Type`, response body (text + parsed JSON when applicable), elapsed ms, and any client-side error. Output was written to `test-results/swagger-petstore-diagnostic/<area>.json` (gitignored).
 
 Specifically captured per area:
 
-- **Pet (30 probes)** — POST/PUT/GET/DELETE on a fresh id, immediate read-after-write, eventual-consistency retry loop, non-existent / zero / negative / non-numeric ids, `findByStatus` for `available|pending|sold|banana|<missing>|<multi>`, `findByTags`, form-data `POST /pet/{id}`, multipart `uploadImage`, idempotent DELETE, with/without `api_key`, malformed JSON body, `text/plain` content-type, missing required fields, empty body.
-- **Store (18 probes)** — `inventory` with and without bogus `api_key`, `POST /store/order` happy / empty / invalid status / id outside documented 1..10 range, `GET /store/order/{id}` for valid + 0 + 11 + 9_999_999 + -1 + non-numeric, idempotent DELETE.
-- **User (25 probes)** — `POST /user` happy + duplicate + empty + special-character username, `GET /user/{username}` immediate + eventual-consistency loop, batch endpoints (`createWithArray`, `createWithList`) including empty-array, `PUT /user/{username}` update + upsert, `GET /user/login` for valid creds + wrong password + non-existent user + empty params, `GET /user/logout`, idempotent DELETE, non-existent DELETE.
-- **Cross-cutting (5 probes)** — `DELETE /pet/{id}` with no `api_key` and with bogus `api_key`, schema-fidelity round-trip (POST then GET, deep-equality of sent vs returned bodies), error response Content-Type sniff, `OPTIONS /pet` CORS preflight.
+- **Pet (30 probes)** - POST/PUT/GET/DELETE on a fresh id, immediate read-after-write, eventual-consistency retry loop, non-existent / zero / negative / non-numeric ids, `findByStatus` for `available|pending|sold|banana|<missing>|<multi>`, `findByTags`, form-data `POST /pet/{id}`, multipart `uploadImage`, idempotent DELETE, with/without `api_key`, malformed JSON body, `text/plain` content-type, missing required fields, empty body.
+- **Store (18 probes)** - `inventory` with and without bogus `api_key`, `POST /store/order` happy / empty / invalid status / id outside documented 1..10 range, `GET /store/order/{id}` for valid + 0 + 11 + 9_999_999 + -1 + non-numeric, idempotent DELETE.
+- **User (25 probes)** - `POST /user` happy + duplicate + empty + special-character username, `GET /user/{username}` immediate + eventual-consistency loop, batch endpoints (`createWithArray`, `createWithList`) including empty-array, `PUT /user/{username}` update + upsert, `GET /user/login` for valid creds + wrong password + non-existent user + empty params, `GET /user/logout`, idempotent DELETE, non-existent DELETE.
+- **Cross-cutting (5 probes)** - `DELETE /pet/{id}` with no `api_key` and with bogus `api_key`, schema-fidelity round-trip (POST then GET, deep-equality of sent vs returned bodies), error response Content-Type sniff, `OPTIONS /pet` CORS preflight.
 
 ## Severity classification
 
-- **Critical** — security or data-integrity defects: missing auth enforcement, accepting any credentials, leaking implementation details.
-- **High** — validation entirely absent, leading to silent acceptance of malformed input or duplicate keys in returned data.
-- **Medium** — status-code drift (e.g., 404 instead of documented 400), incorrect idempotency semantics.
-- **Low** — minor surface deviations (empty body without `Content-Type` on some 404s).
+- **Critical** - security or data-integrity defects: missing auth enforcement, accepting any credentials, leaking implementation details.
+- **High** - validation entirely absent, leading to silent acceptance of malformed input or duplicate keys in returned data.
+- **Medium** - status-code drift (e.g., 404 instead of documented 400), incorrect idempotency semantics.
+- **Low** - minor surface deviations (empty body without `Content-Type` on some 404s).
 
 ## Summary
 
@@ -43,7 +43,7 @@ Specifically captured per area:
 | **CODE-3**       | store  | Medium   | `DELETE /store/order/{invalid-id}` returns 404 for non-numeric ids (spec says 400)                                                                                                             |
 | **SEM-1**        | pet    | High     | `PUT /pet` silently creates pets with non-existent ids (upsert; spec says 404)                                                                                                                 |
 | **SEM-2**        | user   | High     | `PUT /user/{nonexistent}` silently creates the user (upsert; spec says 404)                                                                                                                    |
-| **SEM-3**        | user   | Medium   | `DELETE /user/{username}` second call is **non-deterministic** — sometimes returns 200 (NOT idempotent, the buggy outcome), sometimes returns 404 (correct)                                    |
+| **SEM-3**        | user   | Medium   | `DELETE /user/{username}` second call is **non-deterministic** - sometimes returns 200 (NOT idempotent, the buggy outcome), sometimes returns 404 (correct)                                    |
 | **DATA-1**       | store  | Critical | `GET /store/inventory` returns case-insensitive duplicate keys (`sold` and `SOLD`) and dozens of garbage status values reflecting that `status` is never validated against the documented enum |
 | **DATA-2**       | pet    | High     | `POST /pet` with empty body returns id `9223372036854775807` (Long.MAX_VALUE), so every empty-body POST collides on the same id                                                                |
 | **DATA-3**       | global | Low      | Several 404 responses return an empty body with no `Content-Type` header, while other 404s return JSON                                                                                         |
@@ -95,7 +95,7 @@ Specifically captured per area:
 - **Steps to reproduce:** `POST /pet` with body `{}` (or no body at all).
 - **Observed:** 200 with body `{"id":9223372036854775807,"photoUrls":[],"tags":[]}`. The id is Java's `Long.MAX_VALUE`.
 - **Expected:** 405 (or 400) when required fields `name` and `photoUrls` are missing.
-- **Severity:** High. Compounds with **DATA-2** — every empty-body POST collides on `9223372036854775807`.
+- **Severity:** High. Compounds with **DATA-2** - every empty-body POST collides on `9223372036854775807`.
 - **Captured probes:** `01-pet.json` → `POST /pet (empty body)` and `POST /pet (missing required fields)`.
 
 ### VAL-2: `POST /pet` with malformed JSON returns 500 "something bad happened"
@@ -108,8 +108,8 @@ Specifically captured per area:
 
 ### VAL-3 / VAL-4: `GET /pet/findByStatus` does not validate the `status` query parameter
 
-- **VAL-3 — invalid status:** `GET /pet/findByStatus?status=banana` returns 200 with body `[]`. Spec says 400.
-- **VAL-4 — missing required param:** `GET /pet/findByStatus` (no parameter) returns 200 with body `[]`. Spec marks `status` as `required: true` and documents 400.
+- **VAL-3 - invalid status:** `GET /pet/findByStatus?status=banana` returns 200 with body `[]`. Spec says 400.
+- **VAL-4 - missing required param:** `GET /pet/findByStatus` (no parameter) returns 200 with body `[]`. Spec marks `status` as `required: true` and documents 400.
 - **Expected:** both should be 400.
 - **Severity:** High. Combined with **DATA-1** this is the root cause of the polluted `/store/inventory` keys.
 - **Captured probes:** `01-pet.json` → `GET /pet/findByStatus?status=banana (invalid)` and `GET /pet/findByStatus (no param)`.
@@ -118,7 +118,7 @@ Specifically captured per area:
 
 - **Steps to reproduce:** `GET /pet/findByTags` (no parameter).
 - **Observed:** 200 with empty array.
-- **Expected:** 400 (spec marks `tags` as required) — the endpoint is also marked deprecated, but that does not justify silent acceptance of an absent required param.
+- **Expected:** 400 (spec marks `tags` as required) - the endpoint is also marked deprecated, but that does not justify silent acceptance of an absent required param.
 - **Severity:** High.
 - **Captured probes:** `01-pet.json` → `GET /pet/findByTags (no param)`.
 
@@ -128,7 +128,7 @@ Specifically captured per area:
   1. Empty body: `POST /store/order` with `{}`.
   2. Invalid status: `POST /store/order` with `{ ..., "status": "banana" }`.
   3. Out-of-range id: `POST /store/order` with `{ "id": 9_877_268_767, ... }` (the spec documents `id: 1..10`).
-- **Observed:** all three return 200. The out-of-range id is actually persisted — `GET /store/order/9877268767` afterwards returns 200 with the order body, contradicting the spec's stated id range.
+- **Observed:** all three return 200. The out-of-range id is actually persisted - `GET /store/order/9877268767` afterwards returns 200 with the order body, contradicting the spec's stated id range.
 - **Expected:** 400 for all three.
 - **Severity:** High.
 - **Captured probes:** `02-store.json` → `POST /store/order (empty body)`, `POST /store/order (status=banana)`, `POST /store/order id=9877268767 (above range)`, `GET /store/order/9877268767 (verify out-of-range)`.
@@ -137,7 +137,7 @@ Specifically captured per area:
 
 - **Empty body:** `POST /user` with `{}` returns 200 and body `{"code":200,"type":"unknown","message":"0"}`. The `message` field is the new user id, here `0` (which is also a colliding sentinel value for any other empty-body POST).
 - **Duplicate username:** posting twice with the same username succeeds both times, with the second call returning a different `message` id. The original record is silently overwritten.
-- **Special chars:** `POST /user` with `username = "diag user/with*chars!1777172137731"` returns 200 and the user is later retrievable via `GET /user/{encoded}` with `firstName/lastName/email` intact — meaning the API persists slashes, asterisks, exclamations, and spaces as username characters with no normalisation.
+- **Special chars:** `POST /user` with `username = "diag user/with*chars!1777172137731"` returns 200 and the user is later retrievable via `GET /user/{encoded}` with `firstName/lastName/email` intact - meaning the API persists slashes, asterisks, exclamations, and spaces as username characters with no normalisation.
 - **Expected:** validation rejecting empty body, duplicates, and reserved characters.
 - **Severity:** High.
 - **Captured probes:** `03-user.json` → `POST /user (empty body)`, `POST /user (duplicate username)`, `POST /user (special chars in username)`, `GET /user/{specialUsername} (encoded)`.
@@ -195,7 +195,7 @@ Specifically captured per area:
   - `avalible`, `availabl`, `avaliable` are typo variants of `available`.
   - `False`, `0`, `8`, `Busy`, `string`, `AAA`, `NOT available`, `available, sold`, `weisskeiner1`, `d` are entirely outside the documented enum (`available | pending | sold`).
 - **Expected:** the documented enum should be enforced at write time; `inventory` should only ever return three keys.
-- **Severity:** Critical (data integrity + downstream parser breakage). Root cause is **VAL-3 / VAL-4** — `findByStatus` and `POST /pet` never validate `status` against the enum.
+- **Severity:** Critical (data integrity + downstream parser breakage). Root cause is **VAL-3 / VAL-4** - `findByStatus` and `POST /pet` never validate `status` against the enum.
 - **Captured probes:** `02-store.json` → `GET /store/inventory`.
 
 ### DATA-2: Empty-body `POST /pet` collides on id `9223372036854775807`
@@ -235,9 +235,9 @@ The spec distinguishes `400 Invalid ID supplied` from `404 Pet not found` (and e
 
 - **Steps to reproduce:**
   1. Create a user.
-  2. `DELETE /user/{username}` — always returns 200.
-  3. `DELETE /user/{username}` again — observe response.
-- **Observed:** the second call is **non-deterministic**. The first diagnostic run returned `200` with body `{"code":200,"type":"unknown","message":"<username>"}` (the buggy outcome — not idempotent). A subsequent run of the regression test returned `404` (the correct REST outcome). The inconsistency itself is the defect — clients cannot rely on the contract.
+  2. `DELETE /user/{username}` - always returns 200.
+  3. `DELETE /user/{username}` again - observe response.
+- **Observed:** the second call is **non-deterministic**. The first diagnostic run returned `200` with body `{"code":200,"type":"unknown","message":"<username>"}` (the buggy outcome - not idempotent). A subsequent run of the regression test returned `404` (the correct REST outcome). The inconsistency itself is the defect - clients cannot rely on the contract.
 - **Expected:** the second call should reliably return 404 (the resource no longer exists). Compare with `DELETE /pet/{id}` which **does** correctly and reliably transition 200 → 404 on the second call.
 - **Severity:** Medium.
 - **Captured probes:** `03-user.json` → `DELETE /user/... (idempotent)` initially captured `200`. The regression test `SEM-3: DELETE /user/{username} second call is non-deterministic` accepts either outcome and pins the envelope.
@@ -280,8 +280,8 @@ The diagnostic also confirmed a number of behaviours that _are_ correct or non-b
 - **Eventual consistency is _not_ an issue at the moment.** GET immediately after POST returned 200 on every retry-loop probe (pet, order, user) on the first attempt. Petstore's reputation for consistency lag did not reproduce in this run.
 - **`DELETE /pet/{id}` idempotency is correct (SEM-4).** First call 200, second call 404. (Contrast with SEM-3 on user deletion.)
 - **`DELETE /store/order/{id}` idempotency is correct.** First call 200, second call 404.
-- **Wrong-content-type rejection works.** `POST /pet` with `Content-Type: text/plain` returns 415 (Unsupported Media Type) — proper behaviour.
-- **`OPTIONS /pet` returns 204** with no `Access-Control-Allow-*` headers from a third-party origin — the API is therefore _not_ CORS-enabled for browser clients on other origins (this is by design for a server-to-server API).
+- **Wrong-content-type rejection works.** `POST /pet` with `Content-Type: text/plain` returns 415 (Unsupported Media Type) - proper behaviour.
+- **`OPTIONS /pet` returns 204** with no `Access-Control-Allow-*` headers from a third-party origin - the API is therefore _not_ CORS-enabled for browser clients on other origins (this is by design for a server-to-server API).
 - **`GET /user/{nonexistent}` returns 404 with a clean JSON error body** (`{"code":1,"type":"error","message":"User not found"}`).
 
 ---
@@ -290,13 +290,13 @@ The diagnostic also confirmed a number of behaviours that _are_ correct or non-b
 
 The diagnostic ran 78 probes; the public sandbox has more behaviour surface than that. Out of scope of this run:
 
-- **`POST /pet/{id}/uploadImage`** — the diagnostic only checked status code (200). Whether the image bytes are actually persisted, retrievable, or referenced by `photoUrls` was not verified.
-- **Concurrency / race conditions** — concurrent `POST /pet` with the same id, concurrent `DELETE` + `GET`, etc.
-- **Very large payloads** — name longer than X characters, very large `photoUrls` arrays, deeply nested categories.
-- **Numeric overflow** — sending an `id` larger than `Long.MAX_VALUE`, sending a negative id on POST.
-- **Header injection** — values for `api_key` containing CRLF, very long header values.
-- **Rate limiting / throttling** — number of requests per second the sandbox tolerates before degrading.
-- **Pagination** — `findByStatus` returns hundreds of pets in a single response; the API documents no `limit`/`offset`. Behaviour at scale not probed.
-- **`GET /user/login` session semantics** — whether the session timestamp is honoured anywhere, whether `/user/logout` invalidates anything.
-- **Schema fidelity on Order and User** — verified for Pet only.
-- **Inventory cleanup over time** — whether the garbage `status` keys (`AAA`, `Busy`, etc.) are eventually pruned or whether they grow unboundedly.
+- **`POST /pet/{id}/uploadImage`** - the diagnostic only checked status code (200). Whether the image bytes are actually persisted, retrievable, or referenced by `photoUrls` was not verified.
+- **Concurrency / race conditions** - concurrent `POST /pet` with the same id, concurrent `DELETE` + `GET`, etc.
+- **Very large payloads** - name longer than X characters, very large `photoUrls` arrays, deeply nested categories.
+- **Numeric overflow** - sending an `id` larger than `Long.MAX_VALUE`, sending a negative id on POST.
+- **Header injection** - values for `api_key` containing CRLF, very long header values.
+- **Rate limiting / throttling** - number of requests per second the sandbox tolerates before degrading.
+- **Pagination** - `findByStatus` returns hundreds of pets in a single response; the API documents no `limit`/`offset`. Behaviour at scale not probed.
+- **`GET /user/login` session semantics** - whether the session timestamp is honoured anywhere, whether `/user/logout` invalidates anything.
+- **Schema fidelity on Order and User** - verified for Pet only.
+- **Inventory cleanup over time** - whether the garbage `status` keys (`AAA`, `Busy`, etc.) are eventually pruned or whether they grow unboundedly.

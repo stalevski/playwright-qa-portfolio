@@ -58,9 +58,9 @@ The AI planner should return:
 ## Expected file targets in this repo
 
 - UI specs:
-  - `tests/targets/<system>/ui/*.spec.ts`
+  - `tests/local/pethub-local/ui/*.spec.ts` (our app) or `tests/external/<system>/ui/*.spec.ts` (external)
 - API specs:
-  - `tests/targets/<system>/api/*.spec.ts`
+  - `tests/local/pethub-local/api/*.spec.ts` (our app) or `tests/external/<system>/api/*.spec.ts` (external)
 - Page objects:
   - `src/pages/<system>/*.ts`
 - API clients:
@@ -68,7 +68,7 @@ The AI planner should return:
 - DTOs:
   - `src/models/api/*.ts`
 - Builders:
-  - `src/builders/*.ts`
+  - `src/builders/**/*.ts` (`objects/`, `requests/`, `expected/`)
 
 ## Example prompt
 

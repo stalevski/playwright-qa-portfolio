@@ -44,10 +44,10 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   1. Log in as any non-locked-out user.
   2. Add any item(s) to the cart from the inventory page.
   3. Open the burger menu and click **Reset App State**.
-- **Observed:** the cart badge disappears, but every item that was previously added still shows the **Remove** button. Diagnostic captured `buttonsBefore` and `buttonsAfter` on all five users — they are byte-for-byte identical after Reset.
+- **Observed:** the cart badge disappears, but every item that was previously added still shows the **Remove** button. Diagnostic captured `buttonsBefore` and `buttonsAfter` on all five users - they are byte-for-byte identical after Reset.
 - **Expected:** the inventory page should also reset every item's button text back to **Add to cart**.
 - **Severity:** functional; misleads users into thinking items are still in their cart even though the cart is empty.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `<user>: reset app state does not clear per-item button state (CU-1)`, parametrised over `standard_user`, `problem_user`, `error_user`, and `visual_user`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: reset app state does not clear per-item button state (CU-1)`, parametrised over `standard_user`, `problem_user`, `error_user`, and `visual_user`.
 
 ---
 
@@ -71,24 +71,24 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** the dropdown's selected option visually changes, but the displayed inventory remains in the default order for **all four** sort options. Both names and prices stay in the identical default sequence.
 - **Expected:** Z-A should reverse, lohi should ascend by price, hilo should descend by price.
 - **Severity:** functional. The sort feature is non-functional for this user.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `<user>: inventory sort dropdown does not actually reorder items (PU-2 / EU-1)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: inventory sort dropdown does not actually reorder items (PU-2 / EU-1)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-3: Checkout last-name input writes into the first-name field
 
 - **Steps to reproduce:**
   1. Log in as `problem_user`, add any item, open cart, click Checkout.
-  2. Fill First Name with `Diag`. Read the value back — it is `Diag`. ✅
+  2. Fill First Name with `Diag`. Read the value back - it is `Diag`. ✅
   3. Fill Last Name with `Nostic`.
   4. Read both inputs back via `inputValue()`.
 - **Observed:**
   - First Name now reads `Nostic` (the value just typed into Last Name).
   - Last Name reads empty string.
   - Continue button surfaces `Error: Last Name is required` and the URL stays on `/checkout-step-one.html`.
-  - The cross-binding is one-directional: typing into First Name does **not** mutate Last Name (verified by clearing Last Name, typing into First Name, and re-reading Last Name — it stays empty).
+  - The cross-binding is one-directional: typing into First Name does **not** mutate Last Name (verified by clearing Last Name, typing into First Name, and re-reading Last Name - it stays empty).
 - **Expected:** Last Name should accept and retain its own value; the form should advance to `/checkout-step-two.html` once all three fields are filled.
 - **Severity:** blocker. `problem_user` cannot complete a checkout regardless of input.
-- **Possible root cause:** the Last Name input's `onChange` handler is wired to the First Name field's state setter (or both inputs share the same `name`/`id` and the React binding picks the first match). Sharper than the original "lastName rejects input" framing — the typed text is **not** discarded, it just lands in the wrong field.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `problem_user: checkout last-name input clobbers the first-name field (PU-3)`.
+- **Possible root cause:** the Last Name input's `onChange` handler is wired to the First Name field's state setter (or both inputs share the same `name`/`id` and the React binding picks the first match). Sharper than the original "lastName rejects input" framing - the typed text is **not** discarded, it just lands in the wrong field.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `problem_user: checkout last-name input clobbers the first-name field (PU-3)`.
 
 ### PU-4: Add to cart silently fails on three of the six products
 
@@ -102,7 +102,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - Confirmed by visiting `/cart.html` after attempting all six: cart contains exactly 3 items (Backpack, Bike Light, Onesie).
 - **Expected:** every Add to cart click should add the item and increment the badge.
 - **Severity:** blocker. Half of the catalogue cannot be purchased.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `<user>: Add to cart silently fails on Bolt T-Shirt / Fleece Jacket / TATT (PU-4 / EU-4)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: Add to cart silently fails on Bolt T-Shirt / Fleece Jacket / TATT (PU-4 / EU-4)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-5: Remove button on the inventory page is non-functional
 
@@ -113,7 +113,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** button text stays as **Remove**, cart badge stays at 3. The same is true for Bike Light and Onesie. None of the items can be removed from the inventory page.
 - **Expected:** Remove should flip the button back to **Add to cart** and decrement the badge.
 - **Severity:** functional. The user cannot back out of the cart from the inventory page; they would have to go through `/cart.html` to remove items, which the diagnostic did not exhaustively re-verify.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `<user>: Remove button on inventory page is non-functional (PU-5 / EU-5)`, parametrised over `problem_user` and `error_user`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `<user>: Remove button on inventory page is non-functional (PU-5 / EU-5)`, parametrised over `problem_user` and `error_user`.
 
 ### PU-6: Inventory item title links are off-by-one
 
@@ -133,7 +133,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 
 - **Expected:** clicking each title should open that item's own detail page.
 - **Severity:** functional / data integrity. Combined with PU-1 (every inventory image is the placeholder) the user has no reliable way to identify which product is which on the catalogue page.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → 5 parametrised `problem_user: clicking '<item>' opens id=<n+1> instead of id=<n> (PU-6)` tests + edge case `problem_user: clicking 'Sauce Labs Fleece Jacket' opens id=6 and renders the 404 placeholder (PU-6 edge)`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → 5 parametrised `problem_user: clicking '<item>' opens id=<n+1> instead of id=<n> (PU-6)` tests + edge case `problem_user: clicking 'Sauce Labs Fleece Jacket' opens id=6 and renders the 404 placeholder (PU-6 edge)`.
 
 ---
 
@@ -142,7 +142,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 ### PG-1: All flows succeed but are dramatically slow
 
 - **Steps to reproduce:** log in as `performance_glitch_user` and exercise any flow.
-- **Observed:** the same diagnostic took **31.4 s** for `performance_glitch_user` versus **1.4 s** for `standard_user` — roughly 22× slower. Every page transition (login, inventory render, cart navigation, checkout) shows multi-second delays.
+- **Observed:** the same diagnostic took **31.4 s** for `performance_glitch_user` versus **1.4 s** for `standard_user` - roughly 22× slower. Every page transition (login, inventory render, cart navigation, checkout) shows multi-second delays.
 - **Expected:** comparable timings to `standard_user`.
 - **Severity:** non-functional / performance.
 - **Notes:** functional output is identical to `standard_user` (correct images, descriptions, sort, prices, totals, completion message). The defect is delay only.
@@ -155,7 +155,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 
 - Same shape as `problem_user` PU-2: all four sort options (`az`, `za`, `lohi`, `hilo`) leave the inventory in the identical default order; both name and price sequences match the unsorted state.
 - **Severity:** functional.
-- **Coverage:** see PU-2 above — same parametrised test covers both users.
+- **Coverage:** see PU-2 above - same parametrised test covers both users.
 
 ### EU-2: Checkout last-name validation incorrectly accepts an empty value
 
@@ -168,7 +168,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - Unlike `problem_user`, clicking Continue advances to `/checkout-step-two.html` with no validation error.
 - **Expected:** the form should reject an empty last name and stay on step one with an error message (matching `standard_user` behaviour).
 - **Severity:** functional / data integrity. Orders can be created with no last name attached.
-- **Coverage:** combined with EU-6, asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `error_user: checkout form skips last-name validation and advances with empty lastName (EU-2 / EU-6)`.
+- **Coverage:** combined with EU-6, asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `error_user: checkout form skips last-name validation and advances with empty lastName (EU-2 / EU-6)`.
 
 ### EU-3: Finish button throws a JavaScript error and never completes the order
 
@@ -185,31 +185,31 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Expected:** Finish should clear the cart and navigate to `/checkout-complete.html` showing **Thank you for your order!**.
 - **Severity:** blocker. `error_user` cannot complete an order.
 - **Note:** the CORS / 401 errors are the error-reporting backend (Backtrace) being unreachable; they are a side effect, not the root cause. The page-error message is the actionable signal.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `error_user: clicking Finish triggers a JS error and never lands on checkout-complete (EU-3)`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `error_user: clicking Finish triggers a JS error and never lands on checkout-complete (EU-3)`.
 
 ### EU-4: Add to cart silently fails on three of the six products
 
 - Same product set and same symptoms as PU-4: clicking Add to cart on Bolt T-Shirt, Fleece Jacket, or Test.allTheThings() T-Shirt (Red) leaves the button as **Add to cart**, leaves the cart badge unchanged, and does not add the item to the cart.
 - Confirmed by inspecting `/cart.html` after attempting all six: cart contains exactly 3 items (Backpack, Bike Light, Onesie).
 - **Severity:** blocker. Same impact as PU-4.
-- **Coverage:** see PU-4 above — same parametrised test covers both users.
+- **Coverage:** see PU-4 above - same parametrised test covers both users.
 
 ### EU-5: Remove button on the inventory page is non-functional
 
 - Same shape as PU-5: clicking **Remove** on Backpack, Bike Light, or Onesie (the items that were successfully added) does not change the button text and does not decrement the cart badge.
 - **Severity:** functional.
-- **Coverage:** see PU-5 above — same parametrised test covers both users.
+- **Coverage:** see PU-5 above - same parametrised test covers both users.
 
 ### EU-6: Checkout-information form skips Last Name validation entirely
 
 - **Steps to reproduce:**
   1. Log in as `error_user`, add any item, open cart, click Checkout.
   2. Fill First Name only and click Continue.
-- **Observed:** the validation error is `Error: Postal Code is required` — the form jumps straight from First Name to Postal Code, skipping Last Name validation altogether.
+- **Observed:** the validation error is `Error: Postal Code is required` - the form jumps straight from First Name to Postal Code, skipping Last Name validation altogether.
   - When all three fields are filled, Last Name still reads empty (same input-not-persisting symptom as `problem_user`'s PU-3, but without the cross-binding into First Name), the form advances to `/checkout-step-two.html` anyway, and the order is created with no last name attached. (Already documented in EU-2; EU-6 is the _validation-message_ angle of the same defect surface.)
 - **Expected:** Continue with only First Name filled should fail with `Error: Last Name is required` (matching `standard_user` behaviour).
 - **Severity:** functional / data integrity.
-- **Coverage:** see EU-2 above — same combined test covers both EU-2 and EU-6.
+- **Coverage:** see EU-2 above - same combined test covers both EU-2 and EU-6.
 
 ---
 
@@ -221,7 +221,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** the first item (Sauce Labs Backpack) renders `/static/media/sl-404.168b1cce10384b857a6f.jpg`. The other five items render their correct images.
 - **Expected:** Backpack should render `/static/media/sauce-backpack-1200x1500.<hash>.jpg`.
 - **Severity:** visual.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `visual_user: first inventory item image is the 404 placeholder (VU-1)`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: first inventory item image is the 404 placeholder (VU-1)`.
 
 ### VU-2: Inventory page prices are randomised on every render
 
@@ -237,7 +237,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
   - After hilo sort: `[60.76, 20.59, 45.76, 90.37, 19.51, 28.2]`
 - **Expected:** stable real prices `[29.99, 9.99, 15.99, 49.99, 7.99, 15.99]` for `standard_user`.
 - **Severity:** data integrity. Price displayed on the catalogue is meaningless.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `visual_user: inventory prices change between renders (VU-2)`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: inventory prices change between renders (VU-2)`.
 
 ### VU-3: Sort uses real prices but displays randomised prices
 
@@ -245,7 +245,7 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 - **Observed:** when sorting low-to-high or high-to-low, the **item order** matches what `standard_user` produces (i.e. the catalogue sort uses the real prices). However, the **displayed prices** alongside each card are still random and do not reflect any low-to-high or high-to-low ordering.
 - **Expected:** displayed prices and sort order should agree.
 - **Severity:** data integrity / consistency.
-- **Coverage:** asserted by `tests/targets/sauce-demo/ui/known-defects.spec.ts` → `visual_user: sort uses real prices for ordering but displays random prices (VU-3)`.
+- **Coverage:** asserted by `tests/qa/sauce-demo/ui/known-defects.spec.ts` → `visual_user: sort uses real prices for ordering but displays random prices (VU-3)`.
 
 ### VU-4: Cart and checkout prices are correct despite VU-2 / VU-3
 
@@ -258,10 +258,10 @@ Plus one cross-user defect: **Reset App State** does not clear per-item button s
 
 The second exhaustive pass closed most of the original gaps. What still remains:
 
-- **`visual_user` CSS / layout / colour defects** — not detectable via DOM-level inspection. Would need screenshot comparison against `standard_user` (full-page screenshots for `visual_user` are saved at `test-results/sauce-demo-diagnostic/visual_user/*.png` when the diagnostic is re-run, but a baseline diff is not yet performed).
-- **Cart-page Remove button on `problem_user` / `error_user`** — PU-5 and EU-5 confirm the inventory-page Remove is broken; the cart-page Remove was not exhaustively re-verified per item.
-- **Inventory item description fidelity for every product per user** — the diagnostic captures full descriptions in `cartAfterAddingAll` and they match `standard_user`, but a row-by-row diff per inventory item per user has not been formally produced.
-- **Order ID and persistence after Finish** — the diagnostic checks `complete-header` text and `Back Home` navigation, but does not verify any server-side order record (Sauce Demo has no real backend, so this is largely vacuous).
-- **Mobile / responsive viewport** — diagnostic ran with desktop viewport only.
+- **`visual_user` CSS / layout / colour defects** - not detectable via DOM-level inspection. Would need screenshot comparison against `standard_user` (full-page screenshots for `visual_user` are saved at `test-results/sauce-demo-diagnostic/visual_user/*.png` when the diagnostic is re-run, but a baseline diff is not yet performed).
+- **Cart-page Remove button on `problem_user` / `error_user`** - PU-5 and EU-5 confirm the inventory-page Remove is broken; the cart-page Remove was not exhaustively re-verified per item.
+- **Inventory item description fidelity for every product per user** - the diagnostic captures full descriptions in `cartAfterAddingAll` and they match `standard_user`, but a row-by-row diff per inventory item per user has not been formally produced.
+- **Order ID and persistence after Finish** - the diagnostic checks `complete-header` text and `Back Home` navigation, but does not verify any server-side order record (Sauce Demo has no real backend, so this is largely vacuous).
+- **Mobile / responsive viewport** - diagnostic ran with desktop viewport only.
 
 Closed since the previous catalogue: product detail page rendering per user (PU-6 surfaced), `problem_user` first/last name cross-binding (PU-3 sharpened), Add to cart for every product (PU-4 / EU-4 surfaced), Reset App State on every user (CU-1 confirmed cross-user), logout behaviour (verified working and session enforced for every user).

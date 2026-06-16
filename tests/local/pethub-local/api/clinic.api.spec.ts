@@ -1,4 +1,6 @@
 import { test, expect } from '@pethub-local-fixtures';
+import { ClinicAppointmentRequestBuilder } from '@builders/requests/clinic-appointment.request';
+import { ValidationErrorExpectationBuilder } from '@builders/expected/validation-error.expected';
 
 /**
  * Exercises the PetHub Clinic JSON API at `/api/clinic`: reference data
@@ -22,15 +24,7 @@ test.describe('PetHub Clinic API', () => {
   });
 
   test('books an appointment and reads it back by reference', async ({ localClinicApiClient }) => {
-    const created = await localClinicApiClient.createAppointment({
-      serviceId: 'wellness',
-      vetId: 'reed',
-      date: '2025-06-02',
-      time: '09:00',
-      ownerName: 'Sam Carter',
-      petName: 'Bolt',
-      email: 'sam@example.com',
-    });
+    const created = await localClinicApiClient.createAppointment(new ClinicAppointmentRequestBuilder().build());
     expect(created.appointment.reference).toMatch(/^CLN-\d{4}$/);
     expect(created.appointment.serviceName).toBe('Wellness check');
     expect(created.appointment.vetName).toBe('Dr. Alex Reed');
@@ -43,25 +37,21 @@ test.describe('PetHub Clinic API', () => {
   });
 
   test('rejects an incomplete booking with 422 and field errors', async ({ localClinicApiClient }) => {
-    const response = await localClinicApiClient.createAppointmentRaw({ serviceId: 'wellness' });
+    const response = await localClinicApiClient.createAppointmentRaw(
+      ClinicAppointmentRequestBuilder.blank().withService('wellness').build(),
+    );
     expect(response.status()).toBe(422);
 
+    const expected = new ValidationErrorExpectationBuilder().requiring('vet', 'email');
     const body = await response.json();
     const fields = body.errors.map((error: { field: string }) => error.field);
-    expect(fields).toContain('vet');
-    expect(fields).toContain('email');
+    expect(fields).toEqual(expect.arrayContaining(expected.fieldNames()));
   });
 
   test('rejects an unavailable time slot', async ({ localClinicApiClient }) => {
-    const response = await localClinicApiClient.createAppointmentRaw({
-      serviceId: 'wellness',
-      vetId: 'reed',
-      date: '2025-06-02',
-      time: '12:00',
-      ownerName: 'Sam Carter',
-      petName: 'Bolt',
-      email: 'sam@example.com',
-    });
+    const response = await localClinicApiClient.createAppointmentRaw(
+      new ClinicAppointmentRequestBuilder().withTime('12:00').build(),
+    );
     expect(response.status()).toBe(422);
 
     const body = await response.json();

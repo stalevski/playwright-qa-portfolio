@@ -34,8 +34,8 @@ Prefer organizing code by target or system first.
 
 Examples:
 
-- `tests/targets/<system>/ui`
-- `tests/targets/<system>/api`
+- `tests/dev/pethub-local/{ui,api,a11y}` - tests for our own in-repo app
+- `tests/qa/<system>/{ui,api}` - tests for external third-party targets
 - `src/pages/<system>/`
 - `src/pages/<system>/components/`
 

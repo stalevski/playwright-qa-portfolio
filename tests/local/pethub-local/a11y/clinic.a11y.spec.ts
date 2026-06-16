@@ -1,5 +1,6 @@
 import { test } from '@pethub-local-fixtures';
 import { assertNoSeriousA11yViolations } from '@helpers/a11y';
+import { ClinicAppointmentRequestBuilder } from '@builders/requests/clinic-appointment.request';
 
 /**
  * Accessibility baseline for the PetHub Clinic surfaces. Static pages are
@@ -23,15 +24,15 @@ test.describe('PetHub Clinic accessibility', () => {
 
   test('confirmation page meets the a11y baseline', async ({ page }) => {
     const response = await page.request.post('/api/clinic/appointments', {
-      data: {
-        serviceId: 'vaccination',
-        vetId: 'lindqvist',
-        date: '2025-06-03',
-        time: '11:00',
-        ownerName: 'Ada Lovelace',
-        petName: 'Babbage',
-        email: 'ada@example.com',
-      },
+      data: new ClinicAppointmentRequestBuilder()
+        .withService('vaccination')
+        .withVet('lindqvist')
+        .withDate('2025-06-03')
+        .withTime('11:00')
+        .withOwner('Ada Lovelace')
+        .withPet('Babbage')
+        .withEmail('ada@example.com')
+        .build(),
     });
     const { appointment } = await response.json();
     await page.goto(`/clinic/confirmation/${appointment.reference}`);

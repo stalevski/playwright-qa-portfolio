@@ -51,22 +51,22 @@ export default defineConfig({
   projects: [
     {
       name: 'swagger-petstore-ui-chromium',
-      testMatch: /tests\/targets\/swagger-petstore\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/swagger-petstore\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: swaggerPetstoreUiBaseUrl },
     },
     {
       name: 'swagger-petstore-ui-firefox',
-      testMatch: /tests\/targets\/swagger-petstore\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/swagger-petstore\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Firefox'], baseURL: swaggerPetstoreUiBaseUrl },
     },
     {
       name: 'swagger-petstore-ui-webkit',
-      testMatch: /tests\/targets\/swagger-petstore\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/swagger-petstore\/ui\/.*\.spec\.ts/,
       use: { ...devices['Desktop Safari'], baseURL: swaggerPetstoreUiBaseUrl },
     },
     {
       name: 'swagger-petstore-api',
-      testMatch: /tests\/targets\/swagger-petstore\/api\/.*\.api\.spec\.ts/,
+      testMatch: /tests\/external\/swagger-petstore\/api\/.*\.api\.spec\.ts/,
       use: {
         baseURL: swaggerPetstoreApiBaseUrl,
       },
@@ -75,7 +75,7 @@ export default defineConfig({
      * Sauce Demo auth setup: runs before any sauce-demo-ui-* project, logs in
      * once as standard_user, and writes browser state to playwright/.auth/.
      * The UI projects below load that state via `storageState` so tests start
-     * already authenticated. See `tests/targets/sauce-demo/sauce-demo.setup.ts`.
+     * already authenticated. See `tests/external/sauce-demo/sauce-demo.setup.ts`.
      */
     {
       name: 'sauce-demo-setup',
@@ -84,7 +84,7 @@ export default defineConfig({
     },
     {
       name: 'sauce-demo-ui-chromium',
-      testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/sauce-demo\/ui\/.*\.spec\.ts/,
       dependencies: ['sauce-demo-setup'],
       use: {
         ...devices['Desktop Chrome'],
@@ -94,7 +94,7 @@ export default defineConfig({
     },
     {
       name: 'sauce-demo-ui-firefox',
-      testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/sauce-demo\/ui\/.*\.spec\.ts/,
       dependencies: ['sauce-demo-setup'],
       use: {
         ...devices['Desktop Firefox'],
@@ -104,7 +104,7 @@ export default defineConfig({
     },
     {
       name: 'sauce-demo-ui-webkit',
-      testMatch: /tests\/targets\/sauce-demo\/ui\/.*\.spec\.ts/,
+      testMatch: /tests\/external\/sauce-demo\/ui\/.*\.spec\.ts/,
       dependencies: ['sauce-demo-setup'],
       use: {
         ...devices['Desktop Safari'],

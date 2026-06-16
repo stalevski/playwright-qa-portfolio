@@ -1,4 +1,4 @@
-# PetHub Local — Application Guide
+# PetHub Local - Application Guide
 
 > A self-contained Express + lowdb application bundled in this repository under
 > [apps/pethub-local](../../apps/pethub-local). It exists to give the Playwright suite
@@ -7,7 +7,7 @@
 > reconciliation.
 >
 > For **how to test** this app, see the companion
-> [PetHub Local — Testing Guide](testing.md).
+> [PetHub Local - Testing Guide](testing.md).
 
 ---
 
@@ -17,13 +17,13 @@ The portfolio targets three systems. Two are public (Swagger Petstore, Sauce
 Demo) and therefore flaky and outside our control. PetHub Local is the **primary**
 target because it is:
 
-- **Deterministic** — seed data is fixed and a reset endpoint restores it on demand.
-- **Self-owned** — we control the schema, the routes, and the bugs.
-- **Full-stack** — one process serves an admin UI, a storefront UI, an operations
+- **Deterministic** - seed data is fixed and a reset endpoint restores it on demand.
+- **Self-owned** - we control the schema, the routes, and the bugs.
+- **Full-stack** - one process serves an admin UI, a storefront UI, an operations
   portal, and a JSON REST API, all backed by the same data.
-- **Backend-flavoured** — it deliberately models **CQRS-style read models** and
+- **Backend-flavoured** - it deliberately models **CQRS-style read models** and
   **downstream system replicas** so tests can practice multi-database
-  reconciliation, eventual-consistency polling, and SQL-style joins — the kind of
+  reconciliation, eventual-consistency polling, and SQL-style joins - the kind of
   investigation real backend QA work involves.
 
 It is intentionally **Sauce-Demo-shaped** on the storefront so the same Playwright
@@ -37,7 +37,7 @@ public and local targets.
 | Concern         | Choice                                                                                   |
 | --------------- | ---------------------------------------------------------------------------------------- |
 | HTTP server     | [Express 4](https://expressjs.com/)                                                      |
-| Persistence     | [lowdb 7](https://github.com/typicode/lowdb) — JSON-file document store                  |
+| Persistence     | [lowdb 7](https://github.com/typicode/lowdb) - JSON-file document store                  |
 | Runtime         | Node 22 (see [.nvmrc](../../.nvmrc)), executed via `tsx`                                 |
 | Rendering       | Server-side template literals (no client framework)                                      |
 | Styling/scripts | Static assets under [apps/pethub-local/http/static](../../apps/pethub-local/http/static) |
@@ -56,15 +56,15 @@ npm run app:start          # tsx apps/pethub-local/server.ts
 The app listens on **`http://127.0.0.1:3000`** by default (override with the
 `APP_PORT` environment variable).
 
-| Surface           | Path      | Purpose                                              |
-| ----------------- | --------- | ---------------------------------------------------- |
-| Admin dashboard   | `/`       | Aggregated operational + derived data + API explorer |
-| Storefront        | `/shop`   | Customer-facing buy flow (Sauce-Demo-shaped)         |
-| Clinic            | `/clinic` | Veterinary appointment-booking business (wizard)     |
-| Operations portal | `/ops`    | QA investigation surface for cross-system drift      |
-| QA Test Lab       | `/lab`    | UI automation playground (forms, widgets, menus, …)  |
-| REST API          | `/api`    | JSON endpoints (see [§7](#7-rest-api))               |
-| Static assets     | `/static` | Theme CSS/JS                                         |
+| Surface           | Path      | Purpose                                               |
+| ----------------- | --------- | ----------------------------------------------------- |
+| Admin dashboard   | `/`       | Aggregated operational + derived data + API explorer  |
+| Storefront        | `/shop`   | Customer-facing buy flow (Sauce-Demo-shaped)          |
+| Clinic            | `/clinic` | Veterinary appointment-booking business (wizard)      |
+| Operations portal | `/ops`    | QA investigation surface for cross-system drift       |
+| QA Test Lab       | `/lab`    | UI automation playground (forms, widgets, menus, ...) |
+| REST API          | `/api`    | JSON endpoints (see [§7](#7-rest-api))                |
+| Static assets     | `/static` | Theme CSS/JS                                          |
 
 Health check: `GET /api/health` → `{ "status": "ok", "service": "pethub-local" }`.
 Reset to seed: `POST /api/admin/reset` (used by Playwright `globalSetup`).
@@ -76,13 +76,13 @@ Playwright's `webServer`.
 
 ## 4. Architecture
 
-The codebase follows a light **CQRS / command–query** split layered over lowdb.
+The codebase follows a light **CQRS / command-query** split layered over lowdb.
 
 ```
 apps/pethub-local/
   server.ts              Express bootstrap: wires routers, starts listener
-  commands.ts            Write side  — create/update/delete operations
-  queries.ts             Read side   — all read operations
+  commands.ts            Write side  - create/update/delete operations
+  queries.ts             Read side   - all read operations
   database.ts            Operational store (lowdb) + domain logic + events
   database.seed.ts       Deterministic seed builders (pets, users, orders, ...)
   read-models.ts         CQRS read-model store (second lowdb file)
@@ -97,7 +97,7 @@ apps/pethub-local/
   ops/ops.ts             Ops portal rendering + incident catalogue
   platform.ts            Pure logic for the v2 platform testing surfaces
   lab/
-    lab.ts               QA Test Lab UI page rendering (forms, widgets, menus, frames, …)
+    lab.ts               QA Test Lab UI page rendering (forms, widgets, menus, frames, ...)
     http-lab.ts          Pure helpers for the httpbin-style /api/lab utilities
   routes/
     api.routes.ts        /api/*       JSON REST surface
@@ -132,7 +132,7 @@ flowchart LR
 Every **command** does four things in `database.ts`:
 
 1. Mutates the operational store and writes it to disk.
-2. **Emits a domain event** (`pet.created`, `order.status-updated`, …) into an
+2. **Emits a domain event** (`pet.created`, `order.status-updated`, ...) into an
    `events` collection.
 3. Appends a human-readable **audit-log** row tying the change to its entity.
 4. Calls `syncDerivedStores()`, which **re-projects** the operational data into
@@ -148,11 +148,11 @@ This is the most distinctive part of the app and the reason most backend-style
 tests exist. Three independent JSON files live under
 [apps/pethub-local/data](../../apps/pethub-local/data):
 
-| Store           | File                         | Represents                                  | Shape                                     |
-| --------------- | ---------------------------- | ------------------------------------------- | ----------------------------------------- |
-| **Operational** | `pethub-local-db.json`       | The system of record (write model)          | Full entities + events + audit + sessions |
-| **Read models** | `read-models-db.json`        | CQRS projections optimised for reads        | Slimmed, renamed projections              |
-| **Downstream**  | `downstream-systems-db.json` | Replicas in other systems (billing, CRM, …) | Renamed/remapped replica records          |
+| Store           | File                         | Represents                                    | Shape                                     |
+| --------------- | ---------------------------- | --------------------------------------------- | ----------------------------------------- |
+| **Operational** | `pethub-local-db.json`       | The system of record (write model)            | Full entities + events + audit + sessions |
+| **Read models** | `read-models-db.json`        | CQRS projections optimised for reads          | Slimmed, renamed projections              |
+| **Downstream**  | `downstream-systems-db.json` | Replicas in other systems (billing, CRM, ...) | Renamed/remapped replica records          |
 
 The same domain fact appears in all three stores under **different names**, which
 is exactly what makes reconciliation tests meaningful:
@@ -191,9 +191,9 @@ is exactly what makes reconciliation tests meaningful:
 A single dense page aggregating every backend concept the suite exercises:
 
 - Operational tables: **Pets, Users, Customers, Employees, Orders**.
-- **Audit log + relations** — each mutation row links its user, pet, and order.
-- **Read models** — the projected CQRS store, rendered side-by-side.
-- **Downstream systems** — the replica store (billing/analytics/CRM/HR).
+- **Audit log + relations** - each mutation row links its user, pet, and order.
+- **Read models** - the projected CQRS store, rendered side-by-side.
+- **Downstream systems** - the replica store (billing/analytics/CRM/HR).
 - A **Swagger-style explorer** for ad hoc API calls.
 
 It is the fastest way to eyeball all three stores at once.
@@ -215,7 +215,7 @@ Key behaviours:
 
 - **Auth**: cookie-based session (`storefront_session`) held in an in-memory
   `Map`. Four demo personas (see below), all with password `pethub123`. The
-  Inventory, Cart and Checkout links are **hidden until sign-in** — those routes
+  Inventory, Cart and Checkout links are **hidden until sign-in** - those routes
   redirect to `/shop` without a session, so the section nav only shows a "Sign
   in" action when logged out and reveals the protected links (plus Logout) after
   login.
@@ -243,12 +243,12 @@ Key behaviours:
 
 ### 6.3 Operations portal (`/ops`)
 
-A dedicated QA-investigation surface — **not** a customer experience. Hero copy is
+A dedicated QA-investigation surface - **not** a customer experience. Hero copy is
 intentionally optimistic so a tester must dig into the underlying data to confirm
 reality.
 
 ```
-/ops               overview — stat cards + drift summaries
+/ops               overview - stat cards + drift summaries
 /ops/queue         work queue derived from current data
 /ops/comparisons   side-by-side dump of source vs read model vs downstream
 /ops/incidents     catalogue of known investigation scenarios
@@ -268,7 +268,7 @@ hooks in [apps/pethub-local/http/static/lab.js](../../apps/pethub-local/http/sta
 [apps/pethub-local/lab/lab.ts](../../apps/pethub-local/lab/lab.ts).
 
 ```
-/lab               overview — index of every challenge
+/lab               overview - index of every challenge
 /lab/forms         all input types + client-side validation → success banner
 /lab/dynamic       deferred loading spinner, add/remove elements, enable/disable
 /lab/dialogs       native alert / confirm / prompt with reflected results
@@ -287,13 +287,13 @@ accessibility-testing target.
 ### 6.5 PetHub Clinic (`/clinic`)
 
 A self-contained **veterinary appointment-booking business** layered on top of
-the platform — a worked example of adding a whole new vertical. It keeps its own
+the platform - a worked example of adding a whole new vertical. It keeps its own
 **deterministic, in-memory store** (seeded at module load, reset on every server
 start) in [apps/pethub-local/clinic/clinic.ts](../../apps/pethub-local/clinic/clinic.ts),
 so it never touches the lowdb petstore schema and the existing suites stay green.
 
 ```
-/clinic                       home — services, pricing, vets, stats
+/clinic                       home - services, pricing, vets, stats
 /clinic/book                  four-step booking wizard (service & vet → date & slot → details → review)
 /clinic/confirmation/:ref     confirmation with a unique CLN-#### reference
 /clinic/appointments          table of every booked appointment
@@ -305,13 +305,13 @@ Key behaviours:
   four fieldsets are toggled into steps by
   [clinic.js](../../apps/pethub-local/http/static/clinic.js). Without JavaScript
   all steps are visible and the form still submits (progressive enhancement).
-- **Deterministic slots**: six fixed daily times (09:00–14:00); 12:00 is
+- **Deterministic slots**: six fixed daily times (09:00-14:00); 12:00 is
   intentionally **disabled** ("Fully booked") to exercise unavailable options.
 - **References**: each appointment gets a sequential `CLN-####` reference; tests
   assert on the reference they create rather than absolute counts.
 - **Validation**: server- and client-side checks for service, vet, date, an
   available slot, owner, pet and a well-formed email. The email is validated
-  **inline on the details step** — a malformed address shows "A valid email is
+  **inline on the details step** - a malformed address shows "A valid email is
   required" on the field itself (on blur and when advancing) instead of only at
   final submit, and blocks moving on until corrected.
 
@@ -393,7 +393,7 @@ image upload, user lifecycle) so client code transfers between targets.
 ### Platform & QA testing surfaces (v2)
 
 A second tier of endpoints exists purely to give QA engineers more **types** of
-testing to practice against a deterministic backend. They are additive — the v1
+testing to practice against a deterministic backend. They are additive - the v1
 surface above is unchanged. Implementation lives in
 [apps/pethub-local/platform.ts](../../apps/pethub-local/platform.ts) and
 [apps/pethub-local/routes/qa.routes.ts](../../apps/pethub-local/routes/qa.routes.ts).
@@ -401,7 +401,7 @@ surface above is unchanged. Implementation lives in
 | Method & path              | Testing type           | Behaviour                                                                        |
 | -------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
 | `GET /api/version`         | Smoke / observability  | Build metadata (`name`, `version`, `apiVersions`, `node`, `startedAt`)           |
-| `GET /api/ready`           | Smoke / readiness      | Readiness probe — `200` ready / `503` not ready                                  |
+| `GET /api/ready`           | Smoke / readiness      | Readiness probe - `200` ready / `503` not ready                                  |
 | `GET /api/metrics`         | Observability          | Prometheus text-format gauges/counters                                           |
 | `GET /api/openapi.json`    | Contract               | Minimal OpenAPI 3.0 document describing these paths                              |
 | `POST /api/auth/login`     | Auth                   | Issues a signed bearer token (`200`) or `401` on bad credentials                 |
@@ -429,9 +429,9 @@ surface above is unchanged. Implementation lives in
 > sees the same transitions; idempotency keys are remembered for the process
 > lifetime. This keeps non-2xx behaviour repeatable.
 
-### QA Test Lab — HTTP utilities (`/api/lab`)
+### QA Test Lab - HTTP utilities (`/api/lab`)
 
-A set of **stateless, httpbin-style** helpers for practising raw HTTP mechanics —
+A set of **stateless, httpbin-style** helpers for practising raw HTTP mechanics -
 request reflection, status codes, redirects, auth schemes, cookies, encoding,
 caching, compression and content negotiation. They hold no domain state, so they
 are completely deterministic. Implementation:
@@ -446,9 +446,9 @@ helpers) and
 | `GET /api/lab/ip`               | Request inspection  | Returns the caller IP                                                   |
 | `GET /api/lab/user-agent`       | Request inspection  | Returns the `User-Agent`                                                |
 | `GET /api/lab/uuid`             | Data generation     | A fresh random UUID per call                                            |
-| `ALL /api/lab/status/:code`     | Status handling     | Responds with the requested status (clamped 100–599; `204`/`304` empty) |
-| `GET /api/lab/delay/:seconds`   | Latency / timeout   | Delays the response (clamped 0–3s) then echoes `delayedSeconds`         |
-| `GET /api/lab/redirect/:n`      | Redirects           | A `302` chain of `n` hops (clamped 0–10) ending at `/anything`          |
+| `ALL /api/lab/status/:code`     | Status handling     | Responds with the requested status (clamped 100-599; `204`/`304` empty) |
+| `GET /api/lab/delay/:seconds`   | Latency / timeout   | Delays the response (clamped 0-3s) then echoes `delayedSeconds`         |
+| `GET /api/lab/redirect/:n`      | Redirects           | A `302` chain of `n` hops (clamped 0-10) ending at `/anything`          |
 | `GET /api/lab/basic-auth/:u/:p` | Auth (Basic)        | `401` + `WWW-Authenticate` until matching `Authorization: Basic`        |
 | `GET /api/lab/bearer`           | Auth (Bearer)       | `401` without a token; echoes the token when present                    |
 | `GET /api/lab/cookies`          | Cookies             | Reflects the request cookies                                            |
@@ -485,17 +485,17 @@ in-memory store as the clinic UI. Implementation:
 Operational record types are defined in
 [apps/pethub-local/database.ts](../../apps/pethub-local/database.ts). Highlights:
 
-- **PetRecord** — `id, name, category, status('available'|'pending'|'sold'),
+- **PetRecord** - `id, name, category, status('available'|'pending'|'sold'),
 price, notes, tags[], photoUrls[], timestamps`.
-- **UserRecord** — `id, username, firstName, lastName, email, role, password?,
+- **UserRecord** - `id, username, firstName, lastName, email, role, password?,
 phone?, userStatus?`.
-- **EmployeeRecord** / **CustomerRecord** — business profiles linked to a user via
+- **EmployeeRecord** / **CustomerRecord** - business profiles linked to a user via
   `userId`, with segment/loyalty/department/status enums.
-- **OrderRecord** — `id, petId, userId, quantity, status('placed'|'approved'|
+- **OrderRecord** - `id, petId, userId, quantity, status('placed'|'approved'|
 'completed'|'cancelled'), totalAmount, timestamps`.
-- **AuditRecord** — `entityType, entityId, action, details` (human readable).
-- **LocalAppEvent** — `type, entityType, entityId, payload` (machine readable).
-- **SessionRecord** — API login sessions.
+- **AuditRecord** - `entityType, entityId, action, details` (human readable).
+- **LocalAppEvent** - `type, entityType, entityId, payload` (machine readable).
+- **SessionRecord** - API login sessions.
 
 Ids use a safe max-based `nextId` helper rather than `Date.now()`, so rapid
 sequential inserts never collide.
@@ -506,7 +506,7 @@ sequential inserts never collide.
 produces fresh arrays on every reset, with **deliberately staggered timestamps**
 so "newest first" sorts and audit ordering have variety:
 
-- **18 pets** across Dogs, Cats, Birds, Fish, etc. (price ladder ~$35–$2,800).
+- **18 pets** across Dogs, Cats, Birds, Fish, etc. (price ladder ~$35-$2,800).
   12 available + 3 pending + 3 sold. Sold pets are hidden from the storefront grid.
 - **Users, employees, customers** with realistic roles and segments.
 - **Orders** spanning `placed`, `approved`, `completed` states across different
@@ -521,7 +521,7 @@ screenshot tour in the [README](../../README.md) is generated by resetting first
 
 The operations portal ships a catalogue of investigation scenarios in
 [apps/pethub-local/ops/ops.ts](../../apps/pethub-local/ops/ops.ts) (`opsCases`).
-These are **on purpose** — they give cross-system reconciliation tests something
+These are **on purpose** - they give cross-system reconciliation tests something
 real to catch:
 
 | Slug                   | Severity | What drifts                                                                                                                |
@@ -534,7 +534,7 @@ The `order-total-mismatch` case is wired into the live checkout flow: in
 [routes/storefront.routes.ts](../../apps/pethub-local/routes/storefront.routes.ts)
 the `POST /shop/checkout` handler writes one order whose `petId` is
 `cartItems[0].id`, but whose `quantity` and `totalAmount` aggregate every line.
-So an order's pet relation can understate what was actually purchased — a classic
+So an order's pet relation can understate what was actually purchased - a classic
 "the UI looked right, the data didn't" defect for tests to expose.
 
 ---
@@ -542,7 +542,7 @@ So an order's pet relation can understate what was actually purchased — a clas
 ## 10. Accessibility
 
 The app is built to pass WCAG 2.0/2.1 **A + AA** checks on its primary surfaces.
-Notable deliberate choices live in the rendering helpers — for example, the
+Notable deliberate choices live in the rendering helpers - for example, the
 medium-severity ops pill overrides white-on-orange text with dark text because
 white-on-`#d97706` only reaches 3.18:1 contrast, below the 4.5:1 AA minimum for
 normal text. The accessibility suite (`@axe-core/playwright`) enforces this; see
@@ -565,8 +565,8 @@ the testing guide.
 
 ## See also
 
-- [PetHub Local — Testing Guide](testing.md) — how to write and run
+- [PetHub Local - Testing Guide](testing.md) - how to write and run
   tests against this app.
-- [README.md](../../README.md) — portfolio overview and visual tour.
+- [README.md](../../README.md) - portfolio overview and visual tour.
 - [AGENTS.md](../../AGENTS.md) / [TEST_AUTOMATION_STANDARDS.md](../../TEST_AUTOMATION_STANDARDS.md)
-  — engineering standards.
+  - engineering standards.
