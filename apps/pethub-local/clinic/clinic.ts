@@ -300,7 +300,7 @@ const renderSlotOptions = (selected?: string): string =>
                 ':',
                 '',
               )}"${slot.available ? '' : ' disabled'}${selected === slot.time && slot.available ? ' checked' : ''} />
-              <span>${slot.time}${slot.available ? '' : ' <span class="muted">(Fully booked)</span>'}</span>
+              <span>${slot.time}${slot.available ? '' : ' <span class="muted">(Unavailable)</span>'}</span>
             </label>`;
   }).join('\n');
 

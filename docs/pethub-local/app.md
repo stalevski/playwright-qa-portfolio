@@ -178,13 +178,16 @@ is exactly what makes reconciliation tests meaningful:
 
 > Every surface shares a **two-tier header** rendered by `renderAppBar` in
 > [apps/pethub-local/http/render-helpers.ts](../../apps/pethub-local/http/render-helpers.ts):
-> a global **app bar** (brand + a cross-app switcher to every _other_ surface +
+> a global **app bar** (brand + a cross-app switcher listing every surface +
 > the theme toggle) sits above a surface-specific **section nav** of underline
 > tabs for that surface's own pages. Keeping "switch app" and "navigate within
 > this app" on separate tiers makes the active page obvious and stops the nav
-> from reshuffling between sections. The app switcher still exposes stable
-> `data-test="app-nav-<id>"` hooks (Admin, Storefront, Clinic, Operations, Test
-> Lab), so any surface is reachable from any other.
+> from reshuffling between sections. The switcher keeps every surface in a fixed
+> position and renders the current one as a non-clickable "you are here" marker,
+> so the links never move and clicking an app never leaves the cursor hovering a
+> different one. It exposes stable `data-test="app-nav-<id>"` hooks (Admin,
+> Storefront, Clinic, Operations, Test Lab), so any surface is reachable from any
+> other.
 
 ### 6.1 Admin dashboard (`/`)
 
@@ -306,7 +309,7 @@ Key behaviours:
   [clinic.js](../../apps/pethub-local/http/static/clinic.js). Without JavaScript
   all steps are visible and the form still submits (progressive enhancement).
 - **Deterministic slots**: six fixed daily times (09:00-14:00); 12:00 is
-  intentionally **disabled** ("Fully booked") to exercise unavailable options.
+  intentionally **disabled** ("Unavailable") to exercise unavailable options.
 - **References**: each appointment gets a sequential `CLN-####` reference; tests
   assert on the reference they create rather than absolute counts.
 - **Validation**: server- and client-side checks for service, vet, date, an

@@ -3,7 +3,8 @@ import { test, expect } from '@pethub-local-fixtures';
 /**
  * Verifies the shared app switcher makes every primary surface mutually
  * reachable. Each surface links to all others (via stable `app-nav-<id>`
- * hooks) and never to itself, and the Storefront ↔ Test Lab round-trip works.
+ * hooks) and marks — but never links to — itself, and the Storefront ↔ Test
+ * Lab round-trip works.
  */
 const surfaces = [
   { name: 'admin', path: '/', self: 'admin' },
@@ -23,7 +24,12 @@ test.describe('Cross-app navigation', () => {
       for (const id of others) {
         await expect(page.getByTestId(`app-nav-${id}`).first()).toBeVisible();
       }
-      await expect(page.getByTestId(`app-nav-${surface.self}`)).toHaveCount(0);
+      // The current surface stays in place as a non-clickable "you are here"
+      // marker (so the links never shift position), not a link to itself.
+      const self = page.getByTestId(`app-nav-${surface.self}`);
+      await expect(self).toBeVisible();
+      await expect(self).toHaveAttribute('aria-current', 'page');
+      expect(await self.evaluate((element) => element.tagName)).toBe('SPAN');
     });
   }
 

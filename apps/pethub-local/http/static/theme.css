@@ -231,6 +231,20 @@ nav a.active,
   border-color: var(--border-strong);
   color: var(--fg);
 }
+/* The current surface stays in the switcher as a non-clickable "you are here"
+   marker. Keeping it in place (instead of removing it) means the other links
+   never shift position between pages, so clicking an app never leaves the
+   cursor hovering a different one. */
+.app-switcher .app-switcher-current {
+  background: var(--accent-soft);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: default;
+}
 /* Section sub-nav: calm underline tabs, visually distinct from the app pills.
    A always-present transparent bottom border keeps the active state from
    shifting layout as you move between sections. */
@@ -267,6 +281,14 @@ nav a.active,
   align-items: center;
   gap: 8px;
 }
+/* Keep the Sign in / Logout control comfortably inside the slim section bar.
+   The bar carries no vertical padding (so the active-tab underline can sit on
+   the divider), which previously let the bordered button fill the whole strip
+   and bleed over the top and bottom borders. */
+.section-nav .section-nav-actions .button {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
 @media (max-width: 900px) {
   .app-bar {
     padding: 14px 18px;
@@ -279,6 +301,12 @@ nav a.active,
 main {
   padding: 32px;
   display: grid;
+  /* A bare grid container creates one implicit column whose min size is the
+     widest child's min-content. A wide child (e.g. a data table) then forces
+     the column past the viewport and the whole page scrolls sideways on small
+     screens. minmax(0, 1fr) lets the single column shrink to the viewport so
+     children wrap or scroll within their own box instead. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
@@ -295,6 +323,10 @@ main {
 /* Hero */
 .hero {
   display: grid;
+  /* Shrinkable single column (see .stack): the implicit auto column otherwise
+     sizes to the heading/paragraph max-content and overflows a very narrow
+     viewport. minmax(0, 1fr) is identical to auto at desktop widths. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   background: linear-gradient(135deg, var(--hero-from), var(--hero-to));
   color: var(--hero-fg);
@@ -306,11 +338,16 @@ main {
   margin: 0;
   font-size: 34px;
   color: var(--hero-fg);
+  /* A single long heading word (e.g. "Appointments") is wider than the hero
+     content box on a very narrow viewport and would overflow the page. Allow it
+     to break only when it genuinely cannot fit; never triggers at normal sizes. */
+  overflow-wrap: break-word;
 }
 .hero p {
   margin: 0;
   max-width: 900px;
   color: var(--hero-fg-soft);
+  overflow-wrap: break-word;
 }
 
 /* Sections, panels, cards */
@@ -321,6 +358,13 @@ section,
   border-radius: 20px;
   padding: 24px;
   box-shadow: var(--shadow);
+  /* When panels share a multi-column grid row, the grid stretches every panel
+     to the tallest one (align-items: stretch is the default). Panel content is
+     top-packed, so a short panel (e.g. the hamburger demo next to the taller
+     flyout demo) ends up with a large dead gap below its content. Sizing each
+     panel to its own content removes that gap; it is a no-op for full-width or
+     single-column panels, which are not multi-item grid rows. */
+  align-self: start;
 }
 
 .card {
@@ -359,7 +403,7 @@ section,
   .two-column,
   .three-column,
   .layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -367,6 +411,11 @@ section,
 table {
   width: 100%;
   border-collapse: collapse;
+  /* display: block + overflow-x lets a wide table scroll horizontally inside
+     its panel on narrow screens instead of widening the whole page. At normal
+     widths width: 100% still makes it fill the panel with no inner scrollbar. */
+  display: block;
+  overflow-x: auto;
 }
 th,
 td {
@@ -380,6 +429,10 @@ td {
 /* Forms */
 form {
   display: grid;
+  /* Shrinkable single column (see .stack): the implicit auto column otherwise
+     sizes to the widest field row's min-content and overflows a very narrow
+     viewport. minmax(0, 1fr) is identical to auto at desktop widths. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
 }
 
@@ -397,6 +450,13 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: var(--fg-muted);
+}
+
+/* Tint native checkboxes and radios with the brand accent so the checked
+   state reads clearly in dark mode (the default is a low-contrast grey). */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--accent);
 }
 
 input:focus-visible,
@@ -432,6 +492,38 @@ button:hover,
 .button:hover {
   background: var(--accent-strong);
 }
+/* Anchor buttons must keep their button foreground on hover. The global
+   a:hover rule (color: var(--accent)) would otherwise tint a primary .button
+   link the same blue as its hover background and make the label disappear. */
+a.button:hover {
+  color: var(--accent-fg);
+}
+/* The primary call-to-action sits on the hero's own blue→purple gradient, and
+   in dark mode the default button hover colour (--accent-strong) is the exact
+   start colour of that gradient (--hero-from). The filled button therefore
+   blends into the hero and looks like it vanishes on hover. Keep the hero CTA
+   on the lighter --accent fill in both states (it always reads against the
+   gradient) and give it a light ring plus a lift for hover feedback instead of
+   darkening into the background. */
+.hero .button:not(.secondary):not(.ghost) {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+.hero .button:not(.secondary):not(.ghost):hover {
+  background: var(--accent);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+/* Explorer forms share a row in a 3-column grid, which by default stretches
+   every form to the height of its tallest sibling. In field-less forms (Get
+   Inventory, User Logout) that extra height inflates the lone Execute button
+   into an oversized block. Top-align each form so it sizes to its own content,
+   and size the button to its label instead of the full column width. */
+.explorer form {
+  align-self: start;
+}
+.explorer form button {
+  justify-self: start;
+}
 .button.secondary {
   background: var(--bg-elev-2);
   color: var(--fg);
@@ -463,9 +555,21 @@ button:hover,
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+  /* Allow the second item (e.g. a demo-account value) to drop below the label
+     when both cannot fit side by side on a very narrow viewport instead of
+     spilling past the edge. No effect once they fit on one line. */
+  flex-wrap: wrap;
 }
 .stack {
   display: grid;
+  /* A bare grid has one implicit auto column that floors at its widest child's
+     min-content and will not shrink, so nested stacks (e.g. a panel inside a
+     wrapper section) push the page wider than a very narrow viewport. A single
+     minmax(0, 1fr) column can shrink below that floor so the content wraps to
+     fit instead - the same fix already applied to <main>. At desktop widths a
+     single minmax(0, 1fr) column fills the container exactly like auto, so wide
+     layouts are unchanged. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 .summary {
@@ -836,6 +940,7 @@ th[aria-sort='descending'] .lab-sort-icon::after {
 
 /* Frames */
 .lab-frame {
+  display: block;
   width: 100%;
   min-height: 240px;
   border: 1px solid var(--border-strong);
@@ -924,6 +1029,20 @@ th[aria-sort='descending'] .lab-sort-icon::after {
 .lab-menu-stack a:hover {
   background: var(--bg-elev-2);
 }
+/* Hamburger dropdown floats over the page (like the other menu popups) instead
+   of expanding in flow and shoving the content below it down on every toggle. */
+.lab-hamburger-anchor {
+  position: relative;
+  display: inline-block;
+}
+.lab-hamburger-anchor .lab-menu-stack {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  min-width: 200px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
 .lab-split {
   display: inline-flex;
   align-items: stretch;
@@ -953,7 +1072,10 @@ th[aria-sort='descending'] .lab-sort-icon::after {
 .clinic-options {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* min(220px, 100%) keeps the 220px minimum on roomy screens (so options can
+     sit side by side) but lets a column shrink to the container on very narrow
+     screens, where a hard 220px floor would otherwise overflow the viewport. */
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
 }
 .clinic-option {
   display: flex;
@@ -1128,6 +1250,12 @@ th[aria-sort='descending'] .lab-sort-icon::after {
   position: relative;
   height: 200px;
   margin-bottom: 8px;
+  /* The cards inside are absolutely positioned and deliberately overlap, so on a
+     very narrow viewport the rightmost card can extend past the container. Clip
+     here so the decorative stack can never push the page wider than the screen
+     at any width. At desktop widths the cards fit, so nothing is clipped and the
+     demo's centre hit-test is unaffected. */
+  overflow: hidden;
 }
 .lab-zcard {
   position: absolute;
@@ -1160,4 +1288,21 @@ th[aria-sort='descending'] .lab-sort-icon::after {
 .lab-zcard.is-front {
   z-index: 10;
   border-color: var(--accent);
+}
+/* The container clips horizontal overflow, so the cards can never widen the
+   page. Still tighten the offsets on small screens so less of the rightmost
+   card is clipped; the cards keep overlapping at the centre (where the demo's
+   hit-test reads the topmost layer), so behaviour is unchanged. */
+@media (max-width: 400px) {
+  /* The 34px hero heading is oversized for phone-class widths and a long single
+     word can crowd the card; scale it down so it stays comfortably on one line. */
+  .hero h1 {
+    font-size: 28px;
+  }
+  .lab-zcard-b {
+    left: 40px;
+  }
+  .lab-zcard-c {
+    left: 80px;
+  }
 }

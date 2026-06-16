@@ -33,14 +33,19 @@ const PRIMARY_APPS: { id: PrimaryApp; href: string; label: string }[] = [
 ];
 
 /**
- * Renders cross-app navigation links to every primary surface except the one
- * currently being viewed, so each surface is reachable from any other. Each
- * link carries a stable `data-test="app-nav-<id>"` hook.
+ * Renders cross-app navigation to every primary surface. Other surfaces are
+ * links; the current surface is rendered in the same slot as a non-clickable
+ * "you are here" marker. Keeping it in place (rather than removing it) means the
+ * links never change position between pages, so clicking an app never leaves the
+ * cursor hovering a different one. Every entry keeps a stable
+ * `data-test="app-nav-<id>"` hook.
  */
 export const renderPrimaryNavLinks = (current: PrimaryApp): string =>
-  PRIMARY_APPS.filter((app) => app.id !== current)
-    .map((app) => `<a href="${app.href}" data-test="app-nav-${app.id}">${app.label}</a>`)
-    .join('\n      ');
+  PRIMARY_APPS.map((app) =>
+    app.id === current
+      ? `<span class="app-switcher-current" aria-current="page" data-test="app-nav-${app.id}">${app.label}</span>`
+      : `<a href="${app.href}" data-test="app-nav-${app.id}">${app.label}</a>`,
+  ).join('\n      ');
 
 /**
  * Renders the global app bar (tier 1 of the two-tier header): the surface brand

@@ -550,6 +550,7 @@ export const renderLabMenus = (): string =>
           <h2>Multiple select</h2>
           <div class="field" style="max-width:280px">
             <label for="multi-select">Services (choose several)</label>
+            <p class="muted" data-test="multi-select-hint" style="margin:0;font-size:13px">Hold Ctrl (⌘ on macOS) or Shift and click to select more than one.</p>
             <select id="multi-select" data-test="multi-select" multiple size="4">
               <option value="grooming">Grooming</option>
               <option value="boarding">Boarding</option>
@@ -659,14 +660,16 @@ export const renderLabMenus = (): string =>
         <div class="panel stack">
           <h2>Hamburger menu</h2>
           <p class="muted">A toggle that collapses navigation behind a single button.</p>
-          <button type="button" class="lab-hamburger" data-test="hamburger-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="hamburger-menu" aria-label="Open menu">
-            <span aria-hidden="true">☰</span> Menu
-          </button>
-          <ul class="lab-menu-stack" id="hamburger-menu" data-test="hamburger-menu" hidden>
-            <li><a href="/lab" data-test="hamburger-item-overview">Overview</a></li>
-            <li><a href="/lab/forms" data-test="hamburger-item-forms">Forms</a></li>
-            <li><a href="/lab/tables" data-test="hamburger-item-tables">Tables</a></li>
-          </ul>
+          <div class="lab-hamburger-anchor">
+            <button type="button" class="lab-hamburger" data-test="hamburger-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="hamburger-menu" aria-label="Open menu">
+              <span aria-hidden="true">☰</span> Menu
+            </button>
+            <ul class="lab-menu-stack" id="hamburger-menu" data-test="hamburger-menu" hidden>
+              <li><a href="/lab" data-test="hamburger-item-overview">Overview</a></li>
+              <li><a href="/lab/forms" data-test="hamburger-item-forms">Forms</a></li>
+              <li><a href="/lab/tables" data-test="hamburger-item-tables">Tables</a></li>
+            </ul>
+          </div>
         </div>
 
         <div class="panel stack">

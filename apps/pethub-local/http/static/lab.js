@@ -89,18 +89,25 @@
   var addElement = byTest('add-element');
   if (addElement) {
     var container = byTest('elements-container');
-    var counter = 0;
+    // Labels always reflect the rows currently present (1..N) rather than a
+    // monotonic counter, so deleting a row renumbers the rest instead of
+    // leaving gaps or continuing from the highest number ever added.
+    var renumberRows = function () {
+      Array.prototype.forEach.call(container.querySelectorAll('[data-test="added-element"]'), function (row, index) {
+        row.textContent = 'Delete row ' + (index + 1);
+      });
+    };
     addElement.addEventListener('click', function () {
-      counter += 1;
       var item = document.createElement('button');
       item.type = 'button';
       item.className = 'button secondary';
       item.setAttribute('data-test', 'added-element');
-      item.textContent = 'Delete row ' + counter;
       item.addEventListener('click', function () {
         item.remove();
+        renumberRows();
       });
       container.appendChild(item);
+      renumberRows();
     });
   }
 
@@ -352,6 +359,62 @@
     innerButton.addEventListener('click', function () {
       byTest('inner-message').textContent = 'Updated from inside the frame';
     });
+  }
+
+  /* ---- Auto-size the frames demo iframe to its content --------------- */
+  // The inner document is same-origin, so the host can measure it and grow the
+  // iframe to fit its content, replacing the old fixed CSS height that produced
+  // an inner scrollbar.
+  var labFrame = byTest('lab-iframe');
+  if (labFrame) {
+    var fitLabFrame = function () {
+      try {
+        var doc = labFrame.contentDocument;
+        if (!doc || !doc.body) {
+          return;
+        }
+        // Suppress the inner document's own scrollbar. The host iframe is sized
+        // to fit the content below, so any residual overflow is sub-pixel only
+        // (common at fractional device-pixel ratios on high-DPI or zoomed
+        // displays, e.g. 4K monitors at 125%/150% scaling). Without this a thin
+        // scrollbar shows even though the content "fits" at 100%.
+        doc.documentElement.style.overflow = 'hidden';
+        // Measure from the body, which is sized to its content and so does not
+        // grow with the iframe viewport (avoids a feedback loop). Round the
+        // fractional height up so the content is never a pixel short.
+        var content = Math.max(
+          doc.body.scrollHeight,
+          doc.body.offsetHeight,
+          Math.ceil(doc.body.getBoundingClientRect().height),
+        );
+        // Add the iframe's own border so border-box sizing doesn't clip content.
+        var border = labFrame.offsetHeight - labFrame.clientHeight;
+        var target = content + border;
+        if (Math.abs(target - labFrame.offsetHeight) > 1) {
+          labFrame.style.height = target + 'px';
+        }
+      } catch (error) {
+        /* A cross-origin frame can't be measured; keep the CSS min-height. */
+      }
+    };
+    labFrame.addEventListener('load', function () {
+      fitLabFrame();
+      try {
+        var innerBody = labFrame.contentDocument && labFrame.contentDocument.body;
+        if (innerBody && 'ResizeObserver' in window) {
+          new ResizeObserver(fitLabFrame).observe(innerBody);
+        }
+      } catch (error) {
+        /* Ignore cross-origin frames. */
+      }
+    });
+    // Re-fit when the viewport changes (zoom changes fire resize), and once web
+    // fonts settle, as backstops in addition to the per-load fit above.
+    window.addEventListener('resize', fitLabFrame);
+    if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+      document.fonts.ready.then(fitLabFrame);
+    }
+    fitLabFrame();
   }
 
   /* ---- Shadow DOM custom element ------------------------------------ */
@@ -755,15 +818,30 @@
   var zstack = byTest('zstack');
   if (zstack) {
     var zstackFront = byTest('zstack-front');
-    var bringToFront = function (letter) {
-      ['a', 'b', 'c'].forEach(function (id) {
+    // Remember the stacking order from back to front. The markup starts with C
+    // on top, so seed the history as A, B, C; bringing a card to the front then
+    // slides it above the rest while they keep the relative order they had
+    // before the switch (instead of snapping back to their original layer).
+    var zorder = ['a', 'b', 'c'];
+    var BASE_Z = 1;
+    var applyZorder = function () {
+      zorder.forEach(function (id, index) {
         var card = byTest('zcard-' + id);
         if (card) {
-          card.classList.toggle('is-front', id === letter);
+          card.style.zIndex = String(BASE_Z + index);
+          card.classList.toggle('is-front', index === zorder.length - 1);
         }
       });
-      zstackFront.textContent = letter.toUpperCase();
+      zstackFront.textContent = zorder[zorder.length - 1].toUpperCase();
     };
+    var bringToFront = function (letter) {
+      zorder = zorder.filter(function (id) {
+        return id !== letter;
+      });
+      zorder.push(letter);
+      applyZorder();
+    };
+    applyZorder();
     ['a', 'b', 'c'].forEach(function (letter) {
       var frontButton = byTest('zfront-' + letter);
       if (frontButton) {

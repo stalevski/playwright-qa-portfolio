@@ -50,7 +50,7 @@ ${renderHead('PetHub Local')}
       current: 'admin',
       title: 'PetHub Local',
       subtitle:
-        'Local QA sandbox for Playwright UI, API, event-driven CQRS flows, read models, downstream databases, and Swagger-style Petstore practice.',
+        'A self-contained pet store for practicing QA automation — shop, admin, operations, clinic, and a test lab, all running locally.',
       titleIsHeading: true,
     })}
   </header>
@@ -134,7 +134,7 @@ ${renderHead('PetHub Local')}
         </ul>
       </section>
     </div>
-    <section>
+    <section class="explorer">
       <h2>Swagger-style Explorer</h2>
       <p class="muted">Manual UI helpers for common Swagger Petstore operations against the local app.</p>
       <p class="muted">
@@ -161,8 +161,13 @@ ${renderHead('PetHub Local')}
         </form>
         <form method="get" action="/api/pets/findByTags">
           <h3>Find Pets by Tags</h3>
+          <p class="muted" data-test="explorer-find-tags-hint">
+            Matches each pet's <code>tags[].name</code> from the pet JSON. Comma-separated values
+            match any listed tag (OR) and are case-sensitive. Try <code>family-friendly</code> or
+            <code>puppy,outdoor</code>.
+          </p>
           <label class="sr-only" for="explorer-find-tags">Tags</label>
-          <input id="explorer-find-tags" name="tags" type="text" placeholder="tag1,tag2" />
+          <input id="explorer-find-tags" name="tags" type="text" placeholder="family-friendly,puppy" />
           <button type="submit">Execute</button>
         </form>
         <form method="get" action="/api/store/inventory">
@@ -173,6 +178,8 @@ ${renderHead('PetHub Local')}
       <div class="three-column" style="margin-top: 24px;">
         <form method="post" action="/api/users/login">
           <h3>User Login</h3>
+          <p class="muted">Records a login session for these credentials (mirrors Swagger's <code>POST /user/login</code>). The active session shows above; it does not gate this dashboard.</p>
+          <p class="muted" data-test="explorer-login-hint">Seed users: <code>admin</code>, <code>buyer01</code>, <code>emma.chen</code>, <code>daniel.park</code>, <code>sara.kim</code> &mdash; all share the password <code>Password123!</code>.</p>
           <label class="sr-only" for="explorer-login-username">Username</label>
           <input id="explorer-login-username" name="username" type="text" placeholder="Username" required />
           <label class="sr-only" for="explorer-login-password">Password</label>
@@ -181,6 +188,7 @@ ${renderHead('PetHub Local')}
         </form>
         <form method="post" action="/api/users/logout">
           <h3>User Logout</h3>
+          <p class="muted">Clears the active login session (mirrors Swagger's <code>POST /user/logout</code>).</p>
           <button type="submit">Execute</button>
         </form>
         <form method="post" action="/api/pets/form-update">
