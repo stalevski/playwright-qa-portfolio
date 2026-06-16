@@ -57,6 +57,8 @@ _Last updated: 2026-06-16_
 - [ ] Decide on `BasePage` helpers - adopt across pages or trim the unused ones.
 - [x] Add a `patch()` verb to `BaseApiClient` and refactor `updateOrderStatus` to use it.
 - [ ] Expand a11y coverage beyond the current `pethub-local-a11y` project if desired.
+- [ ] **Productionize PetHub Local** if we want to deploy it for real - see the
+      staged plan in [§7](#7-deploying-pethub-local-as-a-real-app-design-note---continue-2026-06-17).
 - [x] Migrate ESLint 8 (EOL) → flat config + bump `typescript-eslint` (done 2026-06-11; went straight to ESLint 10 + typescript-eslint v8).
 
 ## 5. Known issues / tech-debt
@@ -275,3 +277,108 @@ _Last updated: 2026-06-16_
 - **(earlier)** - Split Playwright into two configs: external (parallel,
   informational) and local (serial, `workers: 1`) because lowdb is a single shared
   file and cannot tolerate concurrent writes.
+
+## 7. Deploying PetHub Local as a real app (design note - continue 2026-06-17)
+
+> Answer to "what if I want to deploy this as a real app?" PetHub Local is built
+> as a **deterministic local QA sandbox**, not a hardened product, so a few
+> sandbox shortcuts have to be undone first. This is the honest gap analysis plus
+> a staged path, grounded in the current code. Nothing here is done yet - it is
+> the plan to pick up next.
+
+### 7.1 What "sandbox" means in the code today (the gaps to close)
+
+- **Persistence is lowdb (a JSON file).** [database.ts](apps/pethub-local/database.ts),
+  [read-models.ts](apps/pethub-local/read-models.ts) and
+  [downstream-systems.ts](apps/pethub-local/downstream-systems.ts) each wrap a
+  `Low` + `JSONFile` store under `apps/pethub-local/data/*.json`. Every mutation
+  rewrites the **whole file**; there are no transactions, constraints, indexes or
+  row locking. This is exactly why the suite runs serial (`workers: 1`) - see the
+  last decision-log entry.
+- **Auth is demo-grade.** The storefront keeps a hardcoded `storefrontUsers` array
+  with **plaintext passwords** and renders them on the login page
+  ([storefront.ts](apps/pethub-local/storefront/storefront.ts)); its sessions live
+  in an **in-memory `Map`** (`storefrontSessions`), so they vanish on restart and
+  cannot be shared across instances. The admin/API users sit in lowdb with a
+  plaintext `password` field and `randomUUID` session tokens. There is no password
+  hashing, CSRF protection, rate limiting on `/login`, security headers, or HTTPS
+  cookie handling.
+- **Runtime is a dev runner.** The app is started with `tsx`
+  ([server.ts](apps/pethub-local/server.ts)) - great for iteration, but production
+  should run compiled JS under a process supervisor. There is no `/healthz`, no
+  graceful shutdown, no centralized error-handling middleware, and no structured
+  logging.
+- **Seed data is the data model.** `initializeDatabase` is idempotent (it only
+  seeds empty collections, so data does persist across restarts), but the seeded
+  demo accounts/catalog are baked in and the deterministic Playwright runs call
+  `resetDatabase` to wipe state. A product needs a real empty-state vs. demo-seed
+  distinction.
+
+### 7.2 Why lowdb is fine locally but not in production
+
+Single-file JSON is perfect for a hermetic, single-process test target: zero setup,
+trivially resettable, diff-able. It breaks as a product backend because (a) writes
+are whole-file, last-write-wins with no concurrency control; (b) there are no
+transactions/constraints/indexes, so integrity is enforced only in app code; (c) it
+is **single-node by definition** - run two instances and they clobber each other's
+file; and (d) the file sits on the container's ephemeral disk, so a redeploy loses
+data unless it is on a mounted volume.
+
+### 7.3 The good news: the persistence seam already exists
+
+The routes never touch lowdb directly - they call typed accessor functions
+(`getPets`, `createOrder`, `loginUser`, ...) exported from the three store modules,
+and the DTO/record types are already defined. So the "real persistence-layer
+rewrite" is **bounded**: re-implement those functions behind a small repository
+interface and swap the storage engine. The CQRS-style read-models and
+downstream-systems projections map cleanly onto SQL views/materialized tables.
+
+### 7.4 Staged path
+
+**Tier 0 - prerequisites regardless of scale**
+
+- Hash passwords (argon2 or bcrypt); stop storing plaintext; **remove the on-screen
+  credential list**.
+- Validate input at the boundary (e.g. `zod`) and add authorization checks on the
+  admin/ops surfaces.
+- Add `helmet`, `SameSite`/`HttpOnly`/`Secure` cookies, CSRF tokens on the form
+  POSTs, and rate limiting on auth.
+- Move config to validated env vars + a secret manager; never commit secrets.
+- Compile TS → JS (tsc/esbuild) and run `node` on the build; add `/healthz`,
+  graceful shutdown, `pino` logging, and an error-handling middleware.
+
+**Tier 1 - "real but simple" (single small instance)**
+
+- Swap lowdb for **SQLite** - `node:sqlite` (built into Node 24) or
+  `better-sqlite3` - behind the repository interface from 7.3.
+- Put sessions in a shared/persistent store (even a SQLite-backed session table or
+  signed JWTs) instead of the in-memory `Map`.
+- Add schema migrations (drizzle/knex) and a real seed command gated behind an env
+  flag (no reset-on-boot in prod).
+- Containerize (Dockerfile, non-root user) with the DB on a **persistent volume**;
+  deploy to a single small host/platform (Fly.io, Render, Railway, a VPS) behind a
+  reverse proxy with TLS.
+
+**Tier 2 - scalable / multi-instance**
+
+- Move to **Postgres** (managed) so the app tier is stateless and horizontally
+  scalable; sessions in Redis.
+- Promote read-models/downstream-systems to real projections (materialized views or
+  a worker) instead of in-process sync.
+- CI/CD that builds the image and **runs migrations on deploy**; add backups,
+  metrics, log aggregation, and uptime/alerting.
+
+### 7.5 Testing implications
+
+The deterministic black-box suite depends on reset-per-run, which is fine to keep
+**only against an ephemeral test DB** (already the case via `globalSetup`). For
+prod, add migration tests and point the suite at a disposable SQLite/Postgres
+instance rather than the live store.
+
+### 7.6 Decision to make next
+
+Pick the **target tier** first - "single small deployable instance" (Tier 1, the
+smallest legitimately-deployable change) vs. "scalable service" (Tier 2). That
+choice determines SQLite-vs-Postgres and whether session/projection work is needed
+now or later. Everything in Tier 0 is required either way, so it is the safe place
+to start tomorrow.
