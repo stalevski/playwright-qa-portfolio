@@ -4,6 +4,7 @@ import { createOrderCommand } from '../commands';
 import { getPetByIdQuery, nextOrderIdQuery } from '../queries';
 import {
   clearStorefrontSessionCookie,
+  delayForStorefrontPersona,
   getCartDetails,
   getStorefrontSession,
   renderStorefrontCart,
@@ -65,6 +66,7 @@ storefrontRouter.post('/login', (request: Request, response: Response) => {
     username: user.username,
     userId: user.userId,
     cart: [],
+    behavior: user.behavior,
   });
   setStorefrontSessionCookie(response, sessionId);
   response.redirect('/shop/inventory');
@@ -84,6 +86,8 @@ storefrontRouter.get('/inventory', async (request: Request, response: Response) 
   if (!session) {
     return;
   }
+
+  await delayForStorefrontPersona(session);
 
   const rawSort = String(request.query.sort ?? 'az');
   const sort: StorefrontSortValue = rawSort === 'za' || rawSort === 'lohi' || rawSort === 'hilo' ? rawSort : 'az';
@@ -105,6 +109,8 @@ storefrontRouter.get('/item/:id', async (request: Request, response: Response) =
     return;
   }
 
+  await delayForStorefrontPersona(session);
+
   response.send(await renderStorefrontItemDetails(session, Number(request.params.id)));
 });
 
@@ -115,15 +121,23 @@ storefrontRouter.post('/cart/add', async (request: Request, response: Response) 
   }
 
   const petId = Number(request.body.petId);
-  const existing = session.cart.find((item) => item.petId === petId);
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    session.cart.push({ petId, quantity: 1 });
-  }
-
   const pet = await getPetByIdQuery(petId);
   const name = pet?.name ?? `pet #${petId}`;
+
+  // problem_user: adding a pet in the "broken" category is silently dropped -
+  // the success toast still appears but the cart never changes (mirrors Sauce
+  // Demo problem_user's Add buttons that look like they work but do not).
+  const brokenCategory = session.behavior?.brokenCartCategory;
+  const addSilentlyFails = Boolean(brokenCategory) && pet?.category === brokenCategory;
+  if (!addSilentlyFails) {
+    const existing = session.cart.find((item) => item.petId === petId);
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      session.cart.push({ petId, quantity: 1 });
+    }
+  }
+
   response.redirect(`/shop/inventory?added=${encodeURIComponent(name)}`);
 });
 
@@ -163,7 +177,10 @@ storefrontRouter.post('/checkout', async (request: Request, response: Response) 
   }
 
   const firstName = String(request.body.firstName ?? '').trim();
-  const lastName = String(request.body.lastName ?? '').trim();
+  // problem_user: the Last Name is silently dropped, so checkout always fails
+  // its "Last Name is required" validation even when the field was filled
+  // (mirrors Sauce Demo problem_user's broken checkout form).
+  const lastName = session.behavior?.brokenCheckoutLastName ? '' : String(request.body.lastName ?? '').trim();
   const postalCode = String(request.body.postalCode ?? '').trim();
   session.checkout = { firstName, lastName, postalCode };
 

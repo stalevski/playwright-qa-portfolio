@@ -46,12 +46,13 @@ test.describe('PetHub Storefront UI', () => {
     await storefrontLoginPage.goto();
     await storefrontLoginPage.assertLoaded();
 
-    // Logged out: the section nav only offers a way to sign in.
+    // Logged out: the section nav exposes no links at all. The login form's own
+    // Sign in button is the only entry point, so the nav no longer repeats it.
     const sectionNav = page.getByRole('navigation', { name: 'Storefront sections' });
     await expect(sectionNav.getByRole('link', { name: 'Inventory' })).toBeHidden();
     await expect(sectionNav.getByRole('link', { name: /^Cart/ })).toBeHidden();
     await expect(sectionNav.getByRole('link', { name: 'Checkout' })).toBeHidden();
-    await expect(sectionNav.getByRole('link', { name: 'Sign in' })).toBeVisible();
+    await expect(sectionNav.getByRole('link', { name: 'Sign in' })).toHaveCount(0);
 
     // Signed in: the protected destinations appear and sign-in becomes logout.
     await storefrontLoginPage.login(standardUser, password);

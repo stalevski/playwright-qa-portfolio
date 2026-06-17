@@ -281,7 +281,7 @@ nav a.active,
   align-items: center;
   gap: 8px;
 }
-/* Keep the Sign in / Logout control comfortably inside the slim section bar.
+/* Keep the Logout control comfortably inside the slim section bar.
    The bar carries no vertical padding (so the active-tab underline can sit on
    the divider), which previously let the bordered button fill the whole strip
    and bleed over the top and bottom borders. */
@@ -514,10 +514,10 @@ a.button:hover {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 /* Explorer forms share a row in a 3-column grid, which by default stretches
-   every form to the height of its tallest sibling. In field-less forms (Get
-   Inventory, User Logout) that extra height inflates the lone Execute button
-   into an oversized block. Top-align each form so it sizes to its own content,
-   and size the button to its label instead of the full column width. */
+   every form to the height of its tallest sibling. In a field-less form (Get
+   Inventory) that extra height inflates the lone Execute button into an
+   oversized block. Top-align each form so it sizes to its own content, and
+   size the button to its label instead of the full column width. */
 .explorer form {
   align-self: start;
 }

@@ -15,6 +15,34 @@ export type StorefrontUser = {
   userId: number;
   role: string;
   locked?: boolean;
+  /**
+   * Intentional "defects" attached to a persona so the storefront can mirror
+   * Sauce Demo's broken accounts for exploratory + automation practice. Absent
+   * for the happy-path `standard_user`.
+   */
+  behavior?: StorefrontBehavior;
+};
+
+/**
+ * Artificial latency (ms) injected into `performance_user` browsing responses
+ * so the persona visibly mirrors Sauce Demo's `performance_glitch_user`.
+ */
+export const PERFORMANCE_GLITCH_DELAY_MS = 1500;
+
+/**
+ * Deliberately broken behaviour wired to a storefront persona. Every flag is
+ * off for `standard_user` (the happy path) and on for one of the mock accounts
+ * so testers have a stable, self-hosted analog of Sauce Demo's defect users.
+ */
+export type StorefrontBehavior = {
+  /** The inventory sort control is accepted in the URL/dropdown but never reorders the grid. */
+  brokenSort?: boolean;
+  /** Checkout silently drops the Last Name, so it always fails "Last Name is required". */
+  brokenCheckoutLastName?: boolean;
+  /** Adding a pet in this category is a no-op even though the success toast still shows. */
+  brokenCartCategory?: string;
+  /** Browsing responses are delayed by this many milliseconds. */
+  slowResponseMs?: number;
 };
 
 export type StorefrontCartItem = {
@@ -27,6 +55,7 @@ export type StorefrontSession = {
   username: string;
   userId: number;
   cart: StorefrontCartItem[];
+  behavior?: StorefrontBehavior;
   checkout?: {
     firstName: string;
     lastName: string;
@@ -38,8 +67,20 @@ export type StorefrontSortValue = 'az' | 'za' | 'lohi' | 'hilo';
 
 export const storefrontUsers: StorefrontUser[] = [
   { username: 'standard_user', password: 'pethub123', userId: 2002, role: 'customer' },
-  { username: 'problem_user', password: 'pethub123', userId: 2003, role: 'customer' },
-  { username: 'performance_user', password: 'pethub123', userId: 2004, role: 'customer' },
+  {
+    username: 'problem_user',
+    password: 'pethub123',
+    userId: 2003,
+    role: 'customer',
+    behavior: { brokenSort: true, brokenCheckoutLastName: true, brokenCartCategory: 'Birds' },
+  },
+  {
+    username: 'performance_user',
+    password: 'pethub123',
+    userId: 2004,
+    role: 'customer',
+    behavior: { slowResponseMs: PERFORMANCE_GLITCH_DELAY_MS },
+  },
   { username: 'locked_out_user', password: 'pethub123', userId: 2005, role: 'customer', locked: true },
 ];
 
@@ -162,6 +203,20 @@ export const getCartDetails = async (session: StorefrontSession): Promise<Storef
 
 export const getCartBadgeCount = (session: StorefrontSession): number => session.cart.length;
 
+/**
+ * Resolves after the persona's configured browsing delay (if any). Used to make
+ * `performance_user` feel sluggish without affecting other accounts.
+ */
+export const delayForStorefrontPersona = async (session: StorefrontSession): Promise<void> => {
+  const ms = session.behavior?.slowResponseMs ?? 0;
+  if (ms <= 0) {
+    return;
+  }
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 export const renderStorefrontLayout = (options: {
   title: string;
   heading: string;
@@ -189,7 +244,7 @@ ${renderHead(options.title)}
             : ''
         }
         <span class="section-nav-actions">
-          ${options.session ? `<form method="post" action="/shop/logout"><button type="submit" class="button secondary">Logout</button></form>` : `<a href="/shop" class="button secondary">Sign in</a>`}
+          ${options.session ? `<form method="post" action="/shop/logout"><button type="submit" class="button secondary">Logout</button></form>` : ''}
         </span>
       </nav>
     </header>
@@ -241,7 +296,10 @@ export const renderStorefrontInventory = async (
   sort: StorefrontSortValue = 'az',
   toast?: { message: string; variant?: 'success' | 'error' },
 ): Promise<string> => {
-  const items = sortStorefrontInventory(await getStorefrontInventory(), sort);
+  // problem_user: the sort selection is reflected in the URL and the dropdown,
+  // but the grid is never actually reordered (mirrors Sauce Demo problem_user).
+  const effectiveSort = session.behavior?.brokenSort ? 'az' : sort;
+  const items = sortStorefrontInventory(await getStorefrontInventory(), effectiveSort);
   return renderStorefrontLayout({
     title: 'PetHub Outfitters Inventory',
     heading: 'Inventory',

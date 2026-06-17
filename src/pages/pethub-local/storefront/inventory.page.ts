@@ -67,6 +67,19 @@ export class StorefrontInventoryPage extends BasePage {
     await this.itemNames.filter({ hasText: itemName }).first().click();
   }
 
+  /** First inventory card whose category pill matches `category` (e.g. `Birds`). */
+  cardOfCategory(category: string): Locator {
+    return this.inventoryItems.filter({ has: this.page.getByText(category, { exact: true }) }).first();
+  }
+
+  /** Clicks "Add to cart" on the first inventory card of the given category. */
+  async addFirstItemInCategory(category: string): Promise<void> {
+    await Promise.all([
+      this.page.waitForURL(/\/shop\/inventory(?:\?.*)?$/),
+      this.cardOfCategory(category).getByRole('button', { name: 'Add to cart' }).click(),
+    ]);
+  }
+
   async openCart(): Promise<void> {
     await this.cartLink.click();
   }
