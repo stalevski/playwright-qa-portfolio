@@ -201,6 +201,12 @@ A single dense page aggregating every backend concept the suite exercises:
 
 It is the fastest way to eyeball all three stores at once.
 
+> The **Create Pet** form and `POST /api/pets` both reject a duplicate id. The
+> JSON store has no primary-key constraint, so uniqueness is enforced in
+> `createPet`: the API answers **409 Conflict** and the form redirects back with
+> an error toast, rather than letting a second record shadow or duplicate an
+> existing pet.
+
 ### 6.2 Storefront (`/shop`)
 
 A deliberately **Sauce-Demo-shaped** buy flow so Playwright patterns transfer:
@@ -231,18 +237,34 @@ Key behaviours:
 
 #### Storefront demo personas
 
-| Username           | Password    | Notes                                         |
-| ------------------ | ----------- | --------------------------------------------- |
-| `standard_user`    | `pethub123` | Normal happy-path user                        |
-| `problem_user`     | `pethub123` | Reserved for problem-scenario practice        |
-| `performance_user` | `pethub123` | Reserved for performance-scenario practice    |
-| `locked_out_user`  | `pethub123` | Login is rejected with a "locked out" message |
+| Username           | Password    | Notes                                                                                      |
+| ------------------ | ----------- | ------------------------------------------------------------------------------------------ |
+| `standard_user`    | `pethub123` | Normal happy-path user                                                                     |
+| `problem_user`     | `pethub123` | Logs in, but the storefront is intentionally broken (dead sort, Birds add no-op, checkout) |
+| `performance_user` | `pethub123` | Logs in, but browsing responses are artificially delayed (~1.5s) to mimic a slow client    |
+| `locked_out_user`  | `pethub123` | Login is rejected with a "locked out" message                                              |
 
 > The login page renders these credentials inline, so the page itself doubles as
 > the credential reference. They are mirrored for tests in
 > [src/helpers/test-data.ts](../../src/helpers/test-data.ts)
 > (`pethubLocalUsers` / `pethubLocalPassword`). Each storefront persona maps to a
 > real seeded `userId` so orders are attributed to an actual user row.
+
+> **Intentional persona defects** - modelled on Sauce Demo so the local app is a
+> self-hosted analog of its `problem_user` / `performance_glitch_user` accounts:
+>
+> - **`problem_user`** - the inventory **sort** control updates the dropdown and
+>   URL but never reorders the grid; **Add to cart** is a silent no-op for the
+>   **Birds** category (the success toast still shows); and **checkout** always
+>   fails "Last Name is required" because the Last Name is dropped server-side.
+> - **`performance_user`** - the inventory and item pages sleep
+>   `PERFORMANCE_GLITCH_DELAY_MS` (1500ms) before responding.
+>
+> These are pinned by
+> [tests/local/pethub-local/ui/storefront-personas.spec.ts](../../tests/local/pethub-local/ui/storefront-personas.spec.ts),
+> which asserts the current broken behaviour (so the specs fail if a persona is
+> ever made healthy). The defects are not surfaced in the UI on purpose - finding
+> them is the exercise.
 
 ### 6.3 Operations portal (`/ops`)
 
@@ -335,7 +357,7 @@ image upload, user lifecycle) so client code transfers between targets.
 | `GET /api/pets/findByStatus`     | Filter by `?status=available\|pending\|sold` |
 | `GET /api/pets/findByTags`       | Filter by `?tags=` (repeatable)              |
 | `GET /api/pets/:id/relations`    | Pet with its related orders                  |
-| `POST /api/pets`                 | Create pet (201)                             |
+| `POST /api/pets`                 | Create pet (201, or 409 if the id is taken)  |
 | `PUT /api/pets/:id`              | Replace pet                                  |
 | `POST /api/pets/:id`             | Swagger-style form update                    |
 | `POST /api/pets/:id/uploadImage` | Swagger-style image upload                   |

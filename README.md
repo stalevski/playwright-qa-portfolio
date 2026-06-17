@@ -88,7 +88,7 @@ Three independent JSON databases live under `apps/pethub-local/data/`: operation
 
 ![Storefront login](docs/screenshots/03-storefront-login.png)
 
-The `/shop` storefront is intentionally Sauce-Demo-shaped so the same Playwright patterns (page objects, fixtures, `data-test` selectors) used against the public Sauce Demo target also apply here. Demo accounts are listed inline so the page itself doubles as a credential reference.
+The `/shop` storefront is intentionally Sauce-Demo-shaped so the same Playwright patterns (page objects, fixtures, `data-test` selectors) used against the public Sauce Demo target also apply here. Demo accounts are listed inline so the page itself doubles as a credential reference. Like Sauce Demo, some accounts carry **intentional defects** discovered only by testing: `problem_user` gets a dead sort control, a silently-failing add-to-cart for Birds, and a checkout that always rejects the last name, while `performance_user` browses under injected latency - `standard_user` stays on the happy path.
 
 ### Storefront - inventory
 
@@ -118,7 +118,7 @@ Session-scoped cart (in-memory, not persisted to lowdb) with three pets selected
 
 ![Order confirmation](docs/screenshots/08-storefront-complete.png)
 
-End of the checkout flow. POSTing the checkout form creates an order in the operational database, emits an `order.created` event, projects to the read model, and replicates to the downstream JSON store - all of which the API specs verify in `tests/dev/pethub-local/api/`.
+End of the checkout flow. POSTing the checkout form creates an order in the operational database, emits an `order.created` event, projects to the read model, and replicates to the downstream JSON store - all of which the API specs verify in `tests/local/pethub-local/api/`.
 
 ### Operations portal - overview
 
@@ -177,8 +177,8 @@ src/
   fixtures/<system>/    Playwright fixtures (re-export test/expect)
   builders/             fluent DTO builders (pet, order, user)
   models/api/           DTOs / typed transport
-tests/dev/pethub-local/{ui,api,a11y}/   specs for our own in-repo app
-tests/qa/<external>/{ui,api}/            specs for external third-party targets
+tests/local/pethub-local/{ui,api,a11y}/  specs for our own in-repo app
+tests/external/<target>/{ui,api}/        specs for external third-party targets
 test-targets.config.ts  URL registry with env overrides
 playwright.config.ts        external targets (parallel)
 playwright.local.config.ts  PetHub Local (serial, owns webServer + globalSetup)
@@ -291,7 +291,7 @@ Add `--headed` or `--debug` via the `test:headed` / `test:debug` scripts to watc
 
 ### Accessibility (`@a11y`)
 
-A dedicated `pethub-local-a11y` Playwright project runs WCAG 2.0 / 2.1 A and AA checks against the local app using `@axe-core/playwright`. Specs live under `tests/dev/pethub-local/a11y/` and cover:
+A dedicated `pethub-local-a11y` Playwright project runs WCAG 2.0 / 2.1 A and AA checks against the local app using `@axe-core/playwright`. Specs live under `tests/local/pethub-local/a11y/` and cover:
 
 - **Admin** - `/` dashboard
 - **Storefront** - `/shop` login, `/shop/inventory`, `/shop/item/:id`, `/shop/cart`, `/shop/checkout`
@@ -307,19 +307,19 @@ The Sauce Demo target uses Playwright's `storageState` pattern so tests skip the
 
 **Where this is implemented in the repo:**
 
-| Concern                                          | File                                                                                          |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| Setup project that logs in and saves state       | `tests/qa/sauce-demo/sauce-demo.setup.ts`                                                     |
-| Project wiring (`dependencies` + `storageState`) | `playwright.config.ts`                                                                        |
-| Opt-out for tests that need a logged-out browser | `tests/qa/sauce-demo/ui/login.spec.ts`, `session-protection.spec.ts`, `known-defects.spec.ts` |
+| Concern                                          | File                                                                                                |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Setup project that logs in and saves state       | `tests/external/sauce-demo/sauce-demo.setup.ts`                                                     |
+| Project wiring (`dependencies` + `storageState`) | `playwright.config.ts`                                                                              |
+| Opt-out for tests that need a logged-out browser | `tests/external/sauce-demo/ui/login.spec.ts`, `session-protection.spec.ts`, `known-defects.spec.ts` |
 
 #### Adding `storageState` to another target
 
-1. **Create a setup spec** next to the target's tests (e.g. `tests/qa/<target>/<target>.setup.ts`) that logs in via the existing page objects and saves state with `page.context().storageState({ path })`.
+1. **Create a setup spec** next to the target's tests (e.g. `tests/external/<target>/<target>.setup.ts`) that logs in via the existing page objects and saves state with `page.context().storageState({ path })`.
 2. **Register a `<target>-setup` project** in `playwright.config.ts`, then give each UI project `dependencies: ['<target>-setup']` plus `storageState: 'playwright/.auth/<target>-standard.json'` so they inherit the saved session.
 3. **Opt out where needed** - tests that verify login, session protection, or alternative users override it per `describe` with `test.use({ storageState: { cookies: [], origins: [] } })` to start logged out.
 
-Add `playwright/.auth/` to `.gitignore`; the setup project regenerates the state on every run. See `tests/qa/sauce-demo/sauce-demo.setup.ts` for the working example.
+Add `playwright/.auth/` to `.gitignore`; the setup project regenerates the state on every run. See `tests/external/sauce-demo/sauce-demo.setup.ts` for the working example.
 
 ### Test tiers (`@smoke`, `@critical`)
 
