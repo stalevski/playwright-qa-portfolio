@@ -8,6 +8,7 @@ import {
   createUsersCommand,
   deletePetCommand,
   deleteUserCommand,
+  DuplicatePetIdError,
   loginUserCommand,
   logoutUserCommand,
   resetDatabase,
@@ -40,7 +41,7 @@ import {
   getUserRelationsQuery,
   getUsersQuery,
 } from '../queries';
-import { respondNotFound } from '../http/responses';
+import { respondConflict, respondNotFound } from '../http/responses';
 
 export const apiRouter = Router();
 
@@ -86,8 +87,16 @@ apiRouter.get('/pets/:id', async (request: Request, response: Response) => {
 });
 
 apiRouter.post('/pets', async (request: Request, response: Response) => {
-  const pet = await createPetCommand(request.body);
-  response.status(201).json(pet);
+  try {
+    const pet = await createPetCommand(request.body);
+    response.status(201).json(pet);
+  } catch (error) {
+    if (error instanceof DuplicatePetIdError) {
+      respondConflict(response, error.message);
+      return;
+    }
+    throw error;
+  }
 });
 
 apiRouter.post('/pets/form-update', async (request: Request, response: Response) => {

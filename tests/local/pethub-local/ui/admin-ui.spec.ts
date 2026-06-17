@@ -56,4 +56,31 @@ test.describe('Local Petstore UI', () => {
 
     await localHomePage.assertPetVisible(updatedPet);
   });
+
+  test('rejects creating a pet with an id that already exists', async ({ localHomePage, page }) => {
+    const original = RandomDataGenerator.createLocalPet({
+      category: 'Dogs',
+      status: 'available',
+    });
+    const duplicate = {
+      ...original,
+      name: `${original.name} Impostor`,
+      status: 'sold' as const,
+    };
+
+    await localHomePage.goto();
+    await localHomePage.assertLoaded();
+    await localHomePage.createPet(original);
+    await localHomePage.assertPetVisible(original);
+
+    // Re-submitting the same id must be refused, not silently duplicated or overwritten.
+    await localHomePage.createPet(duplicate);
+
+    await expect(page.getByTestId('toast')).toContainText(String(original.id));
+    await expect(page.getByText(`${original.name} Impostor`)).toHaveCount(0);
+
+    const rows = localHomePage.petRows.filter({ hasText: String(original.id) });
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText(original.name);
+  });
 });

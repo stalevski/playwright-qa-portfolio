@@ -238,8 +238,27 @@ export const findPetsByTags = async (tags: string[]): Promise<PetRecord[]> => {
     .sort((left, right) => right.id - left.id);
 };
 
+/**
+ * Thrown when a create is attempted with an id that is already taken. The JSON
+ * store has no primary-key constraint, so uniqueness is enforced here to stop a
+ * second record from shadowing single-id lookups or duplicating list views of
+ * an existing pet.
+ */
+export class DuplicatePetIdError extends Error {
+  readonly petId: number;
+
+  constructor(petId: number) {
+    super(`A pet with ID ${petId} already exists.`);
+    this.name = 'DuplicatePetIdError';
+    this.petId = petId;
+  }
+}
+
 export const createPet = async (pet: Omit<PetRecord, 'createdAt' | 'updatedAt'>): Promise<PetRecord> => {
   await ensureLoaded();
+  if (database.data.pets.some((existing: PetRecord) => existing.id === pet.id)) {
+    throw new DuplicatePetIdError(pet.id);
+  }
   const timestamp = now();
   const createdPet: PetRecord = { ...pet, createdAt: timestamp, updatedAt: timestamp };
   database.data.pets.unshift(createdPet);

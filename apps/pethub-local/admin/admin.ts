@@ -1,6 +1,5 @@
 import {
   getAuditLogRelationsQuery,
-  getActiveSessionQuery,
   getCustomersQuery,
   getDownstreamSystemsQuery,
   getEmployeesQuery,
@@ -10,7 +9,7 @@ import {
   getReadModelsQuery,
   getUsersQuery,
 } from '../queries';
-import { renderAppBar, renderHead, renderStatCard } from '../http/render-helpers';
+import { renderAppBar, renderHead, renderStatCard, renderToast } from '../http/render-helpers';
 
 const renderApiQuickLink = (method: string, path: string): string =>
   `<li><span class="pill">${method}</span> <code>${path}</code></li>`;
@@ -29,7 +28,11 @@ const renderTableSection = (title: string, headers: string[], rows: string[][]):
 const renderJsonCard = (title: string, value: unknown): string =>
   `<div class="card"><div class="muted">${title}</div><pre>${JSON.stringify(value, null, 2)}</pre></div>`;
 
-export const renderAdminHomePage = async (): Promise<string> => {
+export const renderAdminHomePage = async (
+  options: {
+    toast?: { message: string; variant?: 'success' | 'error' };
+  } = {},
+): Promise<string> => {
   const pets = await getPetsQuery();
   const users = await getUsersQuery();
   const employees = await getEmployeesQuery();
@@ -39,7 +42,6 @@ export const renderAdminHomePage = async (): Promise<string> => {
   const readModels = await getReadModelsQuery();
   const downstreamSystems = await getDownstreamSystemsQuery();
   const inventory = await getInventoryQuery();
-  const activeSession = await getActiveSessionQuery();
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -55,6 +57,7 @@ ${renderHead('PetHub Local')}
     })}
   </header>
   <main>
+    ${renderToast(options.toast?.message, options.toast?.variant ?? 'success')}
     <section aria-label="Summary statistics">
       <div class="grid stats">
         ${renderStatCard('Pets', pets.length)}
@@ -137,17 +140,7 @@ ${renderHead('PetHub Local')}
     <section class="explorer">
       <h2>Swagger-style Explorer</h2>
       <p class="muted">Manual UI helpers for common Swagger Petstore operations against the local app.</p>
-      <p class="muted">
-        Note: these mirror the public Petstore operations for QA practice. User Login is
-        intentionally stateless — it records a session but does not gate this dashboard.
-      </p>
-      <p data-test="explorer-session-status">
-        ${
-          activeSession
-            ? `<span class="pill">Active session</span> <code>${activeSession.username}</code>`
-            : '<span class="muted">No active session.</span>'
-        }
-      </p>
+      <p class="muted">Note: these mirror the public Petstore operations for QA practice.</p>
       <div class="three-column">
         <form method="get" action="/api/pets/findByStatus">
           <h3>Find Pets by Status</h3>
@@ -172,23 +165,6 @@ ${renderHead('PetHub Local')}
         </form>
         <form method="get" action="/api/store/inventory">
           <h3>Get Inventory</h3>
-          <button type="submit">Execute</button>
-        </form>
-      </div>
-      <div class="three-column" style="margin-top: 24px;">
-        <form method="post" action="/api/users/login">
-          <h3>User Login</h3>
-          <p class="muted">Records a login session for these credentials (mirrors Swagger's <code>POST /user/login</code>). The active session shows above; it does not gate this dashboard.</p>
-          <p class="muted" data-test="explorer-login-hint">Seed users: <code>admin</code>, <code>buyer01</code>, <code>emma.chen</code>, <code>daniel.park</code>, <code>sara.kim</code> &mdash; all share the password <code>Password123!</code>.</p>
-          <label class="sr-only" for="explorer-login-username">Username</label>
-          <input id="explorer-login-username" name="username" type="text" placeholder="Username" required />
-          <label class="sr-only" for="explorer-login-password">Password</label>
-          <input id="explorer-login-password" name="password" type="password" placeholder="Password" required />
-          <button type="submit">Execute</button>
-        </form>
-        <form method="post" action="/api/users/logout">
-          <h3>User Logout</h3>
-          <p class="muted">Clears the active login session (mirrors Swagger's <code>POST /user/logout</code>).</p>
           <button type="submit">Execute</button>
         </form>
         <form method="post" action="/api/pets/form-update">

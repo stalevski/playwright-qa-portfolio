@@ -279,6 +279,34 @@ test.describe('Local Petstore API', () => {
   });
 
   test(
+    'rejects creating a pet with an id that already exists',
+    { tag: '@critical' },
+    async ({ localApiClient, request }) => {
+      const before = await localApiClient.getPet(1001);
+
+      const response = await request.post('pets', {
+        data: {
+          id: 1001,
+          name: 'Impostor Pet',
+          category: 'Dogs',
+          status: 'available',
+          price: 9999,
+          notes: 'should not overwrite the seeded pet',
+        },
+      });
+
+      expect(response.status()).toBe(409);
+      expect((await response.json()).message).toContain('1001');
+
+      // The seeded pet is untouched and the id is still held by exactly one record.
+      const after = await localApiClient.getPet(1001);
+      expect(after.name).toBe(before.name);
+      const matches = (await localApiClient.getPets()).filter((pet) => pet.id === 1001);
+      expect(matches).toHaveLength(1);
+    },
+  );
+
+  test(
     'admin reset endpoint clears arbitrary state and reseeds the seed data',
     { tag: '@critical' },
     async ({ localApiClient, request }) => {
