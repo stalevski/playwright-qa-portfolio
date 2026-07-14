@@ -114,8 +114,7 @@ export const issueToken = (user: AuthUser): IssuedToken => {
 };
 
 export type TokenVerification =
-  | { ok: true; payload: TokenPayload }
-  | { ok: false; reason: 'malformed' | 'bad-signature' | 'expired' };
+  { ok: true; payload: TokenPayload } | { ok: false; reason: 'malformed' | 'bad-signature' | 'expired' };
 
 export const verifyToken = (token: string): TokenVerification => {
   const parts = token.split('.');

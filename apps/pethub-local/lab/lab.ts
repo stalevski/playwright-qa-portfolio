@@ -20,16 +20,7 @@ const escapeHtml = (value: string): string =>
   });
 
 export type LabNav =
-  | 'home'
-  | 'forms'
-  | 'dynamic'
-  | 'dialogs'
-  | 'tables'
-  | 'widgets'
-  | 'menus'
-  | 'overlays'
-  | 'frames'
-  | 'shadow-dom';
+  'home' | 'forms' | 'dynamic' | 'dialogs' | 'tables' | 'widgets' | 'menus' | 'overlays' | 'frames' | 'shadow-dom';
 
 type LabPage = { slug: LabNav; href: string; label: string };
 
