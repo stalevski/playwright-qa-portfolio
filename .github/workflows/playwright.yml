@@ -147,3 +147,35 @@ jobs:
           name: playwright-test-results
           path: test-results/
           retention-days: 14
+
+  auto-merge:
+    name: Auto-merge Dependabot minor & patch
+    # Gate on the required local suite (which itself needs lint + format:check).
+    # The informational external job is intentionally excluded so demo-site
+    # flakiness never blocks a merge.
+    needs: test-local
+    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Squash-merge minor, patch & GitHub Actions updates
+        # GitHub Actions bumps are validated by this same CI run, so they are
+        # safe to auto-merge even on a major; npm majors stay manual.
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.package-ecosystem == 'github_actions'
+        run: |
+          gh pr merge --squash "$PR_URL" \
+            || echo "::notice::Merge deferred; Dependabot will rebase and retry."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
