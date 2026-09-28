@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-09-14_
+_Last updated: 2026-09-28_
 
 ---
 
@@ -95,6 +95,16 @@ Ranked by value per unit of effort. See §6 for why these are separate concerns.
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-09-28** - **Closed the keyboard/focus coverage gap on the QA Test Lab
+  forms.** Added four tests to
+  [lab-ui.spec.ts](tests/local/pethub-local/ui/lab-ui.spec.ts) asserting the
+  keyboard experience rather than only mouse-driven submission: TAB order across
+  the form controls (`name -> email -> password`), TAB reaching the submit button
+  from the last field, and ENTER performing implicit form submission from a text
+  field on both a valid and an incomplete form (using `toBeFocused` and
+  `keyboard.press`). This was the one interaction pattern with no coverage - the
+  suite previously used `keyboard.press('Escape')` only. Test-only; no app
+  changes. Kept `workers: 1` and the a11y baseline untouched.
 - **2026-09-14** - **Added a doc-link check to the gate and tagged the
   intentional-defect suites `@known-defect`.** `scripts/check-doc-links.ts` (with
   `npm run docs:check`, now part of both `npm run verify` and the required CI

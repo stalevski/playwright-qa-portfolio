@@ -69,6 +69,7 @@ The **QA Test Lab** adds two more practice surfaces (see the
 | Compression               | gzip-encoded JSON body                                                                                                           |
 | Content negotiation       | JSON / XML / HTML variants of one payload                                                                                        |
 | Forms & client validation | every input type; success banner only when valid                                                                                 |
+| Keyboard & focus          | TAB order across controls; ENTER submits from a text field; last field TABS to submit                                            |
 | Dynamic content           | deferred loading spinner, add/remove elements, enable/disable                                                                    |
 | JavaScript dialogs        | `alert` / `confirm` / `prompt` via `page.on('dialog')`                                                                           |
 | Tables                    | search filtering + column sorting                                                                                                |

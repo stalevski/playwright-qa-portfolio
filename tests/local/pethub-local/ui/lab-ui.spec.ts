@@ -32,6 +32,54 @@ test.describe('QA Test Lab UI', () => {
       await expect(labFormsPage.error).toBeVisible();
       await expect(labFormsPage.result).toContainText('Name is required');
     });
+
+    test('tabs through the form controls in order', async ({ labFormsPage, page }) => {
+      await labFormsPage.goto();
+      await labFormsPage.assertLoaded();
+
+      await labFormsPage.name.focus();
+      await expect(labFormsPage.name).toBeFocused();
+
+      await page.keyboard.press('Tab');
+      await expect(labFormsPage.email).toBeFocused();
+
+      await page.keyboard.press('Tab');
+      await expect(labFormsPage.password).toBeFocused();
+    });
+
+    test('tabs to the submit button from the last field', async ({ labFormsPage, page }) => {
+      await labFormsPage.goto();
+      await labFormsPage.assertLoaded();
+
+      await labFormsPage.terms.focus();
+      await expect(labFormsPage.terms).toBeFocused();
+
+      await page.keyboard.press('Tab');
+      await expect(labFormsPage.submit).toBeFocused();
+    });
+
+    test('ENTER submits a valid form from a text field', async ({ labFormsPage, page }) => {
+      await labFormsPage.goto();
+      await labFormsPage.assertLoaded();
+      await labFormsPage.fillValid({ name: 'Ada', email: 'ada@example.com', password: 'secret1' });
+
+      await labFormsPage.name.focus();
+      await page.keyboard.press('Enter');
+
+      await expect(labFormsPage.success).toBeVisible();
+      await expect(labFormsPage.success).toHaveText('Form submitted successfully');
+    });
+
+    test('ENTER on an incomplete form shows the validation errors', async ({ labFormsPage, page }) => {
+      await labFormsPage.goto();
+      await labFormsPage.assertLoaded();
+
+      await labFormsPage.name.focus();
+      await page.keyboard.press('Enter');
+
+      await expect(labFormsPage.error).toBeVisible();
+      await expect(labFormsPage.result).toContainText('Name is required');
+    });
   });
 
   test.describe('Dynamic content', () => {
