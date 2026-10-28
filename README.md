@@ -284,6 +284,7 @@ The local suite runs `workers: 1` because PetHub Local stores state in a single 
 | `npm test`                                     | Everything: external (parallel) then local (serial)   |
 | `npm run test:external`                        | External targets only (parallel)                      |
 | `npm run test:local`                           | PetHub Local only (serial)                            |
+| `npm run test:shuffle`                         | PetHub Local in random order (`--shuffle`)            |
 | `npm run test:ui` / `npm run test:api`         | UI / API across all targets                           |
 | `npm run test:pethub-local`                    | PetHub Local UI + API (add `:ui` / `:api` to narrow)  |
 | `npm run test:swagger-petstore`                | Swagger Petstore (add `:ui` / `:api` to narrow)       |

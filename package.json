@@ -8,6 +8,7 @@
     "test": "npm run test:external && npm run test:local",
     "test:external": "playwright test",
     "test:local": "playwright test --config playwright.local.config.ts",
+    "test:shuffle": "playwright test --config playwright.local.config.ts --shuffle",
     "test:swagger-petstore": "playwright test --project=swagger-petstore-ui-chromium --project=swagger-petstore-ui-firefox --project=swagger-petstore-ui-webkit --project=swagger-petstore-api",
     "test:swagger-petstore:ui": "playwright test --project=swagger-petstore-ui-chromium --project=swagger-petstore-ui-firefox --project=swagger-petstore-ui-webkit",
     "test:swagger-petstore:api": "playwright test --project=swagger-petstore-api",
@@ -47,20 +48,20 @@
     "lowdb": "^7.0.1"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.64.0",
+    "@playwright/test": "^1.64.1",
     "@types/express": "^5.0.6",
     "@types/marked": "^5.0.2",
-    "dotenv": "^17.4.2",
-    "eslint": "^10.12.0",
+    "dotenv": "^18.0.8",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-playwright": "^2.12.1",
     "globals": "^17.13.0",
-    "marked": "^18.1.0",
+    "marked": "^18.1.1",
     "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.1"
+    "typescript-eslint": "^8.72.0"
   }
 }

@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-09-28_
+_Last updated: 2026-10-28_
 
 ---
 
@@ -94,6 +94,20 @@ Ranked by value per unit of effort. See §6 for why these are separate concerns.
 ## 6. Decision log
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
+
+- **2026-10-28** - **Playwright 1.64.1 + axe-core 4.14, and the first real a11y
+  finding they surfaced.** The bump (`@playwright/test` 1.64.0 -> 1.64.1,
+  `@axe-core/playwright` 4.13 -> 4.14, eslint 10.13, typescript-eslint 8.72,
+  marked 18.1.1, dotenv 18.0.9) failed the required local job for a good reason:
+  axe-core 4.14 enforces **WCAG 2.5.3 label-in-name**, and the theme toggle's
+  visible text ("Dark mode") was missing from its `aria-label`. Fixed in the app
+  rather than relaxed in the tests: `renderThemeToggle()` now renders
+  `aria-label="Toggle light or dark theme: Dark mode"` and `theme.js` rewrites
+  the name whenever the visible label flips (no parentheses - axe strips
+  parentheticals before comparing tokens). Took the 1.63/1.64 runner features
+  that pay off here: traces record **aria snapshots**, and CI runs a shuffled
+  smoke pass. Local suite is green again: **395/395** (UI x3 browsers + API +
+  24 a11y surfaces).
 
 - **2026-09-28** - **Closed the keyboard/focus coverage gap on the QA Test Lab
   forms.** Added four tests to
