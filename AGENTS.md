@@ -73,6 +73,7 @@ Path aliases (see `tsconfig.json`): `@config`, `@core/*`, `@pages/*`,
 | Typecheck only              | `npm run typecheck`                                                 |
 | All tests                   | `npm test` (external then local)                                    |
 | Local suite (deterministic) | `npm run test:local`                                                |
+| Local suite, random order   | `npm run test:shuffle` (order-independence check)                   |
 | External suite              | `npm run test:external`                                             |
 | By target                   | `npm run test:pethub-local` / `:sauce-demo` / `:swagger-petstore`   |
 | a11y                        | `npm run test:a11y`                                                 |
