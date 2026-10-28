@@ -38,6 +38,13 @@
       if (label) {
         label.textContent = theme === 'light' ? 'Light mode' : 'Dark mode';
       }
+      // WCAG 2.5.3 (label in name): the accessible name must contain the visible
+      // text, and the visible text changes with the theme, so keep both in sync.
+      // No parentheses: axe strips parentheticals before comparing the tokens.
+      toggle.setAttribute(
+        'aria-label',
+        'Toggle light or dark theme: ' + (theme === 'light' ? 'Light mode' : 'Dark mode'),
+      );
     });
   }
 

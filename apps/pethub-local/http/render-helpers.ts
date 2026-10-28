@@ -15,7 +15,7 @@ export const renderHead = (title: string): string =>
 </head>`;
 
 export const renderThemeToggle = (): string =>
-  `<button type="button" class="theme-toggle" data-test="theme-toggle" aria-pressed="false" aria-label="Toggle light or dark theme">
+  `<button type="button" class="theme-toggle" data-test="theme-toggle" aria-pressed="false" aria-label="Toggle light or dark theme: Dark mode">
     <span class="icon icon-moon" aria-hidden="true">🌙</span>
     <span class="icon icon-sun" aria-hidden="true">☀️</span>
     <span data-test="theme-toggle-label">Dark mode</span>
