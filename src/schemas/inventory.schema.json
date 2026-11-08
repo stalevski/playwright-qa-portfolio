@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Swagger Petstore Inventory",
+  "description": "Map of status to count. Keys are deliberately unconstrained: the live demo returns undocumented status keys (see DATA-1 in docs/swagger-petstore/bugs.md), only the value type is contractual.",
+  "type": "object",
+  "additionalProperties": { "type": "integer" }
+}

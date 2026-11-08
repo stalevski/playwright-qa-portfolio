@@ -20,7 +20,8 @@
       "@sauce-demo-fixtures": ["./src/fixtures/sauce-demo/index.ts"],
       "@data/*": ["./src/test-data/*"],
       "@models/*": ["./src/models/*"],
-      "@builders/*": ["./src/builders/*"]
+      "@builders/*": ["./src/builders/*"],
+      "@schemas/*": ["./src/schemas/*"]
     }
   },
   "include": ["playwright.config.ts", "test-targets.config.ts", "src/**/*.ts", "tests/**/*.ts", "apps/**/*.ts"]

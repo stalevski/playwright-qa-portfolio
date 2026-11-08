@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Swagger Petstore ApiResponse",
+  "description": "Derived from the Swagger Petstore v2 'ApiResponse' definition. Every field is optional in the published spec.",
+  "type": "object",
+  "properties": {
+    "code": { "type": "integer" },
+    "type": { "type": "string" },
+    "message": { "type": "string" }
+  },
+  "additionalProperties": true
+}

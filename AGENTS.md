@@ -47,6 +47,9 @@ src/
   core/                   base.page.ts, base-api.client.ts, global-setup.ts
   pages/<system>/         page objects (one per real screen); components/ for shared UI
   helpers/api-clients/    typed API clients (extend BaseApiClient)
+  helpers/schema-validator.ts  ajv wrapper; BaseApiClient validates payloads
+                          against the schemas in src/schemas/ when supplied
+  schemas/                JSON Schemas derived from each target's published API
   fixtures/<system>/      Playwright test.extend fixtures (re-export expect)
   builders/               fluent test-data builders: objects/ (pet, order, user),
                           requests/ + expected/ for API payloads & assertions
@@ -116,7 +119,9 @@ Isolation makes separate **runs** safe. It does not make parallel **specs** safe
   provide `goto()`/`assertLoaded()` and intention-revealing actions. No raw
   selectors in specs.
 - **API**: use typed clients extending `BaseApiClient`; DTOs for transport;
-  builders/factories for data. Follow AAA and assert business outcomes.
+  builders/factories for data. Follow AAA and assert business outcomes. Pass the
+  endpoint's schema from `src/schemas/` so `BaseApiClient` validates the payload
+  before the spec sees it; `*Raw`/`request` access stays for error states.
 - **Async hygiene**: use `waitForURL`, `Promise.all/race`, and `expect.poll` for
   eventual consistency - avoid arbitrary waits.
 - **Known-defect tests** assert _current buggy behavior_ on purpose; keep them

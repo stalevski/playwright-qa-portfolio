@@ -59,12 +59,27 @@ npm run stop        # frees port 3000 when you are done
 ## What's inside
 
 - **End-to-end UI tests** built on the Page Object Model, scoped components, and app-owned `data-test` locators.
-- **Typed API tests** with clients that extend a shared `BaseApiClient`, DTOs for transport, and fluent builders for data.
+- **Typed API tests** with clients that extend a shared `BaseApiClient`, DTOs for transport, and fluent builders for data. Pass the endpoint's JSON Schema and the client validates the response before the test sees it.
 - **A real app to test against** - PetHub Local models an operational database, event-driven **CQRS-style read models**, and **downstream replicas**, so specs can practise the cross-system data investigation common in backend QA.
 - **Accessibility checks** (`@axe-core/playwright`) across every PetHub surface.
 - **Tiered CI** via `@smoke` / `@critical` tags, `storageState` auth reuse, and a `/lab` playground of deterministic UI-automation challenges.
 
 Engineering conventions live in [AGENTS.md](AGENTS.md) and [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md).
+
+### Contract validation policy
+
+Response schemas live in `src/schemas/` and are enforced by `BaseApiClient`, but how strict
+they are depends on who owns the contract:
+
+| Target                                        | Schema depth                                          | Why                                                                                 |
+| --------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| PetHub Local (in-repo app)                    | Types, required fields, enums                         | We own the contract, so a drift failure is a real regression worth blocking on      |
+| External demos (Swagger Petstore, Sauce Demo) | Types + required fields, `additionalProperties: true` | The third party changes without notice; strictness there produces noise, not signal |
+
+`tests/external/swagger-petstore/api/schema-guard.api.spec.ts` asserts that the schema and
+validator actually reject a bad payload, so a green contract check cannot be a no-op. Coverage
+is deliberately partial: endpoints without a captured schema still pass through the client
+unvalidated, and a separate spec-driven pass (Schemathesis/Dredd) is the right tool for breadth.
 
 ## Visual tour
 
@@ -174,6 +189,8 @@ src/
   core/                 BasePage, BaseApiClient, global setup
   pages/<system>/       page objects (one per screen); components/ for shared UI
   helpers/api-clients/  typed API clients (extend BaseApiClient)
+  helpers/schema-validator.ts  ajv wrapper for contract validation
+  schemas/              JSON Schemas derived from the target's published API
   fixtures/<system>/    Playwright fixtures (re-export test/expect)
   builders/             fluent DTO builders (pet, order, user)
   models/api/           DTOs / typed transport

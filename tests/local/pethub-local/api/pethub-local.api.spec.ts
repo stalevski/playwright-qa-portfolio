@@ -56,7 +56,8 @@ test.describe('Local Petstore API', () => {
     expect(uploaded.message).toContain('local-upload');
 
     const inventory = await localApiClient.getInventory();
-    expect(typeof inventory.available === 'number' || typeof inventory.sold === 'number').toBeTruthy();
+    expect(typeof inventory.available).toBe('number');
+    expect(typeof inventory.sold).toBe('number');
   });
 
   test('supports Swagger-style user lifecycle flows', async ({ localApiClient }) => {

@@ -48,6 +48,7 @@ Specifically captured per area:
 | **DATA-2**       | pet    | High     | `POST /pet` with empty body returns id `9223372036854775807` (Long.MAX_VALUE), so every empty-body POST collides on the same id                                                                |
 | **DATA-3**       | global | Low      | Several 404 responses return an empty body with no `Content-Type` header, while other 404s return JSON                                                                                         |
 | **DATA-4**       | user   | High     | `POST /user` returns the new user id encoded as a string in the `message` field of a generic `ApiResponse` (spec says no body)                                                                 |
+| **DATA-5**       | pet    | Low      | `POST /pet/{id}/uploadImage` reports the uploaded file path as `./null`; the multipart file part is not reflected back                                                                         |
 
 ---
 
@@ -260,6 +261,22 @@ The spec distinguishes `400 Invalid ID supplied` from `404 Pet not found` (and e
 
 ## Low-severity defects
 
+### DATA-5: `POST /pet/{id}/uploadImage` reports the file path as `./null`
+
+- **Steps to reproduce:** `POST /pet` to create a pet, then
+  `POST /pet/{id}/uploadImage` as `multipart/form-data` with an
+  `additionalMetadata` field and a file part.
+- **Observed:** `{"code":200,"type":"unknown","message":"additionalMetadata: playwright-upload\nFile uploaded to ./null, 13 bytes"}`.
+  The success message echoes the metadata but reports the path as `./null`, and
+  the byte count reflects the request body rather than any stored file.
+- **Expected:** the message names the uploaded file, or the endpoint documents
+  that the part is ignored.
+- **Severity:** Low (cosmetic response defect; upload persistence is unverified
+  either way).
+- **Pinned by:** `pet.api.spec.ts` asserts the message shape (metadata echo plus
+  a byte count) but deliberately not the filename, so a genuine fix will not
+  produce a false failure.
+
 ### DATA-3: Some 404 responses lack a body and `Content-Type` header
 
 - Affected probes (single sample):
@@ -290,7 +307,7 @@ The diagnostic also confirmed a number of behaviours that _are_ correct or non-b
 
 The diagnostic ran 78 probes; the public sandbox has more behaviour surface than that. Out of scope of this run:
 
-- **`POST /pet/{id}/uploadImage`** - the diagnostic only checked status code (200). Whether the image bytes are actually persisted, retrievable, or referenced by `photoUrls` was not verified.
+- **`POST /pet/{id}/uploadImage`** - the diagnostic only checked status code (200); the upload message shape is now asserted by `pet.api.spec.ts` (see DATA-5), but whether the image bytes are actually persisted, retrievable, or referenced by `photoUrls` remains unverified.
 - **Concurrency / race conditions** - concurrent `POST /pet` with the same id, concurrent `DELETE` + `GET`, etc.
 - **Very large payloads** - name longer than X characters, very large `photoUrls` arrays, deeply nested categories.
 - **Numeric overflow** - sending an `id` larger than `Long.MAX_VALUE`, sending a negative id on POST.

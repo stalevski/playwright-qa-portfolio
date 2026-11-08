@@ -10,8 +10,10 @@ test.describe('Petstore API - Pet endpoints', () => {
     await apiClient.createPet(pet);
     const response = await apiClient.uploadPetImage(pet.id, 'playwright-upload', 'pet-image.txt');
 
-    expect(response.message).toContain('playwright-upload');
-    expect(response.message).toContain('bytes');
+    // The endpoint echoes the metadata and reports a byte count; it reports the
+    // uploaded path as `./null` because the multipart part is sent as a field
+    // (see bugs.md), so the filename is deliberately not asserted here.
+    expect(response.message).toMatch(/^additionalMetadata: playwright-upload\nFile uploaded to .+, \d+ bytes$/);
   });
 
   test('adds a new pet to the store', { tag: ['@smoke', '@critical'] }, async ({ apiClient }) => {
@@ -97,7 +99,7 @@ test.describe('Petstore API - Pet endpoints', () => {
 
     const response = await apiClient.updatePetWithFormData(pet.id, `${pet.name}-form`, 'sold');
 
-    expect(response.message).toContain(String(pet.id));
+    expect(response.message.trim()).toBe(String(pet.id));
 
     await expect
       .poll(async () => {

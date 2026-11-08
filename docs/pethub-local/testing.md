@@ -336,7 +336,9 @@ test('creates and updates a pet', { tag: ['@smoke', '@critical'] }, async ({ loc
 ```
 
 `BaseApiClient` automatically asserts a 2xx (`expectOk`) before returning the
-parsed JSON, so the happy path stays terse. For negative cases, drop down to the
+parsed JSON, so the happy path stays terse. When the method passes a schema from
+`src/schemas/`, the payload is also validated against it and a shape regression
+fails with the offending instance path. For negative cases, drop down to the
 raw `request` fixture and assert the status yourself.
 
 ---
