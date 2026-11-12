@@ -1,6 +1,7 @@
 # Playwright QA Portfolio
 
 [![CI](https://github.com/stalevski/playwright-qa-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/stalevski/playwright-qa-portfolio/actions/workflows/playwright.yml)
+[![Reports](https://img.shields.io/badge/reports-live_on_Pages-2EAD33?logo=playwright&logoColor=white)](https://stalevski.github.io/playwright-qa-portfolio/)
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node-%E2%89%A524-339933?logo=node.js&logoColor=white)](.nvmrc)
@@ -380,6 +381,22 @@ test('returns service health', { tag: ['@smoke', '@critical'] }, async ({ localA
 ```
 
 To extend the smoke tier, add `{ tag: '@smoke' }` to the new test - no other config changes are needed.
+
+## Live reports (GitHub Pages)
+
+Every `main` build publishes its Playwright HTML reports to **GitHub Pages**, so the suite can be
+browsed - including traces, screenshots and videos - without downloading an artifact:
+
+**https://stalevski.github.io/playwright-qa-portfolio/**
+
+- **PetHub Local (required suite)** - the deterministic in-repo app across Chromium, Firefox,
+  WebKit and the a11y project.
+- **External targets (informational)** - Swagger Petstore and Sauce Demo.
+
+The deploy job runs only on `main` (and `workflow_dispatch`), so a pull request can never
+overwrite the published reports. Pages is configured with **Source = GitHub Actions**
+(`build_type: workflow`); the reports are static, self-contained folders, so they render fine from
+a sub-path.
 
 ## Lint and format
 

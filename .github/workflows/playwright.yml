@@ -82,7 +82,7 @@ jobs:
 
       - name: Upload PetHub Local HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-local
           path: playwright-report-local/
@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload PetHub Local test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results-local
           path: test-results-local/
@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload external HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload external test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results
           path: test-results/
@@ -162,6 +162,7 @@ jobs:
     needs: test-local
     if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       pull-requests: write
@@ -185,3 +186,73 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publishes the last main-branch Playwright HTML reports to GitHub Pages so
+  # the suite can be inspected without downloading artifacts:
+  #   https://stalevski.github.io/playwright-qa-portfolio/
+  # Pages is configured with `build_type: workflow` (Settings > Pages >
+  # Source = GitHub Actions). Only main pushes deploy, so a pull request can
+  # never overwrite the published reports.
+  publish-report:
+    name: Publish HTML reports to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [test-local, test-external]
+    if: ${{ always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Serialise deploys so the newest push wins, without cancelling a
+    # half-finished upload.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download the reports
+        uses: actions/download-artifact@v7
+        with:
+          path: site
+
+      - name: Generate the index page
+        run: |
+          cd site
+          cat > index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>Playwright QA Portfolio - reports</title>
+              <style>
+                body { font: 16px/1.6 system-ui, sans-serif; margin: 3rem auto; max-width: 40rem; padding: 0 1.5rem; color: #1c2b21; background: #fbf8f2; }
+                h1 { font-size: 1.5rem; } a { color: #1c6b3c; }
+                li { margin: .5rem 0; } .meta { color: #5b6b60; font-size: .9rem; }
+              </style>
+            </head>
+            <body>
+              <h1>Playwright QA Portfolio - HTML reports</h1>
+              <p class="meta">Published from the latest <code>main</code> build. Trace and screenshot data are included in each report.</p>
+              <ul>
+                <li><a href="playwright-report-local/">PetHub Local (required suite)</a> - deterministic in-repo app, Chromium + Firefox + WebKit + a11y</li>
+                <li><a href="playwright-report/">External targets (informational)</a> - Swagger Petstore + Sauce Demo</li>
+              </ul>
+              <p class="meta"><a href="https://github.com/stalevski/playwright-qa-portfolio">Source</a></p>
+            </body>
+          </html>
+          HTML
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - id: deployment
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
