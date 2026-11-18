@@ -46,7 +46,10 @@ jobs:
     name: Local app tests — PetHub Local (required)
     runs-on: ubuntu-latest
     needs: lint
-    timeout-minutes: 20
+    # Backstop only. The per-step bounds below are what govern a normal run:
+    # install (10) + install-deps (10) + tests (16, just above the 15-minute
+    # globalTimeout so Playwright writes a report before it stops).
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
 
@@ -71,13 +74,21 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+        # Downloads normally take ~40s; bound them so a stalled mirror fails
+        # here, where a re-run fixes it, instead of consuming the job budget.
+        timeout-minutes: 10
         run: npx playwright install --with-deps
 
       - name: Install Playwright system deps only (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
+        # This is a bare apt-get and has been observed hanging for 16+ minutes
+        # on a slow mirror (2026-11-18), which is indistinguishable from a wedged
+        # runner. Bounding it turns that into a fast, retryable failure.
+        timeout-minutes: 10
         run: npx playwright install-deps
 
       - name: Run PetHub Local tests
+        timeout-minutes: 16
         run: npm run test:local
 
       - name: Upload PetHub Local HTML report
@@ -129,13 +140,19 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+        timeout-minutes: 10
         run: npx playwright install --with-deps
 
       - name: Install Playwright system deps only (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
+        # Bare apt-get; bounded for the same reason as the local job's step.
+        timeout-minutes: 10
         run: npx playwright install-deps
 
       - name: Run external target tests
+        # Just above the 10-minute globalTimeout in playwright.config.ts, so a
+        # wedged external target writes a report before the step is cut off.
+        timeout-minutes: 12
         run: npm run test:external
 
       - name: Upload external HTML report
@@ -247,6 +264,26 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
+      - name: Delete stale Pages artifacts from earlier attempts
+        # Re-running this job re-uploads the "github-pages" artifact into the
+        # SAME run, and actions/deploy-pages aborts with "Multiple artifacts
+        # named github-pages were unexpectedly found" instead of picking one.
+        # That is exactly how the retry for #58 failed (2026-11-18). Drop any
+        # leftovers before uploading, so a re-run is always safe.
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner, repo, run_id: context.runId, per_page: 100,
+            });
+            const stale = artifacts.filter((a) => a.name === 'github-pages');
+            for (const artifact of stale) {
+              core.info(`Deleting stale github-pages artifact ${artifact.id} (${artifact.size_in_bytes} bytes)`);
+              await github.rest.actions.deleteArtifact({ owner, repo, artifact_id: artifact.id });
+            }
+            if (stale.length === 0) core.info('No stale github-pages artifacts found.');
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
