@@ -81,10 +81,16 @@ jobs:
 
       - name: Install Playwright system deps only (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        # This is a bare apt-get and has been observed hanging for 16+ minutes
-        # on a slow mirror (2026-11-18), which is indistinguishable from a wedged
-        # runner. Bounding it turns that into a fast, retryable failure.
+        # Bare apt-get. Two reasons this is bounded AND non-fatal:
+        #   1. It has been observed hanging for 16+ minutes on a degraded mirror
+        #      (2026-11-18), so it must not be able to eat the job budget.
+        #   2. On a cache hit the browsers themselves are already installed, and
+        #      GitHub's image carries the shared libraries they need. If a
+        #      library genuinely is missing, the test step fails with Playwright's
+        #      own message naming the packages - so a stalled apt-get must not be
+        #      what fails a required job.
         timeout-minutes: 10
+        continue-on-error: true
         run: npx playwright install-deps
 
       - name: Run PetHub Local tests
@@ -145,8 +151,10 @@ jobs:
 
       - name: Install Playwright system deps only (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        # Bare apt-get; bounded for the same reason as the local job's step.
+        # Same reasoning as the local job's step: bounded and non-fatal, because
+        # the job is informational and the tests themselves report missing libs.
         timeout-minutes: 10
+        continue-on-error: true
         run: npx playwright install-deps
 
       - name: Run external target tests
@@ -238,7 +246,24 @@ jobs:
         with:
           path: site
 
+      - name: Check whether this run produced any reports
+        id: reports
+        # download-artifact does not create `path` when the run published
+        # nothing (e.g. the test job never got as far as writing
+        # playwright-report-local/), and the index step then died on `cd site`.
+        # Better: detect the empty case and leave the previously published site
+        # alone instead of deploying an index full of dead links.
+        run: |
+          mkdir -p site
+          if [ -d site/playwright-report-local ] || [ -d site/playwright-report ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No Playwright reports in this run; leaving the published site untouched."
+          fi
+
       - name: Generate the index page
+        if: steps.reports.outputs.found == 'true'
         run: |
           cd site
           cat > index.html <<'HTML'
@@ -267,9 +292,11 @@ jobs:
           HTML
 
       - name: Configure Pages
+        if: steps.reports.outputs.found == 'true'
         uses: actions/configure-pages@v5
 
       - name: Delete stale Pages artifacts from earlier attempts
+        if: steps.reports.outputs.found == 'true'
         # Re-running this job re-uploads the "github-pages" artifact into the
         # SAME run, and actions/deploy-pages aborts with "Multiple artifacts
         # named github-pages were unexpectedly found" instead of picking one.
@@ -290,10 +317,12 @@ jobs:
             if (stale.length === 0) core.info('No stale github-pages artifacts found.');
 
       - name: Upload Pages artifact
+        if: steps.reports.outputs.found == 'true'
         uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
       - id: deployment
         name: Deploy to GitHub Pages
+        if: steps.reports.outputs.found == 'true'
         uses: actions/deploy-pages@v5
