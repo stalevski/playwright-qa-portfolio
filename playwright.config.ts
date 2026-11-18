@@ -36,6 +36,14 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
+  /**
+   * Belt and braces for CI: the workflow's per-job `timeout-minutes` only kills
+   * the job, so a wedged browser or a stalled external target leaves a worker
+   * waiting forever and the job dies with no report at all. A full external run
+   * takes ~5 minutes, so 10 minutes only trips on a genuine hang and still
+   * writes the HTML report before exiting non-zero. No limit locally.
+   */
+  globalTimeout: process.env.CI ? 10 * 60_000 : 0,
   reporter: [
     ['html', { open: 'never' }],
     // Machine-readable results (see playwright.local.config.ts).

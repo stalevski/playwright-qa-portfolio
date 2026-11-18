@@ -28,6 +28,15 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
+  /**
+   * Belt and braces for CI: the workflow's per-job `timeout-minutes` only kills
+   * the job, so a wedged browser or a hung `webServer` (PetHub Local) leaves a
+   * worker waiting forever and the job dies with no report at all. A full run
+   * takes ~7 minutes across UI and a11y projects, so 15 minutes only trips on a
+   * genuine hang and still writes the HTML report before exiting non-zero.
+   * No limit locally.
+   */
+  globalTimeout: process.env.CI ? 15 * 60_000 : 0,
   reporter: [
     ['html', { open: 'never', outputFolder: 'playwright-report-local' }],
     // Machine-readable results so agents and CI can parse failures
