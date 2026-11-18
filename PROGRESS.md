@@ -95,6 +95,19 @@ Ranked by value per unit of effort. See §6 for why these are separate concerns.
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-11-18** - **`minimatch` advisory closed; `picomatch` accepted.** `eslint`
+  10.15 and `typescript-eslint` 8.73 now admit `minimatch` 11, so `npm audit fix`
+  took the lockfile to 11.0.9 and the medium advisory is gone (it had been pinned
+  to `^10` and looked unfixable). Ten distinct advisories -> one.
+  The one that remains is **`picomatch` ReDoS, GHSA-fc5q-39xc-vjpf
+  (CVE-2026-112366)**: it affects _every_ published version (`<= 4.0.7`) and has
+  **no patched version** yet. It arrives through `tinyglobby`/`fdir` from the
+  lint/test tooling, nothing in the shipped test code calls it, and `npm audit`
+  counts it once per dependent package (hence "9 high" for one advisory). Never
+  chase it with `npm audit fix --force` - the only resolution it offers is
+  downgrading the toolchain. Re-check for a picomatch release above 4.0.7 and drop
+  this note when one ships.
+
 - **2026-10-28** - **Playwright 1.64.1 + axe-core 4.14, and the first real a11y
   finding they surfaced.** The bump (`@playwright/test` 1.64.0 -> 1.64.1,
   `@axe-core/playwright` 4.13 -> 4.14, eslint 10.13, typescript-eslint 8.72,
