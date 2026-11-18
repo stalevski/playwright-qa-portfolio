@@ -220,6 +220,10 @@ jobs:
       contents: read
       pages: write
       id-token: write
+      # Deleting stale "github-pages" artifacts before re-uploading needs this;
+      # without it the cleanup step 403s with "Resource not accessible by
+      # integration" and the whole publish job fails.
+      actions: write
     # Serialise deploys so the newest push wins, without cancelling a
     # half-finished upload.
     concurrency:
