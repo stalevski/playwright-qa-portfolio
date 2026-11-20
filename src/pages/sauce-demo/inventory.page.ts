@@ -76,7 +76,10 @@ export class SauceDemoInventoryPage extends BasePage {
   }
 
   cartButtonOf(itemName: string): Locator {
-    return this.inventoryItems.filter({ hasText: itemName }).getByRole('button');
+    // A card exposes three ARIA buttons: the image, the product-name link and the
+    // cart action. Match the action by its accessible name, otherwise strict mode
+    // resolves to all three ("", the item name, "Add to cart").
+    return this.inventoryItems.filter({ hasText: itemName }).getByRole('button', { name: /add to cart|remove/i });
   }
 
   async assertItemInCart(itemName: string): Promise<void> {

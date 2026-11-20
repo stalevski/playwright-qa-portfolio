@@ -12,8 +12,12 @@ test.describe('Petstore API - Pet endpoints', () => {
 
     // The endpoint echoes the metadata and reports a byte count; it reports the
     // uploaded path as `./null` because the multipart part is sent as a field
-    // (see bugs.md), so the filename is deliberately not asserted here.
-    expect(response.message).toMatch(/^additionalMetadata: playwright-upload\nFile uploaded to .+, \d+ bytes$/);
+    // (see bugs.md), so the filename is deliberately not asserted here. The
+    // wording of the path fragment varies between deployments ("File uploaded
+    // to ./null" vs "Uploaded null"), so accept either.
+    expect(response.message).toMatch(
+      /^additionalMetadata: playwright-upload\n(?:File uploaded to .+|Uploaded null), \d+ bytes$/,
+    );
   });
 
   test('adds a new pet to the store', { tag: ['@smoke', '@critical'] }, async ({ apiClient }) => {
@@ -169,14 +173,25 @@ test.describe('Petstore API - Pet endpoints', () => {
       expect(body.message).toContain('this-is-not-a-number');
     });
 
-    test('VAL-1 / DATA-2: POST /pet with empty body returns 200 and id Long.MAX_VALUE', async ({ request }) => {
+    test('VAL-1 / DATA-2: POST /pet with empty body returns 200 and assigns an id just below Long.MAX_VALUE', async ({
+      request,
+    }) => {
       const response = await request.post('pet', { data: {} });
       expect(response.status()).toBe(200);
       const body = await response.json();
       // Long.MAX_VALUE = 9223372036854775807, but JSON.parse coerces to a JS number which loses precision.
       // Compare via the raw text to avoid the precision loss.
       const rawText = await request.post('pet', { data: {} }).then((r) => r.text());
-      expect(rawText).toContain('9223372036854775807');
+      const idMatch = rawText.match(/"id":(\d+)/);
+      expect(idMatch).not.toBeNull();
+      // The demo used to return exactly Long.MAX_VALUE; it now hands out a
+      // decrementing counter a little below it (MAX-752,274 on 2026-11-20), so
+      // pin the defect - an absurd near-max id - rather than one frozen number.
+      // BigInt because a 19-digit id is not representable as a JS number.
+      const id = BigInt(idMatch![1]);
+      const maxLong = BigInt('9223372036854775807');
+      expect(id).toBeLessThanOrEqual(maxLong);
+      expect(id).toBeGreaterThan(maxLong - BigInt(10_000_000));
       expect(body.photoUrls).toEqual([]);
       expect(body.tags).toEqual([]);
     });
