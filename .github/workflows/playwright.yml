@@ -241,32 +241,68 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Decide what this run has to publish
+        id: reports
+        # Ask the API which report artifacts exist *before* downloading, so an
+        # empty run is detected without depending on download-artifact's
+        # behaviour when nothing matches. Only a green required suite may lead to
+        # an empty deploy: if `test-local` succeeded, its report is mandatory.
+        uses: actions/github-script@v8
+        env:
+          LOCAL_RESULT: ${{ needs.test-local.result }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner, repo, run_id: context.runId, per_page: 100,
+            });
+            const has = (name) =>
+              artifacts.some((a) => a.name === name && a.size_in_bytes > 0);
+            const local = has('playwright-report-local');
+            const external = has('playwright-report');
+            core.info(`Required report present: ${local}; external report present: ${external}`);
+            core.setOutput('local', String(local));
+            core.setOutput('external', String(external));
+            // Only the deterministic suite makes a site worth deploying, and only
+            // it is published on its own: deploying an external-only site would
+            // silently replace the required report with nothing.
+            core.setOutput('found', String(local));
+            if (!local) {
+              if (process.env.LOCAL_RESULT === 'success') {
+                core.setFailed(
+                  'The required PetHub Local suite reported success but uploaded no HTML report, ' +
+                    'so this deploy would publish nothing and leave the last build live. ' +
+                    'Fix the upload; do not skip it.',
+                );
+              } else {
+                core.notice(
+                  `No required report to publish (needs.test-local=${process.env.LOCAL_RESULT}); ` +
+                    'leaving the published site untouched.',
+                );
+              }
+            }
+
       - name: Download the reports
+        if: steps.reports.outputs.found == 'true'
         uses: actions/download-artifact@v7
         with:
+          # HTML reports only. Downloading every artifact used to drag
+          # `test-results/` (full traces, screenshots and videos of failures) and
+          # a stale `github-pages` artifact from an earlier attempt into the site
+          # tree, so they were published to Pages as well.
+          pattern: 'playwright-report*'
           path: site
-
-      - name: Check whether this run produced any reports
-        id: reports
-        # download-artifact does not create `path` when the run published
-        # nothing (e.g. the test job never got as far as writing
-        # playwright-report-local/), and the index step then died on `cd site`.
-        # Better: detect the empty case and leave the previously published site
-        # alone instead of deploying an index full of dead links.
-        run: |
-          mkdir -p site
-          if [ -d site/playwright-report-local ] || [ -d site/playwright-report ]; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::No Playwright reports in this run; leaving the published site untouched."
-          fi
 
       - name: Generate the index page
         if: steps.reports.outputs.found == 'true'
+        env:
+          # The external suite is informational, so its report can legitimately be
+          # absent; linking it unconditionally would publish a dead link.
+          HAS_EXTERNAL: ${{ steps.reports.outputs.external }}
         run: |
           cd site
-          cat > index.html <<'HTML'
+          {
+            cat <<'HTML'
           <!doctype html>
           <html lang="en">
             <head>
@@ -283,13 +319,18 @@ jobs:
               <h1>Playwright QA Portfolio - HTML reports</h1>
               <p class="meta">Published from the latest <code>main</code> build. Trace and screenshot data are included in each report.</p>
               <ul>
-                <li><a href="playwright-report-local/">PetHub Local (required suite)</a> - deterministic in-repo app, Chromium + Firefox + WebKit + a11y</li>
-                <li><a href="playwright-report/">External targets (informational)</a> - Swagger Petstore + Sauce Demo</li>
+          HTML
+            echo '      <li><a href="playwright-report-local/">PetHub Local (required suite)</a> - deterministic in-repo app, Chromium + Firefox + WebKit + a11y</li>'
+            if [ "$HAS_EXTERNAL" = 'true' ]; then
+              echo '      <li><a href="playwright-report/">External targets (informational)</a> - Swagger Petstore + Sauce Demo</li>'
+            fi
+            cat <<'HTML'
               </ul>
               <p class="meta"><a href="https://github.com/stalevski/playwright-qa-portfolio">Source</a></p>
             </body>
           </html>
           HTML
+          } > index.html
 
       - name: Configure Pages
         if: steps.reports.outputs.found == 'true'
