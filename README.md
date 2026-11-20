@@ -398,6 +398,13 @@ overwrite the published reports. Pages is configured with **Source = GitHub Acti
 (`build_type: workflow`); the reports are static, self-contained folders, so they render fine from
 a sub-path.
 
+Only the two HTML-report artifacts are published - the `test-results/` upload (raw traces,
+failure screenshots and videos) stays an artifact of the run and is never served from Pages. The
+required suite's report is the site's anchor: if `test-local` succeeds but uploads no
+`playwright-report-local`, the deploy fails instead of publishing nothing and leaving the previous
+build live. If the required suite itself failed before writing a report, the site is left untouched
+(the run is already red) and the external link is simply omitted from the index.
+
 ## Lint and format
 
 ```bash

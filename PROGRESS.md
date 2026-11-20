@@ -95,6 +95,28 @@ Ranked by value per unit of effort. See §6 for why these are separate concerns.
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-11-20** - **CI/publishing audit: the green `main` run is real, but the
+  Pages deploy was publishing things it should not.** Root causes of the two red
+  `main` runs, from their logs: (1) run `44327525290` - the required local job
+  failed in _"Install Playwright system deps only (cache hit)"_, `The action ...
+has timed out after 10 minutes` (a stalled apt mirror; on a browser-cache hit
+  that step still installs ~185 packages/139 MB), so the suite never ran and the
+  publish job then died on `cd: site: No such file or directory`; (2) run
+  `44322518361` - the local suite passed, but "Delete stale Pages artifacts" got
+  `403 Resource not accessible by integration` (`x-accepted-github-permissions:
+actions=write`), so the whole run went red on a missing job permission. The
+  latest green run `44334120038` is substantive: the local job ran `395 tests`
+  (`394 passed, 1 flaky, 5.1m`) and the publish job deployed. What that deploy
+  actually uploaded was wrong: it downloaded **every** artifact, so
+  `test-results/` (failure traces/screenshots/videos) and a stale 89 MB
+  `github-pages` artifact from an earlier attempt were published -
+  `/playwright-test-results/results.json` and `/github-pages/artifact.tar`
+  returned 200 on the live site. Fixed by downloading only
+  `pattern: playwright-report*`, and by replacing the old "any report?" shell
+  check with an artifact-API decision step: the required report is now the anchor
+  (a green `test-local` with no report fails the deploy instead of silently
+  leaving the previous build live), the index only links reports that exist
+  (no more dead external link), and an external-only run never replaces the site.
 - **2026-11-18** - **`minimatch` advisory closed; `picomatch` accepted.** `eslint`
   10.15 and `typescript-eslint` 8.73 now admit `minimatch` 11, so `npm audit fix`
   took the lockfile to 11.0.9 and the medium advisory is gone (it had been pinned
