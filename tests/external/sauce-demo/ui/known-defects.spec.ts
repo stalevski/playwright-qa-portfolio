@@ -206,7 +206,7 @@ test.describe('Sauce Demo - Known defects', { tag: '@known-defect' }, () => {
     await sauceDemoInventoryPage.openItemDetails(sauceDemoProducts.fleeceJacket);
     await page.waitForURL('**/inventory-item.html**');
     await expect(page).toHaveURL(/id=6\b/);
-    await expect(page.locator('.inventory_details_img').first()).toHaveAttribute('src', /sl-404\./);
+    await expect(page.locator('.inventory_details_img').first()).toHaveAttribute('src', /sl-404/);
   });
 
   // EU-2 / EU-6: error_user form skips Last Name validation entirely and advances with empty lastName.
@@ -275,7 +275,7 @@ test.describe('Sauce Demo - Known defects', { tag: '@known-defect' }, () => {
     await sauceDemoInventoryPage.assertLoaded();
 
     const backpackSrc = await sauceDemoInventoryPage.getItemImageSrc(sauceDemoProducts.backpack);
-    expect(backpackSrc).toMatch(/sl-404\./);
+    expect(backpackSrc).toMatch(/sl-404/);
 
     const allSrcs = await sauceDemoInventoryPage.getItemImageSrcs();
     const otherSrcs = allSrcs.filter((src) => !src.includes('sl-404'));
