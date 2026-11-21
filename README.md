@@ -17,6 +17,10 @@ It exercises three target systems:
 - **Swagger Petstore** - public REST API + UI demo (`https://petstore.swagger.io/`). Informational; some specs deliberately assert known bugs.
 - **Sauce Demo** - public e-commerce UI demo (`https://www.saucedemo.com/`). Informational; demonstrates `storageState` auth reuse.
 
+**Stack:** Playwright 1.65 · TypeScript · Node 24 · Express + lowdb (PetHub Local)
+
+**Verify:** `npm ci && npx playwright install && npm run verify`
+
 ## Contents
 
 - [Quickstart](#quickstart)
