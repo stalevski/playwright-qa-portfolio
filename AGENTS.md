@@ -165,3 +165,23 @@ Isolation makes separate **runs** safe. It does not make parallel **specs** safe
 - Don't commit secrets; real `.env` is gitignored (defaults live in
   `test-targets.config.ts`).
 - Keep external-target flakiness informational - never make it block CI.
+
+## Skills
+
+`.agents/skills/` holds the reusable procedures (`test-planner`,
+`test-generator`, `test-healer`, `coverage-assistant`). `.claude/skills/README.md`
+and `.cursor/skills/README.md` are **pointers**, not copies — one source of truth.
+The long-form playbooks stay in `docs/workflows/`.
+
+## Verify (required before claiming done)
+
+`npm run verify` = lint → format:check → typecheck → assertions:check →
+docs:check → test:local. Exit 0 = done.
+
+`assertions:check` (`scripts/check-assertions.sh`) fails when a diff weakens a
+spec: an added `test.skip` / `test.fixme` / `toBeTruthy()` / `toBeDefined()` /
+`force: true` / `waitForTimeout`, or a touched spec left without a strict
+assertion. Fix the test, never the gate.
+
+External targets are **not** in `verify` and no longer run on pull requests —
+they run on the weekly schedule and on manual dispatch.
