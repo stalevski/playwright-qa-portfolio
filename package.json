@@ -36,9 +36,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "assertions:check": "bash scripts/check-assertions.sh",
     "docs:check": "tsx scripts/check-doc-links.ts",
     "doctor": "node --version && npm --version && npx playwright --version && npm run typecheck && echo Doctor: OK",
-    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run docs:check && npm run test:local"
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run assertions:check && npm run docs:check && npm run test:local"
   },
   "engines": {
     "node": ">=24.0.0"
