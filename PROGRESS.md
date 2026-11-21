@@ -6,7 +6,7 @@
 > [TEST_AUTOMATION_STANDARDS.md](TEST_AUTOMATION_STANDARDS.md); for an overview
 > see [README.md](README.md).
 
-_Last updated: 2026-10-28_
+_Last updated: 2026-11-21_
 
 ---
 
@@ -23,9 +23,11 @@ _Last updated: 2026-10-28_
   `continue-on-error`), plus a weekly cron to detect external-target drift.
 - **Tooling**: ESLint 10 (flat config) + Prettier, Dependabot + auto-merge, `.nvmrc` (Node 24),
   `npm run doctor`, `npm run verify` (the composed gate: lint + format + typecheck +
-  docs + local suite), screenshot/PDF helper scripts.
-- **AI assist**: `docs/workflows/*` (plan / generate / heal / coverage /
-  repo-revival / formatting-cleanup), plus `AGENTS.md` as the single guidance file.
+  assertions + docs + local suite), screenshot/PDF helper scripts.
+- **AI assist**: `.agents/skills/*` (cross-vendor `SKILL.md` front doors) over the
+  long-form playbooks in `docs/workflows/*` (plan / generate / heal / coverage /
+  repo-revival / formatting-cleanup), plus `AGENTS.md` as the single guidance file,
+  `.mcp.json` for the Playwright MCP servers, and a `.devcontainer` that matches CI.
 
 ## 2. Resume on a new machine (checklist)
 
@@ -95,6 +97,29 @@ Ranked by value per unit of effort. See §6 for why these are separate concerns.
 
 > Append notable decisions here (date - decision - why) so context survives across machines and contributors.
 
+- **2026-11-21** - **Agent-readiness surface, with `verify`'s meaning unchanged.**
+  The playbooks already worked; what was missing was a machine-readable front
+  door. `.agents/skills/{test-planner,test-generator,test-healer,coverage-assistant}/SKILL.md`
+  now carry the cross-vendor skill format (YAML frontmatter + steps) and link to
+  the unchanged `docs/workflows/*` detail instead of copying it: one long version,
+  four short ones. `.claude/skills/` and `.cursor/skills/` are committed
+  **pointers, not symlinks** - Windows refuses a directory symlink without
+  Developer Mode or elevation (`WinError 1314`, reproduced on the authoring
+  machine), and a clone made with `core.symlinks=false` materialises one as a text
+  file containing the target path, so a link would be broken for exactly the
+  audience this repo targets. `.mcp.json` wires `playwright-test` and
+  `@playwright/mcp@0.0.86` (both `--headless`); `.devcontainer` pins
+  `mcr.microsoft.com/playwright:v1.65.0-noble` - the lockfile's resolved
+  `@playwright/test`, not "latest" - and exports `CI=1` so a container run behaves
+  like CI. The one real gate change is `scripts/check-assertions.sh`, called from
+  `verify` **after** `typecheck`: it reads the diff against the `origin/main`
+  merge base and fails on added `test.skip`/`test.fixme`, `toBeTruthy()`/
+  `toBeDefined()`, `force: true`, or `waitForTimeout`, plus any touched spec left
+  with no strict assertion. That is the class of defect lint structurally cannot
+  see - each edit is valid code that makes the suite greener without making it
+  truer. `assertions-allow: <reason>` on the line is the reviewed escape hatch, and
+  an unresolvable base ref skips with a printed notice rather than failing or
+  passing silently.
 - **2026-11-20** - **CI/publishing audit: the green `main` run is real, but the
   Pages deploy was publishing things it should not.** Root causes of the two red
   `main` runs, from their logs: (1) run `44327525290` - the required local job

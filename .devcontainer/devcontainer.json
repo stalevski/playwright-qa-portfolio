@@ -1,0 +1,15 @@
+{
+  "name": "playwright-qa-portfolio",
+  "image": "mcr.microsoft.com/playwright:v1.65.0-noble",
+  "containerEnv": {
+    "CI": "1"
+  },
+  "postCreateCommand": "npm ci && npx playwright install --with-deps",
+  "runArgs": ["--init", "--ipc=host"],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-playwright.playwright", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "remoteUser": "root"
+}

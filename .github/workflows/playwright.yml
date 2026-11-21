@@ -116,6 +116,11 @@ jobs:
   test-external:
     name: External target tests (informational)
     runs-on: ubuntu-latest
+    # Third-party targets drift on their own schedule (Sauce Demo changed its
+    # inventory DOM and Petstore changed its upload echo on 2026-11-20). Keep
+    # them out of the PR gate: they run weekly and on demand, so a vendor change
+    # can never red a pull request.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: lint
     timeout-minutes: 30
     # External targets (Swagger Petstore, Sauce Demo) are public demo sites
