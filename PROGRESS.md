@@ -425,3 +425,11 @@ smallest legitimately-deployable change) vs. "scalable service" (Tier 2). That
 choice determines SQLite-vs-Postgres and whether session/projection work is needed
 now or later. Everything in Tier 0 is required either way, so it is the safe place
 to start tomorrow.
+
+### 7.7 External targets moved off the pull-request gate
+
+`test-external` (Sauce Demo + Swagger Petstore) now runs on the weekly schedule
+and on manual dispatch only. Both third-party targets drifted on 2026-11-20
+(inventory DOM, upload echo), so a vendor change was placing a red check on
+every pull request. The local PetHub suite stays required, and lint, format,
+typecheck, docs:check and the assertion gate still run on every PR.
